@@ -32,7 +32,7 @@ cc.LabelTTF._lastWordRex = /([a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]+|\S)$
 cc.LabelTTF._lastEnglish = /[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]+$/;
 cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
 
-(function() {
+(function () {
     cc.LabelTTF.RenderCmd = function () {
         this._fontClientHeight = 18;
         this._fontStyleStr = "";
@@ -54,10 +54,10 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
     proto.constructor = cc.LabelTTF.RenderCmd;
 
     proto._setFontStyle = function (fontNameOrFontDef, fontSize, fontStyle, fontWeight) {
-        if(fontNameOrFontDef instanceof cc.FontDefinition){
+        if (fontNameOrFontDef instanceof cc.FontDefinition) {
             this._fontStyleStr = fontNameOrFontDef._getCanvasFontStr();
             this._fontClientHeight = cc.LabelTTF.__getFontHeightByDiv(fontNameOrFontDef);
-        }else {
+        } else {
             var deviceFontSize = fontSize * cc.view.getDevicePixelRatio();
             this._fontStyleStr = fontStyle + " " + fontWeight + " " + deviceFontSize + "px '" + fontNameOrFontDef + "'";
             this._fontClientHeight = cc.LabelTTF.__getFontHeightByDiv(fontNameOrFontDef, fontSize);
@@ -72,7 +72,7 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
         return this._fontClientHeight;
     };
 
-    proto._updateColor = function(){
+    proto._updateColor = function () {
         this._setColorsString();
         this._updateTexture();
     };
@@ -220,9 +220,9 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
             OffsetYArray.push(yOffset);
         }
         var tmpStatus = {
-            contextTransform:cc.p(dx,dy),
-            xOffset:xOffset,
-            OffsetYArray:OffsetYArray
+            contextTransform: cc.p(dx, dy),
+            xOffset: xOffset,
+            OffsetYArray: OffsetYArray
         };
         this._status.push(tmpStatus);
     };
@@ -456,7 +456,8 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
     var proto = cc.LabelTTF.CanvasRenderCmd.prototype;
     proto.constructor = cc.LabelTTF.CanvasRenderCmd;
 
-    proto._measureConfig = function () {};
+    proto._measureConfig = function () {
+    };
 
     proto._measure = function (text) {
         var context = cc._renderContext.getContext();
@@ -479,7 +480,7 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
         return true;
     };
 
-    proto.rendering = function(ctx) {
+    proto.rendering = function (ctx) {
         var scaleX = cc.view.getScaleX(),
             scaleY = cc.view.getScaleY();
         var wrapper = ctx || cc._renderContext, context = wrapper.getContext();
@@ -487,11 +488,11 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
             return;
         var node = this._node;
         wrapper.computeRealOffsetY();
-        if(this._status.length <= 0)
+        if (this._status.length <= 0)
             return;
-        var locIndex = (this._renderingIndex >= this._status.length)? this._renderingIndex-this._status.length:this._renderingIndex;
+        var locIndex = (this._renderingIndex >= this._status.length) ? this._renderingIndex - this._status.length : this._renderingIndex;
         var status = this._status[locIndex];
-        this._renderingIndex = locIndex+1;
+        this._renderingIndex = locIndex + 1;
 
         var locHeight = node._rect.height,
             locX = node._offsetPosition.x,

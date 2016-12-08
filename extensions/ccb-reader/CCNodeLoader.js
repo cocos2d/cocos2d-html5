@@ -54,9 +54,9 @@ function BlockCCControlData(selCCControlHandler, target, controlEvents) {
 }
 
 cc.NodeLoader = cc.Class.extend({
-    _customProperties:null,
+    _customProperties: null,
 
-    ctor:function(){
+    ctor: function () {
         this._customProperties = new cc._Dictionary();
     },
 
@@ -327,15 +327,15 @@ cc.NodeLoader = cc.Class.extend({
         }
     },
 
-    getCustomProperties:function(){
+    getCustomProperties: function () {
         return this._customProperties;
     },
 
-    _createCCNode:function (parent, ccbReader) {
+    _createCCNode: function (parent, ccbReader) {
         return new cc.Node();
     },
 
-    parsePropTypePosition:function (node, parent, ccbReader, propertyName) {
+    parsePropTypePosition: function (node, parent, ccbReader, propertyName) {
         var x = ccbReader.readFloat();
         var y = ccbReader.readFloat();
 
@@ -650,7 +650,7 @@ cc.NodeLoader = cc.Class.extend({
                     cc.log("Unexpected NULL target for selector.");
                 }
             } else {
-                if(selectorTarget === CCB_TARGETTYPE_DOCUMENTROOT){
+                if (selectorTarget === CCB_TARGETTYPE_DOCUMENTROOT) {
                     ccbReader.addDocumentCallbackNode(node);
                     ccbReader.addDocumentCallbackName(selectorName);
                     ccbReader.addDocumentCallbackControlEvents(0);
@@ -664,7 +664,7 @@ cc.NodeLoader = cc.Class.extend({
         return null;
     },
 
-    parsePropTypeBlockCCControl:function (node, parent, ccbReader) {
+    parsePropTypeBlockCCControl: function (node, parent, ccbReader) {
         var selectorName = ccbReader.readCachedString();
         var selectorTarget = ccbReader.readInt(false);
         var controlEvents = ccbReader.readInt(false);
@@ -704,7 +704,7 @@ cc.NodeLoader = cc.Class.extend({
                     cc.log("Unexpected NULL target for selector.");
                 }
             } else {
-                if(selectorTarget === CCB_TARGETTYPE_DOCUMENTROOT){
+                if (selectorTarget === CCB_TARGETTYPE_DOCUMENTROOT) {
                     ccbReader.addDocumentCallbackNode(node);
                     ccbReader.addDocumentCallbackName(selectorName);
                     ccbReader.addDocumentCallbackControlEvents(controlEvents);
@@ -728,7 +728,7 @@ cc.NodeLoader = cc.Class.extend({
         var myCCBReader = new cc.BuilderReader(ccbReader);
 
         var bytes = cc.loader.getRes(ccbFileName);
-        if(!bytes){
+        if (!bytes) {
             var realUrl = cc.loader.getUrl(ccbFileName);
             bytes = cc.loader.loadBinarySync(realUrl);
             cc.loader.cache[ccbFileName] = bytes;
@@ -754,7 +754,7 @@ cc.NodeLoader = cc.Class.extend({
         return [x,y];
     },
 
-    onHandlePropTypePosition:function (node, parent, propertyName, position, ccbReader) {
+    onHandlePropTypePosition: function (node, parent, propertyName, position, ccbReader) {
         if (propertyName === PROPERTY_POSITION) {
             node.setPosition(position);
         } else {
@@ -762,7 +762,7 @@ cc.NodeLoader = cc.Class.extend({
         }
     },
 
-    onHandlePropTypePoint:function (node, parent, propertyName, position, ccbReader) {
+    onHandlePropTypePoint: function (node, parent, propertyName, position, ccbReader) {
         if (propertyName === PROPERTY_ANCHORPOINT) {
             node.setAnchorPoint(position);
         } else {
@@ -770,11 +770,11 @@ cc.NodeLoader = cc.Class.extend({
         }
     },
 
-    onHandlePropTypePointLock:function (node, parent, propertyName, pointLock, ccbReader) {
+    onHandlePropTypePointLock: function (node, parent, propertyName, pointLock, ccbReader) {
         ASSERT_FAIL_UNEXPECTED_PROPERTY(propertyName);
     },
 
-    onHandlePropTypeSize:function (node, parent, propertyName, sizeValue, ccbReader) {
+    onHandlePropTypeSize: function (node, parent, propertyName, sizeValue, ccbReader) {
         if (propertyName === PROPERTY_CONTENTSIZE) {
             node.setContentSize(sizeValue);
         } else {
@@ -782,7 +782,7 @@ cc.NodeLoader = cc.Class.extend({
         }
     },
 
-    onHandlePropTypeScaleLock:function (node, parent, propertyName, scaleLock, ccbReader) {
+    onHandlePropTypeScaleLock: function (node, parent, propertyName, scaleLock, ccbReader) {
         if (propertyName === PROPERTY_SCALE) {
             node.setScaleX(scaleLock[0]);
             node.setScaleY(scaleLock[1]);
@@ -804,13 +804,13 @@ cc.NodeLoader = cc.Class.extend({
             node[nameY](xy[1]);
         }
     },
-    onHandlePropTypeFloat:function (node, parent, propertyName, floatValue, ccbReader) {
+    onHandlePropTypeFloat: function (node, parent, propertyName, floatValue, ccbReader) {
         //ASSERT_FAIL_UNEXPECTED_PROPERTY(propertyName);
         // It may be a custom property, add it to custom property dictionary.
         this._customProperties.setObject(floatValue, propertyName);
     },
 
-    onHandlePropTypeDegrees:function (node, parent, propertyName, degrees, ccbReader) {
+    onHandlePropTypeDegrees: function (node, parent, propertyName, degrees, ccbReader) {
         if (propertyName === PROPERTY_ROTATION) {
             node.setRotation(degrees);
         } else {
@@ -818,11 +818,11 @@ cc.NodeLoader = cc.Class.extend({
         }
     },
 
-    onHandlePropTypeFloatScale:function (node, parent, propertyName, floatScale, ccbReader) {
+    onHandlePropTypeFloatScale: function (node, parent, propertyName, floatScale, ccbReader) {
         ASSERT_FAIL_UNEXPECTED_PROPERTY(propertyName);
     },
 
-    onHandlePropTypeInteger:function (node, parent, propertyName, integer, ccbReader) {
+    onHandlePropTypeInteger: function (node, parent, propertyName, integer, ccbReader) {
         if (propertyName === PROPERTY_TAG) {
             node.setTag(integer);
         } else {
@@ -830,15 +830,15 @@ cc.NodeLoader = cc.Class.extend({
         }
     },
 
-    onHandlePropTypeIntegerLabeled:function (node, parent, propertyName, integerLabeled, ccbReader) {
+    onHandlePropTypeIntegerLabeled: function (node, parent, propertyName, integerLabeled, ccbReader) {
         ASSERT_FAIL_UNEXPECTED_PROPERTY(propertyName);
     },
 
-    onHandlePropTypeFloatVar:function (node, parent, propertyName, floatVar, ccbReader) {
+    onHandlePropTypeFloatVar: function (node, parent, propertyName, floatVar, ccbReader) {
         ASSERT_FAIL_UNEXPECTED_PROPERTY(propertyName);
     },
 
-    onHandlePropTypeCheck:function (node, parent, propertyName, check, ccbReader) {
+    onHandlePropTypeCheck: function (node, parent, propertyName, check, ccbReader) {
         if (propertyName === PROPERTY_VISIBLE) {
             node.setVisible(check);
         } else if (propertyName === PROPERTY_IGNOREANCHORPOINTFORPOSITION) {
@@ -848,53 +848,53 @@ cc.NodeLoader = cc.Class.extend({
         }
     },
 
-    onHandlePropTypeSpriteFrame:function (node, parent, propertyName, spriteFrame, ccbReader) {
+    onHandlePropTypeSpriteFrame: function (node, parent, propertyName, spriteFrame, ccbReader) {
         ASSERT_FAIL_UNEXPECTED_PROPERTY(propertyName);
     },
 
-    onHandlePropTypeAnimation:function (node, parent, propertyName, ccAnimation, ccbReader) {
+    onHandlePropTypeAnimation: function (node, parent, propertyName, ccAnimation, ccbReader) {
         ASSERT_FAIL_UNEXPECTED_PROPERTY(propertyName);
     },
 
-    onHandlePropTypeTexture:function (node, parent, propertyName, ccTexture2D, ccbReader) {
+    onHandlePropTypeTexture: function (node, parent, propertyName, ccTexture2D, ccbReader) {
         ASSERT_FAIL_UNEXPECTED_PROPERTY(propertyName);
     },
-    onHandlePropTypeByte:function (node, parent, propertyName, byteValue, ccbReader) {
+    onHandlePropTypeByte: function (node, parent, propertyName, byteValue, ccbReader) {
         ASSERT_FAIL_UNEXPECTED_PROPERTY(propertyName);
     },
-    onHandlePropTypeColor3:function (node, parent, propertyName, ccColor3B, ccbReader) {
+    onHandlePropTypeColor3: function (node, parent, propertyName, ccColor3B, ccbReader) {
         ASSERT_FAIL_UNEXPECTED_PROPERTY(propertyName);
     },
-    onHandlePropTypeColor4FVar:function (node, parent, propertyName, ccColor4FVar, ccbReader) {
+    onHandlePropTypeColor4FVar: function (node, parent, propertyName, ccColor4FVar, ccbReader) {
         ASSERT_FAIL_UNEXPECTED_PROPERTY(propertyName);
     },
-    onHandlePropTypeFlip:function (node, parent, propertyName, flip, ccbReader) {
+    onHandlePropTypeFlip: function (node, parent, propertyName, flip, ccbReader) {
         ASSERT_FAIL_UNEXPECTED_PROPERTY(propertyName);
     },
-    onHandlePropTypeBlendFunc:function (node, parent, propertyName, ccBlendFunc, ccbReader) {
+    onHandlePropTypeBlendFunc: function (node, parent, propertyName, ccBlendFunc, ccbReader) {
         ASSERT_FAIL_UNEXPECTED_PROPERTY(propertyName);
     },
-    onHandlePropTypeFntFile:function (node, parent, propertyName, fntFile, ccbReader) {
+    onHandlePropTypeFntFile: function (node, parent, propertyName, fntFile, ccbReader) {
         ASSERT_FAIL_UNEXPECTED_PROPERTY(propertyName);
     },
-    onHandlePropTypeString:function (node, parent, propertyName, strValue, ccbReader) {
+    onHandlePropTypeString: function (node, parent, propertyName, strValue, ccbReader) {
         //ASSERT_FAIL_UNEXPECTED_PROPERTY(propertyName);
         // It may be a custom property, add it to custom property dictionary.
         this._customProperties.setObject(strValue, propertyName);
     },
-    onHandlePropTypeText:function (node, parent, propertyName, textValue, ccbReader) {
+    onHandlePropTypeText: function (node, parent, propertyName, textValue, ccbReader) {
         ASSERT_FAIL_UNEXPECTED_PROPERTY(propertyName);
     },
-    onHandlePropTypeFontTTF:function (node, parent, propertyName, fontTTF, ccbReader) {
+    onHandlePropTypeFontTTF: function (node, parent, propertyName, fontTTF, ccbReader) {
         ASSERT_FAIL_UNEXPECTED_PROPERTY(propertyName);
     },
-    onHandlePropTypeBlock:function (node, parent, propertyName, blockData, ccbReader) {
+    onHandlePropTypeBlock: function (node, parent, propertyName, blockData, ccbReader) {
         ASSERT_FAIL_UNEXPECTED_PROPERTY(propertyName);
     },
-    onHandlePropTypeBlockCCControl:function (node, parent, propertyName, blockCCControlData, ccbReader) {
+    onHandlePropTypeBlockCCControl: function (node, parent, propertyName, blockCCControlData, ccbReader) {
         ASSERT_FAIL_UNEXPECTED_PROPERTY(propertyName);
     },
-    onHandlePropTypeCCBFile:function (node, parent, propertyName, ccbFileNode, ccbReader) {
+    onHandlePropTypeCCBFile: function (node, parent, propertyName, ccbFileNode, ccbReader) {
         ASSERT_FAIL_UNEXPECTED_PROPERTY(propertyName);
     }
 });

@@ -512,8 +512,8 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         this._fontName = textDefinition.fontName;
         this._fontSize = textDefinition.fontSize || 12;
 
-        if(textDefinition.lineHeight)
-            this._lineHeight = textDefinition.lineHeight
+        if (textDefinition.lineHeight)
+            this._lineHeight = textDefinition.lineHeight;
         else
             this._lineHeight = this._fontSize;
 
@@ -537,7 +537,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         if (mustUpdateTexture)
             this._renderCmd._updateTexture();
         var flags = cc.Node._dirtyFlags;
-        this._renderCmd.setDirtyFlag(flags.colorDirty|flags.opacityDirty|flags.textDirty);
+        this._renderCmd.setDirtyFlag(flags.colorDirty | flags.opacityDirty | flags.textDirty);
     },
 
     _prepareTextDefinition: function (adjustForResolution) {
@@ -857,7 +857,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     },
 
     //For web only
-    _setFontStyle: function(fontStyle){
+    _setFontStyle: function (fontStyle) {
         if (this._fontStyle !== fontStyle) {
             this._fontStyle = fontStyle;
             this._renderCmd._setFontStyle(this._fontName, this._fontSize, this._fontStyle, this._fontWeight);
@@ -865,11 +865,11 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         }
     },
 
-    _getFontStyle: function(){
+    _getFontStyle: function () {
         return this._fontStyle;
     },
 
-    _setFontWeight: function(fontWeight){
+    _setFontWeight: function (fontWeight) {
         if (this._fontWeight !== fontWeight) {
             this._fontWeight = fontWeight;
             this._renderCmd._setFontStyle(this._fontName, this._fontSize, this._fontStyle, this._fontWeight);
@@ -877,7 +877,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         }
     },
 
-    _getFontWeight: function(){
+    _getFontWeight: function () {
         return this._fontWeight;
     }
 });

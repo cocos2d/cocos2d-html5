@@ -63,11 +63,11 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     _finalPositionX: 0,
     _finalPositionY: 0,
 
-    _backGroundImageOpacity:0,
+    _backGroundImageOpacity: 0,
 
     _loopFocus: false,                                                          //whether enable loop focus or not
     __passFocusToChild: true,                                                  //on default, it will pass the focus to the next nearest widget
-    _isFocusPassing:false,                                                      //when finding the next focused widget, use this variable to pass focus between layout & widget
+    _isFocusPassing: false,                                                      //when finding the next focused widget, use this variable to pass focus between layout & widget
     _isInterceptTouch: false,
 
     /**
@@ -89,7 +89,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         this.ignoreContentAdaptWithSize(false);
         this.setContentSize(cc.size(0, 0));
         this.setAnchorPoint(0, 0);
-        this.onPassFocusToChild  = this._findNearestChildWidgetIndex.bind(this);
+        this.onPassFocusToChild = this._findNearestChildWidgetIndex.bind(this);
 
         this._backGroundImageCapInsets = cc.rect(0, 0, 0, 0);
 
@@ -107,7 +107,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * Calls its parent's onEnter, and calls its clippingStencil's onEnter if clippingStencil isn't null.
      * @override
      */
-    onEnter: function(){
+    onEnter: function () {
         ccui.Widget.prototype.onEnter.call(this);
         if (this._clippingStencil)
             this._clippingStencil.onEnter();
@@ -119,7 +119,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      *  Calls its parent's onExit, and calls its clippingStencil's onExit if clippingStencil isn't null.
      *  @override
      */
-    onExit: function(){
+    onExit: function () {
         ccui.Widget.prototype.onExit.call(this);
         if (this._clippingStencil)
             this._clippingStencil.onExit();
@@ -129,7 +129,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * If a layout is loop focused which means that the focus movement will be inside the layout
      * @param {Boolean} loop pass true to let the focus movement loop inside the layout
      */
-    setLoopFocus: function(loop){
+    setLoopFocus: function (loop) {
         this._loopFocus = loop;
     },
 
@@ -137,7 +137,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * Gets whether enable focus loop
      * @returns {boolean}  If focus loop is enabled, then it will return true, otherwise it returns false. The default value is false.
      */
-    isLoopFocus: function(){
+    isLoopFocus: function () {
         return this._loopFocus;
     },
 
@@ -145,7 +145,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * Specifies whether the layout pass its focus to its child
      * @param pass To specify whether the layout pass its focus to its child
      */
-    setPassFocusToChild: function(pass){
+    setPassFocusToChild: function (pass) {
         this.__passFocusToChild = pass;
     },
 
@@ -153,7 +153,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * Returns whether the layout will pass the focus to its children or not. The default value is true
      * @returns {boolean} To query whether the layout will pass the focus to its children or not. The default value is true
      */
-    isPassFocusToChild: function(){
+    isPassFocusToChild: function () {
         return this.__passFocusToChild;
     },
 
@@ -164,7 +164,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * @param {ccui.Widget} current the current focused widget
      * @returns {ccui.Widget} return the index of widget in the layout
      */
-    findNextFocusedWidget: function(direction, current){
+    findNextFocusedWidget: function (direction, current) {
         if (this._isFocusPassing || this.isFocused()) {
             var parent = this.getParent();
             this._isFocusPassing = false;
@@ -181,31 +181,31 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                 return this;
             parent._isFocusPassing = true;
             return parent.findNextFocusedWidget(direction, this);
-        } else if(current.isFocused() || current instanceof ccui.Layout) {
+        } else if (current.isFocused() || current instanceof ccui.Layout) {
             if (this._layoutType === ccui.Layout.LINEAR_HORIZONTAL) {
-                switch (direction){
+                switch (direction) {
                     case ccui.Widget.LEFT:
                         return this._getPreviousFocusedWidget(direction, current);
-                    break;
+                        break;
                     case ccui.Widget.RIGHT:
                         return this._getNextFocusedWidget(direction, current);
-                    break;
+                        break;
                     case ccui.Widget.DOWN:
                     case ccui.Widget.UP:
-                        if (this._isLastWidgetInContainer(this, direction)){
+                        if (this._isLastWidgetInContainer(this, direction)) {
                             if (this._isWidgetAncestorSupportLoopFocus(current, direction))
                                 return ccui.Widget.prototype.findNextFocusedWidget.call(this, direction, this);
                             return current;
                         } else {
                             return ccui.Widget.prototype.findNextFocusedWidget.call(this, direction, this);
                         }
-                    break;
+                        break;
                     default:
                         cc.assert(0, "Invalid Focus Direction");
                         return current;
                 }
             } else if (this._layoutType === ccui.Layout.LINEAR_VERTICAL) {
-                switch (direction){
+                switch (direction) {
                     case ccui.Widget.LEFT:
                     case ccui.Widget.RIGHT:
                         if (this._isLastWidgetInContainer(this, direction)) {
@@ -215,7 +215,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                         }
                         else
                             return ccui.Widget.prototype.findNextFocusedWidget.call(this, direction, this);
-                     break;
+                        break;
                     case ccui.Widget.DOWN:
                         return this._getNextFocusedWidget(direction, current);
                         break;
@@ -282,7 +282,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * and sets the layout dirty flag to true.
      * @param {Boolean} cleanup true if all running actions on all children nodes should be cleanup, false otherwise.
      */
-    removeAllChildrenWithCleanup: function(cleanup){
+    removeAllChildrenWithCleanup: function (cleanup) {
         ccui.Widget.prototype.removeAllChildrenWithCleanup.call(this, cleanup);
         this._doLayoutDirty = true;
     },
@@ -337,7 +337,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         switch (this._clippingType) {
             case ccui.Layout.CLIPPING_SCISSOR:
             case ccui.Layout.CLIPPING_STENCIL:
-                if (able){
+                if (able) {
                     this._clippingStencil = new cc.DrawNode();
                     this._renderCmd.rebindStencilRendering(this._clippingStencil);
                     if (this._running)
@@ -415,8 +415,8 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                 var right = Math.min(worldPos.x + scissorWidth, parentClippingRect.x + parentClippingRect.width);
                 var top = Math.min(worldPos.y + scissorHeight, parentClippingRect.y + parentClippingRect.height);
 
-                this._clippingRect.width = Math.max(0.0, right -  this._clippingRect.x);
-                this._clippingRect.height = Math.max(0.0, top -  this._clippingRect.y);
+                this._clippingRect.width = Math.max(0.0, right - this._clippingRect.x);
+                this._clippingRect.height = Math.max(0.0, top - this._clippingRect.y);
             } else {
                 this._clippingRect.x = worldPos.x;
                 this._clippingRect.y = worldPos.y;
@@ -477,7 +477,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         if (!fileName)
             return;
         texType = texType || ccui.Widget.LOCAL_TEXTURE;
-        if (this._backGroundImage === null){
+        if (this._backGroundImage === null) {
             this._addBackGroundImage();
             this.setBackGroundImageScale9Enabled(this._backGroundScale9Enabled);
         }
@@ -507,7 +507,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * @param {cc.Rect} capInsets capinsets of background image.
      */
     setBackGroundImageCapInsets: function (capInsets) {
-        if(!capInsets)
+        if (!capInsets)
             return;
         var locInsets = this._backGroundImageCapInsets;
         locInsets.x = capInsets.x;
@@ -780,7 +780,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     },
 
     _updateBackGroundImageColor: function () {
-        if(this._backGroundImage)
+        if (this._backGroundImage)
             this._backGroundImage.setColor(this._backGroundImageColor);
     },
 
@@ -802,7 +802,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         var locChild = null;
         for (var i = 0; i < layoutChildrenArray.length; i++) {
             locChild = layoutChildrenArray[i];
-            if(locChild instanceof ccui.Widget)
+            if (locChild instanceof ccui.Widget)
                 this._supplyTheLayoutParameterLackToChild(locChild);
         }
         this._doLayoutDirty = true;
@@ -835,20 +835,20 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         this._doLayoutDirty = false;
     },
 
-    _getLayoutContentSize: function(){
+    _getLayoutContentSize: function () {
         return this.getContentSize();
     },
 
-    _getLayoutElements: function(){
+    _getLayoutElements: function () {
         return this.getChildren();
     },
 
-    _updateBackGroundImageOpacity: function(){
+    _updateBackGroundImageOpacity: function () {
         if (this._backGroundImage)
             this._backGroundImage.setOpacity(this._backGroundImageOpacity);
     },
 
-    _updateBackGroundImageRGBA: function(){
+    _updateBackGroundImageRGBA: function () {
         if (this._backGroundImage) {
             this._backGroundImage.setColor(this._backGroundImageColor);
             this._backGroundImage.setOpacity(this._backGroundImageOpacity);
@@ -860,13 +860,13 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * @returns {cc.Size}
      * @private
      */
-    _getLayoutAccumulatedSize: function(){
+    _getLayoutAccumulatedSize: function () {
         var children = this.getChildren();
-        var  layoutSize = cc.size(0, 0);
+        var layoutSize = cc.size(0, 0);
         var widgetCount = 0, locSize;
-        for(var i = 0, len = children.length; i < len; i++) {
+        for (var i = 0, len = children.length; i < len; i++) {
             var layout = children[i];
-            if (null !== layout && layout instanceof ccui.Layout){
+            if (null !== layout && layout instanceof ccui.Layout) {
                 locSize = layout._getLayoutAccumulatedSize();
                 layoutSize.width += locSize.width;
                 layoutSize.height += locSize.height;
@@ -875,8 +875,8 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                     widgetCount++;
                     var m = layout.getLayoutParameter().getMargin();
                     locSize = layout.getContentSize();
-                    layoutSize.width += locSize.width +  (m.right + m.left) * 0.5;
-                    layoutSize.height += locSize.height +  (m.top + m.bottom) * 0.5;
+                    layoutSize.width += locSize.width + (m.right + m.left) * 0.5;
+                    layoutSize.height += locSize.height + (m.top + m.bottom) * 0.5;
                 }
             }
         }
@@ -884,10 +884,10 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         //substract extra size
         var type = this.getLayoutType();
         if (type === ccui.Layout.LINEAR_HORIZONTAL)
-            layoutSize.height = layoutSize.height - layoutSize.height/widgetCount * (widgetCount-1);
+            layoutSize.height = layoutSize.height - layoutSize.height / widgetCount * (widgetCount - 1);
 
         if (type === ccui.Layout.LINEAR_VERTICAL)
-            layoutSize.width = layoutSize.width - layoutSize.width/widgetCount * (widgetCount-1);
+            layoutSize.width = layoutSize.width - layoutSize.width / widgetCount * (widgetCount - 1);
         return layoutSize;
     },
 
@@ -899,7 +899,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * @returns {Number}
      * @private
      */
-    _findNearestChildWidgetIndex: function(direction, baseWidget){
+    _findNearestChildWidgetIndex: function (direction, baseWidget) {
         if (baseWidget == null || baseWidget === this)
             return this._findFirstFocusEnabledWidgetIndex();
 
@@ -912,9 +912,9 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
             while (index < count) {
                 var w = locChildren[index];
                 if (w && w instanceof ccui.Widget && w.isFocusEnabled()) {
-                    var length = (w instanceof ccui.Layout)? w._calculateNearestDistance(baseWidget)
+                    var length = (w instanceof ccui.Layout) ? w._calculateNearestDistance(baseWidget)
                         : cc.pLength(cc.pSub(this._getWorldCenterPoint(w), widgetPosition));
-                    if (length < distance){
+                    if (length < distance) {
                         found = index;
                         distance = length;
                     }
@@ -935,7 +935,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * @returns {Number} The index of child widget in the container
      * @private
      */
-    _findFarthestChildWidgetIndex: function(direction, baseWidget){
+    _findFarthestChildWidgetIndex: function (direction, baseWidget) {
         if (baseWidget == null || baseWidget === this)
             return this._findFirstFocusEnabledWidgetIndex();
 
@@ -944,20 +944,20 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
 
         var distance = -cc.FLT_MAX, found = 0;
         if (direction === ccui.Widget.LEFT || direction === ccui.Widget.RIGHT || direction === ccui.Widget.DOWN || direction === ccui.Widget.UP) {
-            var widgetPosition =  this._getWorldCenterPoint(baseWidget);
-            while (index <  count) {
+            var widgetPosition = this._getWorldCenterPoint(baseWidget);
+            while (index < count) {
                 var w = locChildren[index];
                 if (w && w instanceof ccui.Widget && w.isFocusEnabled()) {
-                    var length = (w instanceof ccui.Layout)?w._calculateFarthestDistance(baseWidget)
+                    var length = (w instanceof ccui.Layout) ? w._calculateFarthestDistance(baseWidget)
                         : cc.pLength(cc.pSub(this._getWorldCenterPoint(w), widgetPosition));
-                    if (length > distance){
+                    if (length > distance) {
                         found = index;
                         distance = length;
                     }
                 }
                 index++;
             }
-            return  found;
+            return found;
         }
         cc.log("invalid focus direction!!!");
         return 0;
@@ -969,9 +969,9 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * @returns {Number} return the nearest distance between the baseWidget and the layout's children
      * @private
      */
-    _calculateNearestDistance: function(baseWidget){
+    _calculateNearestDistance: function (baseWidget) {
         var distance = cc.FLT_MAX;
-        var widgetPosition =  this._getWorldCenterPoint(baseWidget);
+        var widgetPosition = this._getWorldCenterPoint(baseWidget);
         var locChildren = this._children;
 
         for (var i = 0, len = locChildren.length; i < len; i++) {
@@ -996,9 +996,9 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * @returns {number}
      * @private
      */
-    _calculateFarthestDistance:function(baseWidget){
+    _calculateFarthestDistance: function (baseWidget) {
         var distance = -cc.FLT_MAX;
-        var widgetPosition =  this._getWorldCenterPoint(baseWidget);
+        var widgetPosition = this._getWorldCenterPoint(baseWidget);
         var locChildren = this._children;
 
         for (var i = 0, len = locChildren.length; i < len; i++) {
@@ -1026,7 +1026,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * @param baseWidget
      * @private
      */
-    _findProperSearchingFunctor: function(direction, baseWidget){
+    _findProperSearchingFunctor: function (direction, baseWidget) {
         if (baseWidget === undefined)
             return;
 
@@ -1038,13 +1038,13 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         } else if (direction === ccui.Widget.RIGHT) {
             this.onPassFocusToChild = (previousWidgetPosition.x > widgetPosition.x) ? this._findFarthestChildWidgetIndex
                 : this._findNearestChildWidgetIndex;
-        }else if(direction === ccui.Widget.DOWN) {
+        } else if (direction === ccui.Widget.DOWN) {
             this.onPassFocusToChild = (previousWidgetPosition.y > widgetPosition.y) ? this._findNearestChildWidgetIndex
                 : this._findFarthestChildWidgetIndex;
-        }else if(direction === ccui.Widget.UP) {
+        } else if (direction === ccui.Widget.UP) {
             this.onPassFocusToChild = (previousWidgetPosition.y < widgetPosition.y) ? this._findNearestChildWidgetIndex
                 : this._findFarthestChildWidgetIndex;
-        }else
+        } else
             cc.log("invalid direction!");
     },
 
@@ -1053,15 +1053,15 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * @returns {ccui.Widget}
      * @private
      */
-    _findFirstNonLayoutWidget:function(){
+    _findFirstNonLayoutWidget: function () {
         var locChildren = this._children;
-        for(var i = 0, len = locChildren.length; i < len; i++) {
+        for (var i = 0, len = locChildren.length; i < len; i++) {
             var child = locChildren[i];
-            if (child instanceof ccui.Layout){
+            if (child instanceof ccui.Layout) {
                 var widget = child._findFirstNonLayoutWidget();
-                if(widget)
+                if (widget)
                     return widget;
-            } else{
+            } else {
                 if (child instanceof ccui.Widget)
                     return child;
             }
@@ -1074,7 +1074,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * @returns {number}
      * @private
      */
-    _findFirstFocusEnabledWidgetIndex: function(){
+    _findFirstFocusEnabledWidgetIndex: function () {
         var index = 0, locChildren = this.getChildren();
         var count = locChildren.length;
         while (index < count) {
@@ -1092,9 +1092,9 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * @returns {*}
      * @private
      */
-    _findFocusEnabledChildWidgetByIndex: function(index){
+    _findFocusEnabledChildWidgetByIndex: function (index) {
         var widget = this._getChildWidgetByIndex(index);
-        if (widget){
+        if (widget) {
             if (widget.isFocusEnabled())
                 return widget;
             index = index + 1;
@@ -1109,10 +1109,10 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * @returns {cc.Point}
      * @private
      */
-    _getWorldCenterPoint: function(widget){
+    _getWorldCenterPoint: function (widget) {
         //FIXEDME: we don't need to calculate the content size of layout anymore
-        var widgetSize = widget instanceof ccui.Layout ? widget._getLayoutAccumulatedSize() :  widget.getContentSize();
-        return widget.convertToWorldSpace(cc.p(widgetSize.width /2, widgetSize.height /2));
+        var widgetSize = widget instanceof ccui.Layout ? widget._getLayoutAccumulatedSize() : widget.getContentSize();
+        return widget.convertToWorldSpace(cc.p(widgetSize.width / 2, widgetSize.height / 2));
     },
 
     /**
@@ -1122,9 +1122,9 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * @returns {ccui.Widget} the next focused widget
      * @private
      */
-    _getNextFocusedWidget: function(direction, current){
+    _getNextFocusedWidget: function (direction, current) {
         var nextWidget = null, locChildren = this._children;
-        var  previousWidgetPos = locChildren.indexOf(current);
+        var previousWidgetPos = locChildren.indexOf(current);
         previousWidgetPos = previousWidgetPos + 1;
         if (previousWidgetPos < locChildren.length) {
             nextWidget = this._getChildWidgetByIndex(previousWidgetPos);
@@ -1159,8 +1159,8 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                         return this._getNextFocusedWidget(direction, nextWidget);
                 } else
                     return (current instanceof ccui.Layout) ? current : ccui.Widget._focusedWidget;
-            } else{
-                if (this._isLastWidgetInContainer(current, direction)){
+            } else {
+                if (this._isLastWidgetInContainer(current, direction)) {
                     if (this._isWidgetAncestorSupportLoopFocus(this, direction))
                         return ccui.Widget.prototype.findNextFocusedWidget.call(this, direction, this);
                     return (current instanceof ccui.Layout) ? current : ccui.Widget._focusedWidget;
@@ -1177,14 +1177,14 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * @returns {ccui.Widget} the next focused widget
      * @private
      */
-    _getPreviousFocusedWidget: function(direction, current){
+    _getPreviousFocusedWidget: function (direction, current) {
         var nextWidget = null, locChildren = this._children;
         var previousWidgetPos = locChildren.indexOf(current);
         previousWidgetPos = previousWidgetPos - 1;
-        if (previousWidgetPos >= 0){
+        if (previousWidgetPos >= 0) {
             nextWidget = this._getChildWidgetByIndex(previousWidgetPos);
             if (nextWidget.isFocusEnabled()) {
-                if (nextWidget instanceof ccui.Layout){
+                if (nextWidget instanceof ccui.Layout) {
                     nextWidget._isFocusPassing = true;
                     return nextWidget.findNextFocusedWidget(direction, nextWidget);
                 }
@@ -1192,13 +1192,13 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                 return nextWidget;
             } else
                 return this._getPreviousFocusedWidget(direction, nextWidget);       //handling the disabled widget, there is no actual focus lose or get, so we don't need any envet
-        }else {
-            if (this._loopFocus){
+        } else {
+            if (this._loopFocus) {
                 if (this._checkFocusEnabledChild()) {
-                    previousWidgetPos = locChildren.length -1;
+                    previousWidgetPos = locChildren.length - 1;
                     nextWidget = this._getChildWidgetByIndex(previousWidgetPos);
-                    if (nextWidget.isFocusEnabled()){
-                        if (nextWidget instanceof ccui.Layout){
+                    if (nextWidget.isFocusEnabled()) {
+                        if (nextWidget instanceof ccui.Layout) {
                             nextWidget._isFocusPassing = true;
                             return nextWidget.findNextFocusedWidget(direction, nextWidget);
                         } else {
@@ -1255,7 +1255,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * @returns {Boolean}
      * @private
      */
-    _isLastWidgetInContainer:function(widget, direction){
+    _isLastWidgetInContainer: function (widget, direction) {
         var parent = widget.getParent();
         if (parent == null || !(parent instanceof ccui.Layout))
             return true;
@@ -1280,8 +1280,8 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
 
             if (direction === ccui.Widget.UP)
                 return this._isLastWidgetInContainer(parent, direction);
-        } else if(parent.getLayoutType() === ccui.Layout.LINEAR_VERTICAL){
-            if (direction === ccui.Widget.UP){
+        } else if (parent.getLayoutType() === ccui.Layout.LINEAR_VERTICAL) {
+            if (direction === ccui.Widget.UP) {
                 if (index === 0)
                     return this._isLastWidgetInContainer(parent, direction);
                 else
@@ -1311,7 +1311,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * @returns {Boolean}
      * @private
      */
-    _isWidgetAncestorSupportLoopFocus: function(widget, direction){
+    _isWidgetAncestorSupportLoopFocus: function (widget, direction) {
         var parent = widget.getParent();
         if (parent == null || !(parent instanceof ccui.Layout))
             return false;
@@ -1323,12 +1323,12 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                 else
                     return this._isWidgetAncestorSupportLoopFocus(parent, direction);
             }
-            if (layoutType === ccui.Layout.LINEAR_VERTICAL){
+            if (layoutType === ccui.Layout.LINEAR_VERTICAL) {
                 if (direction === ccui.Widget.DOWN || direction === ccui.Widget.UP)
                     return true;
                 else
                     return this._isWidgetAncestorSupportLoopFocus(parent, direction);
-            } else{
+            } else {
                 cc.assert(0, "invalid layout type");
                 return false;
             }
@@ -1343,7 +1343,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * @returns {ccui.Widget}
      * @private
      */
-    _passFocusToChild: function(direction, current){
+    _passFocusToChild: function (direction, current) {
         if (this._checkFocusEnabledChild()) {
             var previousWidget = ccui.Widget.getCurrentFocusedWidget();
             this._findProperSearchingFunctor(direction, previousWidget);
@@ -1357,7 +1357,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                 this.dispatchFocusEvent(current, widget);
                 return widget;
             }
-        }else
+        } else
             return this;
     },
 
@@ -1366,9 +1366,9 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * @returns {boolean}
      * @private
      */
-    _checkFocusEnabledChild: function(){
+    _checkFocusEnabledChild: function () {
         var locChildren = this._children;
-        for(var i = 0, len = locChildren.length; i < len; i++){
+        for (var i = 0, len = locChildren.length; i < len; i++) {
             var widget = locChildren[i];
             if (widget && widget instanceof ccui.Widget && widget.isFocusEnabled())
                 return true;
@@ -1393,7 +1393,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     },
 
     _copySpecialProperties: function (layout) {
-        if(!(layout instanceof  ccui.Layout))
+        if (!(layout instanceof  ccui.Layout))
             return;
         this.setBackGroundImageScale9Enabled(layout._backGroundScale9Enabled);
         this.setBackGroundImage(layout._backGroundImageFileName, layout._bgImageTexType);
@@ -1414,13 +1414,13 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     /**
      * force refresh widget layout
      */
-    forceDoLayout: function(){
+    forceDoLayout: function () {
         this.requestDoLayout();
         this._doLayout();
     },
 
-    _createRenderCmd: function(){
-        if(cc._renderType === cc.game.RENDER_TYPE_WEBGL)
+    _createRenderCmd: function () {
+        if (cc._renderType === cc.game.RENDER_TYPE_WEBGL)
             return new ccui.Layout.WebGLRenderCmd(this);
         else
             return new ccui.Layout.CanvasRenderCmd(this);

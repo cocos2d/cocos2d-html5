@@ -22,8 +22,8 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-(function(){
-    if(!cc.Node.WebGLRenderCmd)
+(function () {
+    if (!cc.Node.WebGLRenderCmd)
         return;
     cc.ProtectedNode.WebGLRenderCmd = function (renderable) {
         cc.Node.WebGLRenderCmd.call(this, renderable);
@@ -87,13 +87,13 @@
         this._dirtyFlag = 0;
     };
 
-    proto.transform = function(parentCmd, recursive){
+    proto.transform = function (parentCmd, recursive) {
         this.originTransform(parentCmd, recursive);
 
         var i, len,
             locChildren = this._node._protectedChildren;
-        if(recursive && locChildren && locChildren.length !== 0){
-            for(i = 0, len = locChildren.length; i< len; i++){
+        if (recursive && locChildren && locChildren.length !== 0) {
+            for (i = 0, len = locChildren.length; i < len; i++) {
                 locChildren[i]._renderCmd.transform(this, recursive);
             }
         }

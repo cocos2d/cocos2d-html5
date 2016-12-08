@@ -22,7 +22,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-(function(){
+(function () {
     sp.Skeleton.WebGLRenderCmd = function (renderableObject) {
         cc.Node.WebGLRenderCmd.call(this, renderableObject);
         this._needDraw = true;
@@ -71,7 +71,7 @@
                 continue;
             attachment = slot.attachment;
 
-            switch(slot.attachment.type) {
+            switch (slot.attachment.type) {
                 case sp.ATTACHMENT_TYPE.REGION:
                     this._updateRegionAttachmentQuad(attachment, slot, tmpQuad, premultiAlpha);
                     break;
@@ -184,11 +184,13 @@
         }
     };
 
-    proto._createChildFormSkeletonData = function(){};
+    proto._createChildFormSkeletonData = function () {
+    };
 
-    proto._updateChild = function(){};
+    proto._updateChild = function () {
+    };
 
-    proto._updateRegionAttachmentQuad = function(self, slot, quad, premultipliedAlpha) {
+    proto._updateRegionAttachmentQuad = function (self, slot, quad, premultipliedAlpha) {
         var vertices = {};
         self.computeVertices(slot.bone.skeleton.x, slot.bone.skeleton.y, slot.bone, vertices);
         var a = slot.bone.skeleton.a * slot.a * attachment.a * 255;
@@ -222,7 +224,7 @@
         quad.br.texCoords.v = self.uvs[VERTEX.Y4];
     };
 
-    proto._updateMeshAttachmentQuad = function(self, slot, quad, premultipliedAlpha) {
+    proto._updateMeshAttachmentQuad = function (self, slot, quad, premultipliedAlpha) {
         var vertices = {};
         self.computeWorldVertices(slot.bone.x, slot.bone.y, slot, vertices);
         var r = slot.bone.skeleton.r * slot.r * 255;

@@ -35,7 +35,7 @@
     var proto = cc.PhysicsDebugNode.CanvasRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
     proto.constructor = cc.PhysicsDebugNode.CanvasRenderCmd;
 
-    proto.rendering = function(ctx, scaleX, scaleY){
+    proto.rendering = function (ctx, scaleX, scaleY) {
         var node = this._node;
         if (!node._space)
             return;

@@ -23,8 +23,8 @@
  ****************************************************************************/
 
 //-------------------------- ClippingNode's canvas render cmd --------------------------------
-(function(){
-    cc.ClippingNode.CanvasRenderCmd = function(renderable){
+(function () {
+    cc.ClippingNode.CanvasRenderCmd = function (renderable) {
         cc.Node.CanvasRenderCmd.call(this, renderable);
         this._needDraw = false;
 
@@ -38,10 +38,11 @@
     var proto = cc.ClippingNode.CanvasRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
     proto.constructor = cc.ClippingNode.CanvasRenderCmd;
 
-    proto.initStencilBits = function(){};
+    proto.initStencilBits = function () {
+    };
 
-    proto.setStencil = function(stencil){
-        if(stencil == null)
+    proto.setStencil = function (stencil) {
+        if (stencil == null)
             return;
 
         this._node._stencil = stencil;
@@ -49,8 +50,8 @@
         // For shape stencil, rewrite the draw of stencil ,only init the clip path and draw nothing.
         //else
         if (stencil instanceof cc.DrawNode) {
-            if(stencil._buffer){
-                for(var i=0; i<stencil._buffer.length; i++){
+            if (stencil._buffer) {
+                for (var i = 0; i < stencil._buffer.length; i++) {
                     stencil._buffer[i].isFill = false;
                     stencil._buffer[i].isStroke = false;
                 }
@@ -66,12 +67,12 @@
             this._rendererClipCmd._canUseDirtyRegion = true;
             this._rendererRestoreCmd._canUseDirtyRegion = true;
 
-        }else{
+        } else {
             stencil._parent = this._node;
         }
     };
 
-    proto._saveCmdCallback  = function(ctx, scaleX, scaleY) {
+    proto._saveCmdCallback = function (ctx, scaleX, scaleY) {
         var wrapper = ctx || cc._renderContext, context = wrapper.getContext();
 
         if (this._clipElemType) {
@@ -94,22 +95,22 @@
         }
     };
 
-    proto._setStencilCompositionOperation = function(stencil){
-         if(!stencil)
+    proto._setStencilCompositionOperation = function (stencil) {
+        if (!stencil)
             return;
         var node = this._node;
-        if(stencil._renderCmd && stencil._renderCmd._blendFuncStr)          //it is a hack way.
+        if (stencil._renderCmd && stencil._renderCmd._blendFuncStr)          //it is a hack way.
             stencil._renderCmd._blendFuncStr = (node.inverted ? "destination-out" : "destination-in");
 
-        if(!stencil._children)
+        if (!stencil._children)
             return;
         var children = stencil._children;
-        for(var i = 0, len = children.length; i < len; i++){
-             this._setStencilCompositionOperation(children[i]);
+        for (var i = 0, len = children.length; i < len; i++) {
+            this._setStencilCompositionOperation(children[i]);
         }
     };
 
-    proto._clipCmdCallback = function(ctx) {
+    proto._clipCmdCallback = function (ctx) {
         var node = this._node;
         var wrapper = ctx || cc._renderContext, context = wrapper.getContext();
 
@@ -118,7 +119,7 @@
             this._setStencilCompositionOperation(node._stencil);
         } else {
             var stencil = this._node._stencil;
-            if(stencil instanceof cc.DrawNode) {
+            if (stencil instanceof cc.DrawNode) {
                 context.beginPath();
                 var t = stencil._renderCmd._transform;
                 context.transform(t.a, t.b, t.c, t.d, t.tx, -t.ty);
@@ -129,9 +130,9 @@
                     //    "Only clockwise polygons should be used as stencil");
 
                     var firstPoint = vertices[0];
-                    context.moveTo(firstPoint.x , -firstPoint.y );
+                    context.moveTo(firstPoint.x, -firstPoint.y);
                     for (var j = vertices.length - 1; j > 0; j--)
-                        context.lineTo(vertices[j].x , -vertices[j].y );
+                        context.lineTo(vertices[j].x, -vertices[j].y);
                 }
             }
             context.clip();
@@ -154,10 +155,10 @@
         }
     };
 
-    proto.transform = function(parentCmd, recursive){
-        cc.Node.CanvasRenderCmd.prototype.transform.call(this, parentCmd, recursive);
+    proto.transform = function (parentCmd, recursive) {
+        this.originTransform(parentCmd, recursive);
         var node = this._node;
-        if(node._stencil && node._stencil._renderCmd)
+        if (node._stencil && node._stencil._renderCmd)
             node._stencil._renderCmd.transform(this, recursive);
     };
 

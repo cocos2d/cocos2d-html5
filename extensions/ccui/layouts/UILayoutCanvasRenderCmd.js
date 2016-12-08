@@ -70,7 +70,7 @@
 
     proto.layoutVisit = proto.visit;
 
-    proto._onRenderSaveCmd = function(ctx, scaleX, scaleY){
+    proto._onRenderSaveCmd = function (ctx, scaleX, scaleY) {
         var wrapper = ctx || cc._renderContext, context = wrapper.getContext();
         wrapper.save();
         wrapper.save();
@@ -81,31 +81,31 @@
             var element = buffer[i], vertices = element.verts;
             var firstPoint = vertices[0];
             context.beginPath();
-            context.moveTo(firstPoint.x, -firstPoint.y );
+            context.moveTo(firstPoint.x, -firstPoint.y);
             for (var j = 1, len = vertices.length; j < len; j++)
-                context.lineTo(vertices[j].x , -vertices[j].y );
+                context.lineTo(vertices[j].x, -vertices[j].y);
             context.closePath();
         }
     };
 
-    proto._onRenderClipCmd = function(ctx){
+    proto._onRenderClipCmd = function (ctx) {
         var wrapper = ctx || cc._renderContext, context = wrapper.getContext();
         wrapper.restore();
         context.clip();
     };
 
-    proto._onRenderRestoreCmd = function(ctx){
+    proto._onRenderRestoreCmd = function (ctx) {
         var wrapper = ctx || cc._renderContext, context = wrapper.getContext();
 
         wrapper.restore();
     };
 
-    proto.rebindStencilRendering = function(stencil){
+    proto.rebindStencilRendering = function (stencil) {
         stencil._renderCmd.rendering = this.__stencilDraw;
         stencil._renderCmd._canUseDirtyRegion = true;
     };
 
-    proto.__stencilDraw = function(ctx,scaleX, scaleY){          //Only for Canvas
+    proto.__stencilDraw = function (ctx, scaleX, scaleY) {          //Only for Canvas
         //do nothing, rendering in layout
     };
 

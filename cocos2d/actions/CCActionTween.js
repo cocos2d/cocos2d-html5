@@ -36,7 +36,8 @@ cc.ActionTweenDelegate = cc.Class.extend(/** @lends cc.ActionTweenDelegate */{
      * @param value
      * @param key
      */
-    updateTweenAction:function(value, key){}
+    updateTweenAction: function (value, key) {
+    }
 });
 
 /**
@@ -60,24 +61,24 @@ cc.ActionTweenDelegate = cc.Class.extend(/** @lends cc.ActionTweenDelegate */{
  * @param {Number} to
  */
 cc.ActionTween = cc.ActionInterval.extend(/** @lends cc.ActionTween */{
-    key:"",
-    from:0,
-    to:0,
-    delta:0,
+    key: "",
+    from: 0,
+    to: 0,
+    delta: 0,
 
-	/**
+    /**
      * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function. <br />
-	 * Creates an initializes the action with the property name (key), and the from and to parameters.
-	 * @param {Number} duration
-	 * @param {String} key
-	 * @param {Number} from
-	 * @param {Number} to
-	 */
-    ctor:function(duration, key, from, to){
+     * Creates an initializes the action with the property name (key), and the from and to parameters.
+     * @param {Number} duration
+     * @param {String} key
+     * @param {Number} from
+     * @param {Number} to
+     */
+    ctor: function (duration, key, from, to) {
         cc.ActionInterval.prototype.ctor.call(this);
         this.key = "";
 
-		to !== undefined && this.initWithDuration(duration, key, from, to);
+        to !== undefined && this.initWithDuration(duration, key, from, to);
     },
 
     /**
@@ -88,7 +89,7 @@ cc.ActionTween = cc.ActionInterval.extend(/** @lends cc.ActionTween */{
      * @param {Number} to
      * @return {Boolean}
      */
-    initWithDuration:function (duration, key, from, to) {
+    initWithDuration: function (duration, key, from, to) {
         if (cc.ActionInterval.prototype.initWithDuration.call(this, duration)) {
             this.key = key;
             this.to = to;
@@ -102,8 +103,8 @@ cc.ActionTween = cc.ActionInterval.extend(/** @lends cc.ActionTween */{
      * Start this tween with target.
      * @param {cc.ActionTweenDelegate} target
      */
-    startWithTarget:function (target) {
-        if(!target || !target.updateTweenAction)
+    startWithTarget: function (target) {
+        if (!target || !target.updateTweenAction)
             throw new Error("cc.ActionTween.startWithTarget(): target must be non-null, and target must implement updateTweenAction function");
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
         this.delta = this.to - this.from;
@@ -114,7 +115,7 @@ cc.ActionTween = cc.ActionInterval.extend(/** @lends cc.ActionTween */{
      *
      * @param {Number}  dt
      */
-    update:function (dt) {
+    update: function (dt) {
         this.target.updateTweenAction(this.to - this.delta * (1 - dt), this.key);
     },
 
@@ -122,7 +123,7 @@ cc.ActionTween = cc.ActionInterval.extend(/** @lends cc.ActionTween */{
      * returns a reversed action.
      * @return {cc.ActionTween}
      */
-    reverse:function () {
+    reverse: function () {
         return new cc.ActionTween(this.duration, this.key, this.to, this.from);
     },
 
@@ -132,7 +133,7 @@ cc.ActionTween = cc.ActionInterval.extend(/** @lends cc.ActionTween */{
      *
      * @return {cc.ActionTween}
      */
-    clone:function(){
+    clone: function () {
         var action = new cc.ActionTween();
         action.initWithDuration(this._duration, this.key, this.from, this.to);
         return action;

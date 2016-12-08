@@ -151,7 +151,7 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
     },
 
     addChild: function (child, localZOrder, tag) {
-        if(child instanceof ccui.Widget){
+        if (child instanceof ccui.Widget) {
             cc.log("Armature doesn't support to add Widget as its child, it will be fix soon.");
             return;
         }
@@ -194,7 +194,7 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
     addBone: function (bone, parentName) {
         cc.assert(bone, "Argument must be non-nil");
         var locBoneDic = this._boneDic;
-        if(bone.getName())
+        if (bone.getName())
             cc.assert(!locBoneDic[bone.getName()], "bone already added. It can't be added again");
 
         if (parentName) {
@@ -282,7 +282,7 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
             this.setAnchorPoint(locOffsetPoint.x / rect.width, locOffsetPoint.y / rect.height);
     },
 
-    getOffsetPoints: function(){
+    getOffsetPoints: function () {
         return {x: this._offsetPoint.x, y: this._offsetPoint.y};
     },
 
@@ -345,21 +345,21 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
      * This boundingBox will calculate all bones' boundingBox every time
      * @returns {cc.Rect}
      */
-    getBoundingBox: function(){
+    getBoundingBox: function () {
         var minX, minY, maxX, maxY = 0;
         var first = true;
 
         var boundingBox = cc.rect(0, 0, 0, 0), locChildren = this._children;
 
         var len = locChildren.length;
-        for (var i=0; i<len; i++) {
+        for (var i = 0; i < len; i++) {
             var bone = locChildren[i];
             if (bone) {
                 var r = bone.getDisplayManager().getBoundingBox();
                 if (r.x === 0 && r.y === 0 && r.width === 0 && r.height === 0)
                     continue;
 
-                if(first) {
+                if (first) {
                     minX = r.x;
                     minY = r.y;
                     maxX = r.x + r.width;
@@ -429,7 +429,7 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
         for (var key in locBoneDic) {
             var bone = locBoneDic[key];
             var detector = bone.getColliderDetector();
-            if(!detector)
+            if (!detector)
                 continue;
             var bodyList = detector.getColliderBodyList();
             for (var i = 0; i < bodyList.length; i++) {
@@ -477,7 +477,7 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
      * @param {Number} [dst]
      */
     setBlendFunc: function (blendFunc, dst) {
-        if(dst === undefined){
+        if (dst === undefined) {
             this._blendFunc.src = blendFunc.src;
             this._blendFunc.dst = blendFunc.dst;
         } else {
@@ -544,8 +544,8 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
         this.version = version;
     },
 
-    _createRenderCmd: function(){
-        if(cc._renderType === cc.game.RENDER_TYPE_CANVAS)
+    _createRenderCmd: function () {
+        if (cc._renderType === cc.game.RENDER_TYPE_CANVAS)
             return new ccs.Armature.CanvasRenderCmd(this);
         else
             return new ccs.Armature.WebGLRenderCmd(this);

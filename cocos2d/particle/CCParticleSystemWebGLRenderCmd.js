@@ -22,7 +22,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-(function(){
+(function () {
     /**
      * ParticleSystem's WebGL render command
      */
@@ -41,12 +41,16 @@
     var proto = cc.ParticleSystem.WebGLRenderCmd.prototype = Object.create(cc.Node.WebGLRenderCmd.prototype);
     proto.constructor = cc.ParticleSystem.WebGLRenderCmd;
 
-    proto.getDrawMode = function(){};
-    proto.setDrawMode = function(drawMode){};
-    proto.getShapeType = function(){};
-    proto.setShapeType = function(shapeType){};
+    proto.getDrawMode = function () {
+    };
+    proto.setDrawMode = function (drawMode) {
+    };
+    proto.getShapeType = function () {
+    };
+    proto.setShapeType = function (shapeType) {
+    };
 
-    proto.setBatchNode = function(batchNode){
+    proto.setBatchNode = function (batchNode) {
         var node = this._node;
         if (node._batchNode !== batchNode) {
             var oldBatch = node._batchNode;
@@ -91,11 +95,11 @@
         }
     };
 
-    proto.isDifferentTexture = function(texture1, texture2){
-         return (texture1 === texture2);
+    proto.isDifferentTexture = function (texture1, texture2) {
+        return (texture1 === texture2);
     };
 
-    proto.updateParticlePosition = function(particle, position){
+    proto.updateParticlePosition = function (particle, position) {
         // IMPORTANT: newPos may not be used as a reference here! (as it is just the temporary tpa point)
         // the implementation of updateQuadWithParticle must use
         // the x and y values directly
@@ -113,9 +117,9 @@
 
         var r, g, b, a;
         if (node._opacityModifyRGB) {
-            r = 0 | (particle.color.r * particle.color.a/255);
-            g = 0 | (particle.color.g * particle.color.a/255);
-            b = 0 | (particle.color.b * particle.color.a/255);
+            r = 0 | (particle.color.r * particle.color.a / 255);
+            g = 0 | (particle.color.g * particle.color.a / 255);
+            b = 0 | (particle.color.b * particle.color.a / 255);
         } else {
             r = 0 | (particle.color.r );
             g = 0 | (particle.color.g );
@@ -219,16 +223,16 @@
         gl.drawElements(gl.TRIANGLES, node._particleIdx * 6, gl.UNSIGNED_SHORT, 0);
     };
 
-    proto.initTexCoordsWithRect = function(pointRect){
+    proto.initTexCoordsWithRect = function (pointRect) {
         var node = this._node;
         var texture = node.texture;
         var scaleFactor = cc.contentScaleFactor();
         // convert to pixels coords
         var rect = cc.rect(
-                pointRect.x * scaleFactor,
-                pointRect.y * scaleFactor,
-                pointRect.width * scaleFactor,
-                pointRect.height * scaleFactor);
+            pointRect.x * scaleFactor,
+            pointRect.y * scaleFactor,
+            pointRect.width * scaleFactor,
+            pointRect.height * scaleFactor);
 
         var wide = pointRect.width;
         var high = pointRect.height;
@@ -288,7 +292,7 @@
         }
     };
 
-    proto.setTotalParticles = function(tp){
+    proto.setTotalParticles = function (tp) {
         var node = this._node;
         // If we are setting the total numer of particles to a number higher
         // than what is allocated, we need to allocate new arrays
@@ -321,7 +325,7 @@
             this._setupVBO();
 
             //set the texture coord
-            if(node._texture){
+            if (node._texture) {
                 this.initTexCoordsWithRect(cc.rect(0, 0, node._texture.width, node._texture.height));
             }
         } else
@@ -329,13 +333,13 @@
         node.resetSystem();
     };
 
-    proto.addParticle = function(){
+    proto.addParticle = function () {
         var node = this._node,
             particles = node._particles;
         return particles[node.particleCount];
     };
 
-    proto._setupVBO = function(){
+    proto._setupVBO = function () {
         var node = this;
         var gl = cc._renderContext;
 
@@ -351,10 +355,10 @@
         //cc.checkGLErrorDebug();
     };
 
-    proto._allocMemory = function(){
-        var node  = this._node;
+    proto._allocMemory = function () {
+        var node = this._node;
         //cc.assert((!this._quads && !this._indices), "Memory already allocated");
-        if(node._batchNode){
+        if (node._batchNode) {
             cc.log("cc.ParticleSystem._allocMemory(): Memory should not be allocated when not using batchNode");
             return false;
         }
@@ -376,13 +380,13 @@
         return true;
     };
 
-    proto.postStep = function(){
+    proto.postStep = function () {
         var gl = cc._renderContext;
         gl.bindBuffer(gl.ARRAY_BUFFER, this._buffersVBO[0]);
         gl.bufferSubData(gl.ARRAY_BUFFER, 0, this._quadsArrayBuffer);
     };
 
-    proto._setBlendAdditive = function(){
+    proto._setBlendAdditive = function () {
         var locBlendFunc = this._node._blendFunc;
         if (this._texture && !this._texture.hasPremultipliedAlpha()) {
             locBlendFunc.src = cc.SRC_ALPHA;
@@ -393,7 +397,7 @@
         }
     };
 
-    proto._initWithTotalParticles = function(totalParticles){
+    proto._initWithTotalParticles = function (totalParticles) {
         // allocating data space
         if (!this._allocMemory())
             return false;

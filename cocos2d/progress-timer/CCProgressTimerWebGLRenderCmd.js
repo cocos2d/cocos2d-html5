@@ -102,16 +102,16 @@
 
     proto._syncStatus = function (parentCmd) {
         var node = this._node;
-        if(!node._sprite)
+        if (!node._sprite)
             return;
         var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
         var parentNode = parentCmd ? parentCmd._node : null;
 
-        if(parentNode && parentNode._cascadeColorEnabled && (parentCmd._dirtyFlag & flags.colorDirty))
+        if (parentNode && parentNode._cascadeColorEnabled && (parentCmd._dirtyFlag & flags.colorDirty))
             locFlag |= flags.colorDirty;
-        if(parentNode && parentNode._cascadeOpacityEnabled && (parentCmd._dirtyFlag & flags.opacityDirty))
+        if (parentNode && parentNode._cascadeOpacityEnabled && (parentCmd._dirtyFlag & flags.opacityDirty))
             locFlag |= flags.opacityDirty;
-        if(parentCmd && (parentCmd._dirtyFlag & flags.transformDirty))
+        if (parentCmd && (parentCmd._dirtyFlag & flags.transformDirty))
             locFlag |= flags.transformDirty;
         this._dirtyFlag = locFlag;
 
@@ -121,19 +121,19 @@
         var colorDirty = (locFlag | spriteFlag) & flags.colorDirty,
             opacityDirty = (locFlag | spriteFlag) & flags.opacityDirty;
 
-        if (colorDirty){
+        if (colorDirty) {
             spriteCmd._syncDisplayColor();
             spriteCmd._dirtyFlag &= ~flags.colorDirty;
             this._dirtyFlag &= ~flags.colorDirty;
         }
 
-        if (opacityDirty){
+        if (opacityDirty) {
             spriteCmd._syncDisplayOpacity();
             spriteCmd._dirtyFlag &= ~flags.opacityDirty;
             this._dirtyFlag &= ~flags.opacityDirty;
         }
 
-        if(colorDirty || opacityDirty){
+        if (colorDirty || opacityDirty) {
             this._updateColor();
         }
 
@@ -152,7 +152,7 @@
 
     proto.updateStatus = function () {
         var node = this._node;
-        if(!node._sprite)
+        if (!node._sprite)
             return;
         var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
         var spriteCmd = node._sprite._renderCmd;
@@ -161,23 +161,23 @@
         var colorDirty = (locFlag | spriteFlag) & flags.colorDirty,
             opacityDirty = (locFlag | spriteFlag) & flags.opacityDirty;
 
-        if(colorDirty){
+        if (colorDirty) {
             spriteCmd._updateDisplayColor();
             spriteCmd._dirtyFlag = spriteCmd._dirtyFlag & flags.colorDirty ^ spriteCmd._dirtyFlag;
             this._dirtyFlag = this._dirtyFlag & flags.colorDirty ^ this._dirtyFlag;
         }
 
-        if(opacityDirty){
+        if (opacityDirty) {
             spriteCmd._updateDisplayOpacity();
             spriteCmd._dirtyFlag = spriteCmd._dirtyFlag & flags.opacityDirty ^ spriteCmd._dirtyFlag;
             this._dirtyFlag = this._dirtyFlag & flags.opacityDirty ^ this._dirtyFlag;
         }
 
-        if(colorDirty || opacityDirty){
+        if (colorDirty || opacityDirty) {
             this._updateColor();
         }
 
-        if(locFlag & flags.transformDirty){
+        if (locFlag & flags.transformDirty) {
             //update the transform
             this.transform(this.getParentRenderCmd(), true);
         }
@@ -192,7 +192,7 @@
         }
     };
 
-    proto.releaseData = function(){
+    proto.releaseData = function () {
         if (this._vertexData) {
             //release all previous information
             var webglBuffer = this._vertexWebGLBuffer;
@@ -238,9 +238,9 @@
     proto._updateProgressData = function () {
         var node = this._node;
         var locType = node._type;
-        if(locType === cc.ProgressTimer.TYPE_RADIAL)
+        if (locType === cc.ProgressTimer.TYPE_RADIAL)
             this._updateRadial();
-        else if(locType === cc.ProgressTimer.TYPE_BAR)
+        else if (locType === cc.ProgressTimer.TYPE_BAR)
             this._updateBar();
         this._vertexDataDirty = true;
     };
@@ -260,7 +260,7 @@
      * </p>
      * @private
      */
-    proto._updateBar = function(){
+    proto._updateBar = function () {
         var node = this._node;
         if (!node._sprite)
             return;
@@ -268,7 +268,7 @@
         var i, alpha = node._percentage / 100.0;
         var locBarChangeRate = node._barChangeRate;
         var alphaOffset = cc.pMult(cc.p((1.0 - locBarChangeRate.x) + alpha * locBarChangeRate.x,
-                (1.0 - locBarChangeRate.y) + alpha * locBarChangeRate.y), 0.5);
+            (1.0 - locBarChangeRate.y) + alpha * locBarChangeRate.y), 0.5);
         var min = cc.pSub(node._midPoint, alphaOffset), max = cc.pAdd(node._midPoint, alphaOffset);
 
         if (min.x < 0) {
@@ -478,7 +478,7 @@
             else
                 return cc.p((locProTextCoords >> ((index << 1) + 1)) & 1, (locProTextCoords >> (index << 1)) & 1);
         }
-        return cc.p(0,0);
+        return cc.p(0, 0);
     };
 
     proto._textureCoordFromAlphaPoint = function (coords, ax, ay) {
@@ -510,7 +510,7 @@
         vertex.z = this._node._vertexZ;
     };
 
-    proto._updateColor = function(){
+    proto._updateColor = function () {
         var sp = this._node._sprite;
         if (!this._vertexDataCount || !sp)
             return;

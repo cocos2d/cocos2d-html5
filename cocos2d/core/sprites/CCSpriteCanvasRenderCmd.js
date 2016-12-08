@@ -22,7 +22,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-(function() {
+(function () {
     cc.Sprite.CanvasRenderCmd = function (renderable) {
         cc.Node.CanvasRenderCmd.call(this, renderable);
         this._needDraw = true;
@@ -44,14 +44,15 @@
     var proto = cc.Sprite.CanvasRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
     proto.constructor = cc.Sprite.CanvasRenderCmd;
 
-    proto.setDirtyRecursively = function (value) {};
+    proto.setDirtyRecursively = function (value) {
+    };
 
     proto._setTexture = function (texture) {
         var node = this._node;
         if (node._texture !== texture) {
             if (texture) {
                 node._textureLoaded = texture._textureLoaded;
-            }else{
+            } else {
                 node._textureLoaded = false;
             }
             node._texture = texture;
@@ -107,7 +108,7 @@
         var locTextureCoord = this._textureCoord, alpha = (this._displayedOpacity / 255);
         var texture = this._textureToRender || node._texture;
 
-        if ((texture && (locTextureCoord.width === 0 || locTextureCoord.height === 0|| !texture._textureLoaded)) || alpha === 0)
+        if ((texture && (locTextureCoord.width === 0 || locTextureCoord.height === 0 || !texture._textureLoaded)) || alpha === 0)
             return;
 
         var wrapper = ctx || cc._renderContext, context = wrapper.getContext();
@@ -118,7 +119,7 @@
         wrapper.setCompositeOperation(this._blendFuncStr);
         wrapper.setGlobalAlpha(alpha);
 
-        if(node._flippedX || node._flippedY)
+        if (node._flippedX || node._flippedY)
             wrapper.save();
         if (node._flippedX) {
             locX = -locX - locWidth;
@@ -133,7 +134,7 @@
         if (this._colorized) {
             sx = 0;
             sy = 0;
-        }else{
+        } else {
             sx = locTextureCoord.renderX;
             sy = locTextureCoord.renderY;
         }
@@ -163,22 +164,22 @@
                 context.fillRect(x, y, contentSize.width * scaleX, contentSize.height * scaleY);
             }
         }
-        if(node._flippedX || node._flippedY)
+        if (node._flippedX || node._flippedY)
             wrapper.restore();
         cc.g_NumberOfDraws++;
     };
 
-    proto._updateColor = function(){
+    proto._updateColor = function () {
         var node = this._node;
 
         var texture = node._texture, rect = this._textureCoord;
         var dColor = this._displayedColor;
 
-        if(texture){
-            if(dColor.r !== 255 || dColor.g !== 255 || dColor.b !== 255){
+        if (texture) {
+            if (dColor.r !== 255 || dColor.g !== 255 || dColor.b !== 255) {
                 this._textureToRender = texture._generateColorTexture(dColor.r, dColor.g, dColor.b, rect);
                 this._colorized = true;
-            }else if(texture){
+            } else if (texture) {
                 this._textureToRender = texture;
                 this._colorized = false;
             }
@@ -232,14 +233,14 @@
         if (!rect)
             return texture;
 
-        counterclockwise = counterclockwise == null? true: counterclockwise;   // texture package is counterclockwise, spine is clockwise
+        counterclockwise = counterclockwise == null ? true : counterclockwise;   // texture package is counterclockwise, spine is clockwise
 
         var nCanvas = document.createElement("canvas");
         nCanvas.width = rect.width;
         nCanvas.height = rect.height;
         var ctx = nCanvas.getContext("2d");
         ctx.translate(nCanvas.width / 2, nCanvas.height / 2);
-        if(counterclockwise)
+        if (counterclockwise)
             ctx.rotate(-1.5707963267948966);
         else
             ctx.rotate(1.5707963267948966);

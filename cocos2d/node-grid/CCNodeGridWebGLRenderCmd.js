@@ -33,15 +33,15 @@
     var proto = cc.NodeGrid.WebGLRenderCmd.prototype = Object.create(cc.Node.WebGLRenderCmd.prototype);
     proto.constructor = cc.NodeGrid.WebGLRenderCmd;
 
-    proto.visit = function(parentCmd) {
+    proto.visit = function (parentCmd) {
         var node = this._node;
         // quick return if not visible
         if (!node._visible)
             return;
 
         parentCmd = parentCmd || this.getParentRenderCmd();
-        if (node._parent && node._parent._renderCmd)
-            this._curLevel = node._parent._renderCmd._curLevel + 1;
+        if (parentCmd)
+            this._curLevel = parentCmd._curLevel + 1;
 
         var currentStack = cc.current_stack;
         currentStack.stack.push(currentStack.top);
@@ -49,16 +49,16 @@
         currentStack.top = this._stackMatrix;
 
         /*var beforeProjectionType = cc.director.PROJECTION_DEFAULT;
-        if (locGrid && locGrid._active) {
-            //var backMatrix = new cc.kmMat4();
-            //cc.kmMat4Assign(backMatrix, this._stackMatrix);
+         if (locGrid && locGrid._active) {
+         //var backMatrix = new cc.kmMat4();
+         //cc.kmMat4Assign(backMatrix, this._stackMatrix);
 
-            beforeProjectionType = cc.director.getProjection();
-            //locGrid.set2DProjection();
+         beforeProjectionType = cc.director.getProjection();
+         //locGrid.set2DProjection();
 
-            //reset this._stackMatrix to current_stack.top
-            //cc.kmMat4Assign(currentStack.top, backMatrix);
-        }*/
+         //reset this._stackMatrix to current_stack.top
+         //cc.kmMat4Assign(currentStack.top, backMatrix);
+         }*/
         cc.renderer.pushRenderCommand(this._gridBeginCommand);
 
         if (node._target)
@@ -76,7 +76,7 @@
         }
 
         //if (locGrid && locGrid._active) {
-            //cc.director.setProjection(beforeProjectionType);
+        //cc.director.setProjection(beforeProjectionType);
         //}
         cc.renderer.pushRenderCommand(this._gridEndCommand);
 
@@ -84,13 +84,13 @@
         currentStack.top = currentStack.stack.pop();
     };
 
-    proto.onGridBeginDraw = function(){
+    proto.onGridBeginDraw = function () {
         var locGrid = this._node.grid;
         if (locGrid && locGrid._active)
             locGrid.beforeDraw();
     };
 
-    proto.onGridEndDraw = function(){
+    proto.onGridEndDraw = function () {
         var locGrid = this._node.grid;
         if (locGrid && locGrid._active)
             locGrid.afterDraw(this._node);

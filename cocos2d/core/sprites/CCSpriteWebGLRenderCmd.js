@@ -23,7 +23,7 @@
  ****************************************************************************/
 
 //Sprite's WebGL render command
-(function() {
+(function () {
 
     cc.Sprite.WebGLRenderCmd = function (renderable) {
         cc.Node.WebGLRenderCmd.call(this, renderable);
@@ -45,9 +45,10 @@
     var proto = cc.Sprite.WebGLRenderCmd.prototype = Object.create(cc.Node.WebGLRenderCmd.prototype);
     proto.constructor = cc.Sprite.WebGLRenderCmd;
 
-    proto.updateBlendFunc = function (blendFunc) {};
+    proto.updateBlendFunc = function (blendFunc) {
+    };
 
-    proto.setDirtyFlag = function(dirtyFlag){
+    proto.setDirtyFlag = function (dirtyFlag) {
         cc.Node.WebGLRenderCmd.prototype.setDirtyFlag.call(this, dirtyFlag);
         this._dirty = true;
     };
@@ -201,7 +202,8 @@
         }
     };
 
-    proto._setColorDirty = function () {};
+    proto._setColorDirty = function () {
+    };
 
     proto._updateBlendFunc = function () {
         if (this._batchNode) {
@@ -229,12 +231,12 @@
         var node = this._node;
         // If batchnode, then texture id should be the same
         if (node._batchNode) {
-            if(node._batchNode.texture !== texture){
+            if (node._batchNode.texture !== texture) {
                 cc.log(cc._LogInfos.Sprite_setTexture);
                 return;
             }
         } else {
-            if(node._texture !== texture){
+            if (node._texture !== texture) {
                 node._textureLoaded = texture ? texture._textureLoaded : false;
                 node._texture = texture;
                 this._updateBlendFunc();
@@ -272,7 +274,7 @@
         var node = this._node,
             lx = node._offsetPosition.x, rx = lx + node._rect.width,
             by = node._offsetPosition.y, ty = by + node._rect.height,
-            wt = this._worldTransform, 
+            wt = this._worldTransform,
             wtx = wt.tx, wty = wt.ty,
             lxa = lx * wt.a, lxb = lx * wt.b, rxa = rx * wt.a, rxb = rx * wt.b,
             tyc = ty * wt.c, tyd = ty * wt.d, byc = by * wt.c, byd = by * wt.d;
@@ -309,7 +311,7 @@
             g *= a;
             b *= a;
         }
-        this._color[0] = ((opacity<<24) | (b<<16) | (g<<8) | r);
+        this._color[0] = ((opacity << 24) | (b << 16) | (g << 8) | r);
         var z = node._vertexZ;
 
         var vertices = this._vertices;

@@ -727,7 +727,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {Number}
      */
     getPositionY: function () {
-        return  this._position.y;
+        return this._position.y;
     },
 
     /**
@@ -782,7 +782,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {Boolean} visible Pass true to make the node visible, false to hide the node.
      */
     setVisible: function (visible) {
-        if(this._visible !== visible){
+        if (this._visible !== visible) {
             this._visible = visible;
             //if(visible)
             this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
@@ -1019,8 +1019,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @function
      * @param {String} name
      */
-    setName: function(name){
-         this._name = name;
+    setName: function (name) {
+        this._name = name;
     },
 
     /**
@@ -1028,7 +1028,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @function
      * @returns {string} A string that identifies the node.
      */
-    getName: function(){
+    getName: function () {
         return this._name;
     },
 
@@ -1166,7 +1166,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @deprecated since v3.0, please use getBoundingBox instead
      * @return {cc.Rect}
      */
-    boundingBox: function(){
+    boundingBox: function () {
         cc.log(cc._LogInfos.Node_boundingBox);
         return this.getBoundingBox();
     },
@@ -1223,16 +1223,16 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {String} name A name to find the child node.
      * @return {cc.Node} a CCNode object whose name equals to the input parameter
      */
-    getChildByName: function(name){
-        if(!name){
+    getChildByName: function (name) {
+        if (!name) {
             cc.log("Invalid name");
             return null;
         }
 
         var locChildren = this._children;
-        for(var i = 0, len = locChildren.length; i < len; i++){
-           if(locChildren[i]._name === name)
-            return locChildren[i];
+        for (var i = 0, len = locChildren.length; i < len; i++) {
+            if (locChildren[i]._name === name)
+                return locChildren[i];
         }
         return null;
     },
@@ -1252,10 +1252,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         var name, setTag = false;
         if (tag === undefined) {
             name = child._name;
-        } else if (typeof tag === 'string'){
+        } else if (typeof tag === 'string') {
             name = tag;
             tag = undefined;
-        } else if (typeof tag === 'number'){
+        } else if (typeof tag === 'number') {
             setTag = true;
             name = "";
         }
@@ -1266,12 +1266,12 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         this._addChildHelper(child, localZOrder, tag, name, setTag);
     },
 
-    _addChildHelper: function(child, localZOrder, tag, name, setTag){
-        if(!this._children)
+    _addChildHelper: function (child, localZOrder, tag, name, setTag) {
+        if (!this._children)
             this._children = [];
 
         this._insertChild(child, localZOrder);
-        if(setTag)
+        if (setTag)
             child.setTag(tag);
         else
             child.setName(name);
@@ -1279,7 +1279,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         child.setParent(this);
         child.setOrderOfArrival(cc.s_globalOrderOfArrival++);
 
-        if( this._running ){
+        if (this._running) {
             child.onEnter();
             // prevent onEnterTransitionDidFinish to be called twice when a node is added in onEnter
             if (this._isTransitionFinished)
@@ -1429,7 +1429,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         child._setLocalZOrder(z);
     },
 
-    setNodeDirty: function(){
+    setNodeDirty: function () {
         this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
     },
 
@@ -1462,22 +1462,22 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
             // insertion sort
             var len = _children.length, i, j, tmp;
-            for(i=1; i<len; i++){
+            for (i = 1; i < len; i++) {
                 tmp = _children[i];
                 j = i - 1;
 
                 //continue moving element downwards while zOrder is smaller or when zOrder is the same but mutatedIndex is smaller
-                while(j >= 0){
-                    if(tmp._localZOrder < _children[j]._localZOrder){
-                        _children[j+1] = _children[j];
-                    }else if(tmp._localZOrder === _children[j]._localZOrder && tmp.arrivalOrder < _children[j].arrivalOrder){
-                        _children[j+1] = _children[j];
-                    }else{
+                while (j >= 0) {
+                    if (tmp._localZOrder < _children[j]._localZOrder) {
+                        _children[j + 1] = _children[j];
+                    } else if (tmp._localZOrder === _children[j]._localZOrder && tmp.arrivalOrder < _children[j].arrivalOrder) {
+                        _children[j + 1] = _children[j];
+                    } else {
                         break;
                     }
                     j--;
                 }
-                _children[j+1] = tmp;
+                _children[j + 1] = tmp;
             }
 
             //don't need to check children recursively, that's done in visit of each child
@@ -1680,49 +1680,49 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     schedule: function (callback, interval, repeat, delay, key) {
         var len = arguments.length;
-        if(typeof callback === "function"){
+        if (typeof callback === "function") {
             //callback, interval, repeat, delay, key
-            if(len === 1){
+            if (len === 1) {
                 //callback
                 interval = 0;
                 repeat = cc.REPEAT_FOREVER;
                 delay = 0;
                 key = this.__instanceId;
-            }else if(len === 2){
-                if(typeof interval === "number"){
+            } else if (len === 2) {
+                if (typeof interval === "number") {
                     //callback, interval
                     repeat = cc.REPEAT_FOREVER;
                     delay = 0;
                     key = this.__instanceId;
-                }else{
+                } else {
                     //callback, key
                     key = interval;
                     interval = 0;
                     repeat = cc.REPEAT_FOREVER;
                     delay = 0;
                 }
-            }else if(len === 3){
-                if(typeof repeat === "string"){
+            } else if (len === 3) {
+                if (typeof repeat === "string") {
                     //callback, interval, key
                     key = repeat;
                     repeat = cc.REPEAT_FOREVER;
-                }else{
+                } else {
                     //callback, interval, repeat
                     key = this.__instanceId;
                 }
                 delay = 0;
-            }else if(len === 4){
+            } else if (len === 4) {
                 key = this.__instanceId;
             }
-        }else{
+        } else {
             //selector
             //selector, interval
             //selector, interval, repeat, delay
-            if(len === 1){
+            if (len === 1) {
                 interval = 0;
                 repeat = cc.REPEAT_FOREVER;
                 delay = 0;
-            }else if(len === 2){
+            } else if (len === 2) {
                 repeat = cc.REPEAT_FOREVER;
                 delay = 0;
             }
@@ -1749,7 +1749,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     scheduleOnce: function (callback, delay, key) {
         //selector, delay
         //callback, delay, key
-        if(key === undefined)
+        if (key === undefined)
             key = this.__instanceId;
         this.schedule(callback, 0, 0, delay, key);
     },
@@ -1885,7 +1885,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.AffineTransform}
      */
     getParentToNodeTransform: function () {
-       return this._renderCmd.getParentToNodeTransform();
+        return this._renderCmd.getParentToNodeTransform();
     },
 
     /**
@@ -1912,7 +1912,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @function
      * @deprecated since v3.0, please use getNodeToWorldTransform instead
      */
-    nodeToWorldTransform: function(){
+    nodeToWorldTransform: function () {
         return this.getNodeToWorldTransform();
     },
 
@@ -1950,7 +1950,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Point}
      */
     convertToWorldSpace: function (nodePoint) {
-        nodePoint = nodePoint || cc.p(0,0);
+        nodePoint = nodePoint || cc.p(0, 0);
         return cc.pointApplyAffineTransform(nodePoint, this.getNodeToWorldTransform());
     },
 
@@ -1973,7 +1973,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Point}
      */
     convertToWorldSpaceAR: function (nodePoint) {
-        nodePoint = nodePoint || cc.p(0,0);
+        nodePoint = nodePoint || cc.p(0, 0);
         var pt = cc.pAdd(nodePoint, this._renderCmd.getAnchorPointInPoints());
         return this.convertToWorldSpace(pt);
     },
@@ -2121,7 +2121,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {cc.Node.RenderCmd} parentCmd parent's render command
      * @param {boolean} recursive whether call its children's transform
      */
-    transform: function(parentCmd, recursive){
+    transform: function (parentCmd, recursive) {
         this._renderCmd.transform(parentCmd, recursive);
     },
 
@@ -2132,7 +2132,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.AffineTransform}
      * @deprecated since v3.0, please use getNodeToParentTransform instead
      */
-    nodeToParentTransform: function(){
+    nodeToParentTransform: function () {
         return this.getNodeToParentTransform();
     },
 
@@ -2142,20 +2142,20 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @function
      * @return {cc.AffineTransform} The affine transform object
      */
-    getNodeToParentTransform: function(ancestor){
+    getNodeToParentTransform: function (ancestor) {
         var t = this._renderCmd.getNodeToParentTransform();
-        if(ancestor){
+        if (ancestor) {
             var T = {a: t.a, b: t.b, c: t.c, d: t.d, tx: t.tx, ty: t.ty};
-            for(var p = this._parent;  p != null && p != ancestor ; p = p.getParent()){
+            for (var p = this._parent; p != null && p != ancestor; p = p.getParent()) {
                 cc.affineTransformConcatIn(T, p.getNodeToParentTransform());
             }
             return T;
-        }else{
+        } else {
             return t;
         }
     },
 
-    getNodeToParentAffineTransform: function(ancestor){
+    getNodeToParentAffineTransform: function (ancestor) {
         return this.getNodeToParentTransform(ancestor);
     },
 
@@ -2429,8 +2429,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         this._renderCmd = cc.renderer.getRenderCmd(this);
     },
 
-    _createRenderCmd: function(){
-        if(cc._renderType === cc.game.RENDER_TYPE_CANVAS)
+    _createRenderCmd: function () {
+        if (cc._renderType === cc.game.RENDER_TYPE_CANVAS)
             return new cc.Node.CanvasRenderCmd(this);
         else
             return new cc.Node.WebGLRenderCmd(this);
@@ -2462,7 +2462,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      *  And returns a boolean result. Your callback can return `true` to terminate the enumeration.
      *
      */
-    enumerateChildren: function(name, callback){
+    enumerateChildren: function (name, callback) {
         cc.assert(name && name.length != 0, "Invalid name");
         cc.assert(callback != null, "Invalid callback function");
 
@@ -2472,39 +2472,39 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
         // Starts with '//'?
         var searchRecursively = false;
-        if(length > 2 && name[0] === "/" && name[1] === "/"){
+        if (length > 2 && name[0] === "/" && name[1] === "/") {
             searchRecursively = true;
             subStrStartPos = 2;
             subStrlength -= 2;
         }
 
         var searchFromParent = false;
-        if(length > 3 && name[length-3] === "/" && name[length-2] === "." && name[length-1] === "."){
+        if (length > 3 && name[length - 3] === "/" && name[length - 2] === "." && name[length - 1] === ".") {
             searchFromParent = true;
             subStrlength -= 3;
         }
 
         var newName = name.substr(subStrStartPos, subStrlength);
 
-        if(searchFromParent)
+        if (searchFromParent)
             newName = "[[:alnum:]]+/" + newName;
 
-        if(searchRecursively)
+        if (searchRecursively)
             this.doEnumerateRecursive(this, newName, callback);
         else
             this.doEnumerate(newName, callback);
     },
 
-    doEnumerateRecursive: function(node, name, callback){
+    doEnumerateRecursive: function (node, name, callback) {
         var ret = false;
-        if(node.doEnumerate(name,callback)){
+        if (node.doEnumerate(name, callback)) {
             ret = true;
-        }else{
+        } else {
             var child,
                 children = node.getChildren(),
                 length = children.length;
             // search its children
-            for (var i=0; i<length; i++) {
+            for (var i = 0; i < length; i++) {
                 child = children[i];
                 if (this.doEnumerateRecursive(child, name, callback)) {
                     ret = true;
@@ -2515,12 +2515,12 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         return ret;
     },
 
-    doEnumerate: function(name, callback){
+    doEnumerate: function (name, callback) {
         // name may be xxx/yyy, should find its parent
         var pos = name.indexOf('/');
         var searchName = name;
         var needRecursive = false;
-        if (pos !== -1){
+        if (pos !== -1) {
             searchName = name.substr(0, pos);
             //name.erase(0, pos+1);
             needRecursive = true;
@@ -2530,16 +2530,16 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         var child,
             children = this._children,
             length = children.length;
-        for (var i=0; i<length; i++){
+        for (var i = 0; i < length; i++) {
             child = children[i];
-            if (child._name.indexOf(searchName) !== -1){
-                if (!needRecursive){
+            if (child._name.indexOf(searchName) !== -1) {
+                if (!needRecursive) {
                     // terminate enumeration if callback return true
-                    if (callback(child)){
+                    if (callback(child)) {
                         ret = true;
                         break;
                     }
-                }else{
+                } else {
                     ret = child.doEnumerate(name, callback);
                     if (ret)
                         break;

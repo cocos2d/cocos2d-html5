@@ -36,8 +36,8 @@
 cc.DrawNode = cc.Node.extend(/** @lends cc.DrawNode# */{
 //TODO need refactor
 
-    _buffer:null,
-    _blendFunc:null,
+    _buffer: null,
+    _blendFunc: null,
     _lineWidth: 1,
     _drawColor: null,
 
@@ -97,7 +97,7 @@ cc.DrawNode = cc.Node.extend(/** @lends cc.DrawNode# */{
      * @returns {cc.Color}
      */
     getDrawColor: function () {
-        return  cc.color(this._drawColor.r, this._drawColor.g, this._drawColor.b, this._drawColor.a);
+        return cc.color(this._drawColor.r, this._drawColor.g, this._drawColor.b, this._drawColor.a);
     }
 });
 
@@ -116,7 +116,7 @@ cc.DrawNode.TYPE_POLY = 2;
 
 cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
 
-    function pMultOut (pin, floatVar, pout) {
+    function pMultOut(pin, floatVar, pout) {
         pout.x = pin.x * floatVar;
         pout.y = pin.y * floatVar;
     }
@@ -137,7 +137,7 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
         };
 
         cc.extend(cc.DrawNode.prototype, /** @lends cc.DrawNode# */{
-            _className:"DrawNodeCanvas",
+            _className: "DrawNodeCanvas",
 
             /**
              * <p>The cc.DrawNodeCanvas's constructor. <br/>
@@ -155,9 +155,9 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
                 this._localBB = new cc.Rect();
             },
 
-            setLocalBB: function(rectorX, y, width, height) {
+            setLocalBB: function (rectorX, y, width, height) {
                 var localBB = this._localBB;
-                if(y === undefined) {
+                if (y === undefined) {
                     localBB.x = rectorX.x;
                     localBB.y = rectorX.y;
                     localBB.width = rectorX.width;
@@ -180,7 +180,7 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
             drawRect: function (origin, destination, fillColor, lineWidth, lineColor) {
                 lineWidth = (lineWidth == null) ? this._lineWidth : lineWidth;
                 lineColor = lineColor || this.getDrawColor();
-                if(lineColor.a == null)
+                if (lineColor.a == null)
                     lineColor.a = 255;
 
                 var vertices = [
@@ -198,7 +198,7 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
                 element.lineCap = "butt";
                 element.fillColor = fillColor;
                 if (fillColor) {
-                    if(fillColor.a == null)
+                    if (fillColor.a == null)
                         fillColor.a = 255;
                     element.isFill = true;
                 }
@@ -336,7 +336,7 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
             drawCardinalSpline: function (config, tension, segments, lineWidth, color) {
                 lineWidth = lineWidth || this._lineWidth;
                 color = color || this.getDrawColor();
-                if(color.a == null)
+                if (color.a == null)
                     color.a = 255;
 
                 var vertices = [], p, lt, deltaT = 1.0 / config.length;
@@ -394,14 +394,14 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
              * @param {Number} radius
              * @param {cc.Color} [color]
              */
-            drawDots: function(points, radius, color){
-                if(!points || points.length == 0)
+            drawDots: function (points, radius, color) {
+                if (!points || points.length == 0)
                     return;
                 color = color || this.getDrawColor();
                 if (color.a == null)
                     color.a = 255;
-                for(var i = 0, len = points.length; i < len; i++)
-                   this.drawDot(points[i], radius, color);
+                for (var i = 0, len = points.length; i < len; i++)
+                    this.drawDot(points[i], radius, color);
             },
 
             /**
@@ -460,7 +460,7 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
              */
             drawPoly: function (verts, fillColor, lineWidth, lineColor) {
                 var vertsCopy = [];
-                for (var i=0; i < verts.length; i++) {
+                for (var i = 0; i < verts.length; i++) {
                     vertsCopy.push(cc.p(verts[i].x, verts[i].y));
                 }
                 return this.drawPoly_(vertsCopy, fillColor, lineWidth, lineColor);
@@ -473,7 +473,7 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
                 this._buffer.length = 0;
             },
 
-            _createRenderCmd: function(){
+            _createRenderCmd: function () {
                 return new cc.DrawNode.CanvasRenderCmd(this);
             }
         });
@@ -559,7 +559,7 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
                     if (prev !== 0) {
                         _sharedBuffer.freeBuffer(prevOffset, VERTEX_BYTE * prev);
                         _t._occupiedSize = 0;
-                    } 
+                    }
                     var offset = _t._offset = _sharedBuffer.requestBuffer(VERTEX_BYTE * request);
                     if (offset >= 0) {
                         _t._occupiedSize = _t._bufferCapacity = request;
@@ -571,7 +571,7 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
                         if (prev !== 0 && prevOffset !== offset) {
                             // offset is in byte, we need to transform to float32 index
                             var last = (prevOffset + prev) / 4;
-                            for (var i = offset/4, j = prevOffset/4; j < last; i++, j++) {
+                            for (var i = offset / 4, j = prevOffset / 4; j < last; i++, j++) {
                                 _sharedBuffer.dataArray[i] = _sharedBuffer.dataArray[j];
                             }
                         }
@@ -593,7 +593,7 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
                 lineColor = lineColor || this._drawColor;
                 _vertices.length = 0;
                 _vertices.push(origin.x, origin.y, destination.x, origin.y, destination.x, destination.y, origin.x, destination.y);
-                if(fillColor == null)
+                if (fillColor == null)
                     this._drawSegments(_vertices, lineWidth, lineColor, true);
                 else
                     this.drawPoly(_vertices, fillColor, lineWidth, lineColor);
@@ -700,16 +700,16 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
                 _vertices.length = 0;
             },
 
-            drawDots: function(points, radius,color) {
-                if(!points || points.length === 0)
+            drawDots: function (points, radius, color) {
+                if (!points || points.length === 0)
                     return;
                 color = color || this._drawColor;
-                for(var i = 0, len = points.length; i < len; i++) {
+                for (var i = 0, len = points.length; i < len; i++) {
                     this.drawDot(points[i], radius, color);
                 }
             },
 
-            _render:function () {
+            _render: function () {
                 var gl = cc._renderContext;
                 if (this._offset < 0 || this._vertexCount <= 0) {
                     return;
@@ -746,14 +746,14 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
                 var offset = this._vertexCount * FLOAT_PER_VERTEX;
                 f32Buffer[offset] = x;
                 f32Buffer[offset + 1] = y;
-                _color[0] = ((color.a<<24) | (color.b<<16) | (color.g<<8) | color.r);
+                _color[0] = ((color.a << 24) | (color.b << 16) | (color.g << 8) | color.r);
                 this._ui32Buffer[offset + 2] = _color[0];
                 f32Buffer[offset + 3] = u;
                 f32Buffer[offset + 4] = v;
                 this._vertexCount++;
             },
 
-            drawDot:function (pos, radius, color) {
+            drawDot: function (pos, radius, color) {
                 color = color || this._drawColor;
                 if (color.a == null)
                     color.a = 255;
@@ -764,7 +764,7 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
 
                 var vertexCount = 2 * 3;
                 var succeed = this._ensureCapacity(this._vertexCount + vertexCount);
-                if (!succeed) 
+                if (!succeed)
                     return;
 
                 // lb, lt, rt, lb, rt, rb
@@ -778,14 +778,14 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
                 this._dirty = true;
             },
 
-            drawSegment:function (from, to, radius, color) {
+            drawSegment: function (from, to, radius, color) {
                 color = color || this.getDrawColor();
                 if (color.a == null)
                     color.a = 255;
                 radius = radius || (this._lineWidth * 0.5);
                 var vertexCount = 6 * 3;
                 var succeed = this._ensureCapacity(this._vertexCount + vertexCount);
-                if (!succeed) 
+                if (!succeed)
                     return;
 
                 var a = from, b = to;
@@ -841,7 +841,7 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
                 this._dirty = true;
             },
 
-            drawPoly:function (verts, fillColor, borderWidth, borderColor) {
+            drawPoly: function (verts, fillColor, borderWidth, borderColor) {
                 // Backward compatibility
                 if (typeof verts[0] === 'object') {
                     _vertices.length = 0;
@@ -859,9 +859,9 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
                     fillColor.a = 255;
                 if (borderColor.a == null)
                     borderColor.a = 255;
-                borderWidth = (borderWidth == null)? this._lineWidth : borderWidth;
+                borderWidth = (borderWidth == null) ? this._lineWidth : borderWidth;
                 borderWidth *= 0.5;
-                var v0x, v0y, v1x, v1y, v2x, v2y, 
+                var v0x, v0y, v1x, v1y, v2x, v2y,
                     factor, offx, offy,
                     i, count = verts.length;
                 _extrude.length = 0;
@@ -889,7 +889,7 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
                 count = count / 2;
                 var outline = (borderWidth > 0.0), triangleCount = 3 * count - 2, vertexCount = 3 * triangleCount;
                 var succeed = this._ensureCapacity(this._vertexCount + vertexCount);
-                if (!succeed) 
+                if (!succeed)
                     return;
 
                 var inset = (outline == false ? 0.5 : 0.0);
@@ -898,18 +898,18 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
                     v0x = verts[0] - _extrude[0] * inset;
                     v0y = verts[1] - _extrude[1] * inset;
                     // v1 = sub(verts[i + 1], multi(extrude[i + 1].offset, inset));
-                    v1x = verts[i * 2 + 2] - _extrude[(i+1) * 4] * inset;
-                    v1y = verts[i * 2 + 3] - _extrude[(i+1) * 4 + 1] * inset;
+                    v1x = verts[i * 2 + 2] - _extrude[(i + 1) * 4] * inset;
+                    v1y = verts[i * 2 + 3] - _extrude[(i + 1) * 4 + 1] * inset;
                     // v2 = sub(verts[i + 2], multi(extrude[i + 2].offset, inset));
-                    v2x = verts[i * 2 + 4] - _extrude[(i+2) * 4] * inset;
-                    v2y = verts[i * 2 + 5] - _extrude[(i+2) * 4 + 1] * inset;
+                    v2x = verts[i * 2 + 4] - _extrude[(i + 2) * 4] * inset;
+                    v2y = verts[i * 2 + 5] - _extrude[(i + 2) * 4 + 1] * inset;
 
                     this.appendVertexData(v0x, v0y, fillColor, 0, 0);
                     this.appendVertexData(v1x, v1y, fillColor, 0, 0);
                     this.appendVertexData(v2x, v2y, fillColor, 0, 0);
                 }
 
-                var off0x, off0y, off1x, off1y, 
+                var off0x, off0y, off1x, off1y,
                     bw = outline ? borderWidth : 0.5,
                     color = outline ? borderColor : fillColor,
                     in0x, in0y, in1x, in1y, out0x, out0y, out1x, out1y;
@@ -947,17 +947,17 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
                 this._dirty = true;
             },
 
-            _drawSegments: function(verts, borderWidth, borderColor, closePoly){
+            _drawSegments: function (verts, borderWidth, borderColor, closePoly) {
                 borderWidth = (borderWidth == null) ? this._lineWidth : borderWidth;
                 if (borderWidth <= 0)
                     return;
 
                 borderColor = borderColor || this._drawColor;
-                if(borderColor.a == null)
+                if (borderColor.a == null)
                     borderColor.a = 255;
                 borderWidth *= 0.5;
 
-                var v0x, v0y, v1x, v1y, v2x, v2y, 
+                var v0x, v0y, v1x, v1y, v2x, v2y,
                     factor, offx, offy,
                     i, count = verts.length;
                 _extrude.length = 0;
@@ -986,11 +986,11 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
                 count = count / 2;
                 var triangleCount = 3 * count - 2, vertexCount = 3 * triangleCount;
                 var succeed = this._ensureCapacity(this._vertexCount + vertexCount);
-                if (!succeed) 
+                if (!succeed)
                     return;
 
                 var len = closePoly ? count : count - 1,
-                    off0x, off0y, off1x, off1y, 
+                    off0x, off0y, off1x, off1y,
                     in0x, in0y, in1x, in1y, out0x, out0y, out1x, out1y;
                 for (i = 0; i < len; i++) {
                     var j = (i + 1) % count;
@@ -1022,7 +1022,7 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
                 this._dirty = true;
             },
 
-            clear:function () {
+            clear: function () {
                 this.release();
                 this._dirty = true;
             },

@@ -49,7 +49,7 @@ var dirtyFlags = cc.Node._dirtyFlags = {
 var ONE_DEGREE = Math.PI / 180;
 var stack = new Array(50);
 
-function transformChildTree (root) {
+function transformChildTree(root) {
     var index = 1;
     var children, child, curr, parentCmd, i, len;
     stack[0] = root;

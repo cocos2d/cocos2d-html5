@@ -22,9 +22,9 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-(function(){
+(function () {
     ccs.Armature.RenderCmd = {
-        _updateAnchorPointInPoint: function(){
+        _updateAnchorPointInPoint: function () {
             var node = this._node;
             var contentSize = node._contentSize, anchorPoint = node._anchorPoint, offsetPoint = node._offsetPoint;
             this._anchorPointInPoints.x = contentSize.width * anchorPoint.x - offsetPoint.x;
@@ -35,7 +35,7 @@
             this.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
         },
 
-        getAnchorPointInPoints: function(){
+        getAnchorPointInPoints: function () {
             return cc.p(this._realAnchorPointInPoints);
         }
     };
@@ -58,7 +58,7 @@
     cc.inject(ccs.Armature.RenderCmd, proto);
     proto.constructor = ccs.Armature.CanvasRenderCmd;
 
-    proto._startCmdCallback = function(ctx, scaleX, scaleY){
+    proto._startCmdCallback = function (ctx, scaleX, scaleY) {
         var node = this._node, parent = node._parent;
         this.transform(parent ? parent._renderCmd : null);
 
@@ -69,17 +69,17 @@
         wrapper._switchToArmatureMode(true, this._worldTransform, scaleX, scaleY);
     };
 
-    proto.transform = function(parentCmd, recursive){
-        ccs.Node.CanvasRenderCmd.prototype.transform.call(this, parentCmd, recursive);
+    proto.transform = function (parentCmd, recursive) {
+        this.originTransform(parentCmd, recursive);
 
         var locChildren = this._node._children;
-        for (var i = 0, len = locChildren.length; i< len; i++) {
+        for (var i = 0, len = locChildren.length; i < len; i++) {
             var selBone = locChildren[i];
             var boneCmd = selBone._renderCmd;
             if (selBone && selBone.getDisplayRenderNode) {
                 var boneType = selBone.getDisplayRenderNodeType();
                 var selNode = selBone.getDisplayRenderNode();
-                if (selNode && selNode._renderCmd){
+                if (selNode && selNode._renderCmd) {
                     var cmd = selNode._renderCmd;
                     cmd.transform(null);   //must be null, use transform in armature mode
                     if (boneType !== ccs.DISPLAY_TYPE_ARMATURE && boneType !== ccs.DISPLAY_TYPE_SPRITE) {
@@ -112,25 +112,27 @@
         }
     };
 
-    proto._RestoreCmdCallback = function(wrapper){
+    proto._RestoreCmdCallback = function (wrapper) {
         this._cacheDirty = false;
         //wrapper.restore();
         wrapper._switchToArmatureMode(false);
         wrapper.restore();
     };
 
-    proto.initShaderCache = function(){};
-    proto.setShaderProgram = function(){};
-    proto.updateChildPosition = function(dis, bone){
+    proto.initShaderCache = function () {
+    };
+    proto.setShaderProgram = function () {
+    };
+    proto.updateChildPosition = function (dis, bone) {
         dis.visit();
         // cc.renderer.pushRenderCommand(dis._renderCmd);
     };
 
-    proto.rendering = function(ctx, scaleX, scaleY){
+    proto.rendering = function (ctx, scaleX, scaleY) {
         var node = this._node;
         var locChildren = node._children;
         var alphaPremultiplied = cc.BlendFunc.ALPHA_PREMULTIPLIED, alphaNonPremultipled = cc.BlendFunc.ALPHA_NON_PREMULTIPLIED;
-        for (var i = 0, len = locChildren.length; i< len; i++) {
+        for (var i = 0, len = locChildren.length; i < len; i++) {
             var selBone = locChildren[i];
             if (selBone && selBone.getDisplayRenderNode) {
                 var selNode = selBone.getDisplayRenderNode();
@@ -150,14 +152,14 @@
                         selNode._renderCmd.visit(boneCmd);
                         break;
                 }
-            } else if(selBone instanceof cc.Node) {
+            } else if (selBone instanceof cc.Node) {
                 this._visitNormalChild(selBone);
                 // selBone.visit(this);
             }
         }
     };
 
-    proto._visitNormalChild = function(childNode){
+    proto._visitNormalChild = function (childNode) {
         if (!childNode)
             return;
 
@@ -193,7 +195,7 @@
         this._dirtyFlag = 0;
     };
 
-    proto.visit = function(parentCmd){
+    proto.visit = function (parentCmd) {
         var node = this._node;
         // quick return if not visible. children won't be drawn.
         if (!node._visible)

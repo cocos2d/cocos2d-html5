@@ -1,13 +1,13 @@
-ccs.SkinNode = (function(){
+ccs.SkinNode = (function () {
 
     var Node = cc.Node;
 
-    var proto = {
-    };
+    var proto = {};
 
     var SkinNode = Node.extend(proto);
 
-    SkinNode.create = function(){};
+    SkinNode.create = function () {
+    };
 
     return SkinNode;
 

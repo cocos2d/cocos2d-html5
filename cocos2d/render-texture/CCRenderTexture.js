@@ -77,26 +77,26 @@ cc.NextPOT = function (x) {
  * @property {cc.Color}     clearColorVal   - Clear color value, valid only when "autoDraw" is true.
  */
 cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
-	sprite:null,
+    sprite: null,
 
-	//
-	// <p>Code for "auto" update<br/>
-	// Valid flags: GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, GL_STENCIL_BUFFER_BIT.<br/>
-	// They can be OR'ed. Valid when "autoDraw is YES.</p>
-	// @public
-	//
-	clearFlags:0,
+    //
+    // <p>Code for "auto" update<br/>
+    // Valid flags: GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, GL_STENCIL_BUFFER_BIT.<br/>
+    // They can be OR'ed. Valid when "autoDraw is YES.</p>
+    // @public
+    //
+    clearFlags: 0,
 
-	clearDepthVal:0,
-	autoDraw:false,
+    clearDepthVal: 0,
+    autoDraw: false,
 
-    _texture:null,
-    _pixelFormat:0,
+    _texture: null,
+    _pixelFormat: 0,
 
-    clearStencilVal:0,
-    _clearColor:null,
+    clearStencilVal: 0,
+    _clearColor: null,
 
-    _className:"RenderTexture",
+    _className: "RenderTexture",
 
     /**
      * creates a RenderTexture object with width and height in Points and a pixel format, only RGB and RGBA formats are valid
@@ -110,23 +110,23 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      * var rt = new cc.RenderTexture(width, height, format, depthStencilFormat)
      * @function
      */
-    ctor: function(width, height, format, depthStencilFormat){
+    ctor: function (width, height, format, depthStencilFormat) {
         cc.Node.prototype.ctor.call(this);
         this._cascadeColorEnabled = true;
         this._cascadeOpacityEnabled = true;
         this._pixelFormat = cc.Texture2D.PIXEL_FORMAT_RGBA8888;
-        this._clearColor = new cc.Color(0,0,0,255);
+        this._clearColor = new cc.Color(0, 0, 0, 255);
 
-        if(width !== undefined && height !== undefined) {
+        if (width !== undefined && height !== undefined) {
             format = format || cc.Texture2D.PIXEL_FORMAT_RGBA8888;
             depthStencilFormat = depthStencilFormat || 0;
             this.initWithWidthAndHeight(width, height, format, depthStencilFormat);
         }
-        this.setAnchorPoint(0,0);
+        this.setAnchorPoint(0, 0);
     },
 
-    _createRenderCmd: function(){
-        if(cc._renderType === cc.game.RENDER_TYPE_CANVAS)
+    _createRenderCmd: function () {
+        if (cc._renderType === cc.game.RENDER_TYPE_CANVAS)
             return new cc.RenderTexture.CanvasRenderCmd(this);
         else
             return new cc.RenderTexture.WebGLRenderCmd(this);
@@ -136,7 +136,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      * Clear RenderTexture.
      * @function
      */
-    cleanup: function(){
+    cleanup: function () {
         cc.Node.prototype.onExit.call(this);
         this._renderCmd.cleanup();
     },
@@ -145,7 +145,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      * Gets the sprite
      * @return {cc.Sprite}
      */
-    getSprite:function () {
+    getSprite: function () {
         return this.sprite;
     },
 
@@ -153,7 +153,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      * Set the sprite
      * @param {cc.Sprite} sprite
      */
-    setSprite:function (sprite) {
+    setSprite: function (sprite) {
         this.sprite = sprite;
     },
 
@@ -163,8 +163,8 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      * @param {cc.Rect} fullRect
      * @param {cc.Rect} fullViewport
      */
-    setVirtualViewport: function(rtBegin, fullRect, fullViewport){
-         this._renderCmd.setVirtualViewport(rtBegin, fullRect, fullViewport);
+    setVirtualViewport: function (rtBegin, fullRect, fullViewport) {
+        this._renderCmd.setVirtualViewport(rtBegin, fullRect, fullViewport);
     },
 
     /**
@@ -176,7 +176,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      * @param {Number} [depthStencilFormat]
      * @return {Boolean}
      */
-    initWithWidthAndHeight: function(width, height, format, depthStencilFormat){
+    initWithWidthAndHeight: function (width, height, format, depthStencilFormat) {
         return this._renderCmd.initWithWidthAndHeight(width, height, format, depthStencilFormat);
     },
 
@@ -184,7 +184,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      * starts grabbing
      * @function
      */
-    begin: function(){
+    begin: function () {
         cc.renderer._turnToCacheMode(this.__instanceId);
         this._renderCmd.begin();
     },
@@ -198,16 +198,16 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      * @param {Number} [depthValue=]
      * @param {Number} [stencilValue=]
      */
-    beginWithClear:function (r, g, b, a, depthValue, stencilValue) {
+    beginWithClear: function (r, g, b, a, depthValue, stencilValue) {
         //todo: only for WebGL?
         var gl = cc._renderContext;
         depthValue = depthValue || gl.COLOR_BUFFER_BIT;
         stencilValue = stencilValue || (gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-        this._beginWithClear(r , g , b , a , depthValue, stencilValue, (gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT | gl.STENCIL_BUFFER_BIT));
+        this._beginWithClear(r, g, b, a, depthValue, stencilValue, (gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT | gl.STENCIL_BUFFER_BIT));
     },
 
-    _beginWithClear: function(r, g, b, a, depthValue, stencilValue, flags){
+    _beginWithClear: function (r, g, b, a, depthValue, stencilValue, flags) {
         this.begin();
         this._renderCmd._beginWithClear(r, g, b, a, depthValue, stencilValue, flags);
     },
@@ -216,7 +216,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      * ends grabbing
      * @function
      */
-    end: function(){
+    end: function () {
         this._renderCmd.end();
     },
 
@@ -227,7 +227,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      * @param {Number} b blue 0-1
      * @param {Number} a alpha 0-1
      */
-    clear:function (r, g, b, a) {
+    clear: function (r, g, b, a) {
         this.beginWithClear(r, g, b, a);
         this.end();
     },
@@ -240,7 +240,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      * @param {number} width
      * @param {number} height
      */
-    clearRect: function(x, y, width, height){
+    clearRect: function (x, y, width, height) {
         this._renderCmd.clearRect(x, y, width, height);
     },
 
@@ -249,7 +249,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      * @function
      * @param {Number} depthValue
      */
-    clearDepth: function(depthValue){
+    clearDepth: function (depthValue) {
         this._renderCmd.clearDepth(depthValue);
     },
 
@@ -258,7 +258,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      * @function
      * @param {Number} stencilValue
      */
-    clearStencil: function(stencilValue) {
+    clearStencil: function (stencilValue) {
         this._renderCmd.clearStencil(stencilValue);
     },
 
@@ -266,7 +266,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      * Valid flags: GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, GL_STENCIL_BUFFER_BIT. They can be OR'ed. Valid when "autoDraw is YES.
      * @return {Number}
      */
-    getClearFlags:function () {
+    getClearFlags: function () {
         return this.clearFlags;
     },
 
@@ -274,7 +274,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      * Set the clearFlags
      * @param {Number} clearFlags
      */
-    setClearFlags:function (clearFlags) {
+    setClearFlags: function (clearFlags) {
         this.clearFlags = clearFlags;
     },
 
@@ -283,16 +283,16 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      * @function
      * @return {cc.Color}
      */
-    getClearColor:function () {
+    getClearColor: function () {
         return this._clearColor;
     },
 
-	/**
-	 * Set the clear color value. Valid only when "autoDraw" is true.
-	 * @function
-	 * @param {cc.Color} clearColor The clear color
-	 */
-    setClearColor: function(clearColor){
+    /**
+     * Set the clear color value. Valid only when "autoDraw" is true.
+     * @function
+     * @param {cc.Color} clearColor The clear color
+     */
+    setClearColor: function (clearColor) {
         var locClearColor = this._clearColor;
         locClearColor.r = clearColor.r;
         locClearColor.g = clearColor.g;
@@ -305,7 +305,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      * Value for clearDepth. Valid only when autoDraw is true.
      * @return {Number}
      */
-    getClearDepth:function () {
+    getClearDepth: function () {
         return this.clearDepthVal;
     },
 
@@ -313,7 +313,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      * Set value for clearDepth. Valid only when autoDraw is true.
      * @param {Number} clearDepth
      */
-    setClearDepth:function (clearDepth) {
+    setClearDepth: function (clearDepth) {
         this.clearDepthVal = clearDepth;
     },
 
@@ -321,7 +321,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      * Value for clear Stencil. Valid only when autoDraw is true
      * @return {Number}
      */
-    getClearStencil:function () {
+    getClearStencil: function () {
         return this.clearStencilVal;
     },
 
@@ -329,7 +329,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      * Set value for clear Stencil. Valid only when autoDraw is true
      * @return {Number}
      */
-    setClearStencil:function (clearStencil) {
+    setClearStencil: function (clearStencil) {
         this.clearStencilVal = clearStencil;
     },
 
@@ -338,7 +338,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      * Will be enabled in the future.
      * @return {Boolean}
      */
-    isAutoDraw:function () {
+    isAutoDraw: function () {
         return this.autoDraw;
     },
 
@@ -347,7 +347,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      * Will be enabled in the future.
      * @return {Boolean}
      */
-    setAutoDraw:function (autoDraw) {
+    setAutoDraw: function (autoDraw) {
         this.autoDraw = autoDraw;
     },
 
@@ -359,7 +359,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      * @param {Number} filePath
      * @param {Number} format
      */
-    saveToFile:function (filePath, format) {
+    saveToFile: function (filePath, format) {
         cc.log("saveToFile isn't supported on Cocos2d-Html5");
     },
 
@@ -367,7 +367,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      * creates a new CCImage from with the texture's data. Caller is responsible for releasing it by calling delete.
      * @return {*}
      */
-    newCCImage:function(flipImage){
+    newCCImage: function (flipImage) {
         cc.log("saveToFile isn't supported on cocos2d-html5");
         return null;
     },
@@ -376,13 +376,15 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      * Listen "come to background" message, and save render texture. It only has effect on Android.
      * @param {cc.Class} obj
      */
-    listenToBackground:function (obj) { },
+    listenToBackground: function (obj) {
+    },
 
     /**
      * Listen "come to foreground" message and restore the frame buffer object. It only has effect on Android.
      * @param {cc.Class} obj
      */
-    listenToForeground:function (obj) { }
+    listenToForeground: function (obj) {
+    }
 });
 
 var _p = cc.RenderTexture.prototype;

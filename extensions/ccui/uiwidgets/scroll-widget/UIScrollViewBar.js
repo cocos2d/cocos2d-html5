@@ -41,16 +41,16 @@ ccui.ScrollViewBar = ccui.ProtectedNode.extend(/** @lends ccui.ScrollViewBar# */
     _lowerHalfCircle: null,
     _body: null,
 
-    _opacity : 255,
+    _opacity: 255,
 
-    _marginFromBoundary : 0,
+    _marginFromBoundary: 0,
     _marginForLength: 0,
 
     _touching: false,
 
     _autoHideEnabled: true,
-    autoHideTime : 0,
-    _autoHideRemainingTime : 0,
+    autoHideTime: 0,
+    _autoHideRemainingTime: 0,
     _className: "ScrollViewBar",
 
     /**
@@ -62,7 +62,7 @@ ccui.ScrollViewBar = ccui.ProtectedNode.extend(/** @lends ccui.ScrollViewBar# */
     ctor: function (parent, direction) {
         cc.ProtectedNode.prototype.ctor.call(this);
         this._direction = direction;
-        this._parentScroll  = parent;
+        this._parentScroll = parent;
 
         this._marginFromBoundary = ccui.ScrollViewBar.DEFAULT_MARGIN;
         this._marginForLength = ccui.ScrollViewBar.DEFAULT_MARGIN;
@@ -91,7 +91,7 @@ ccui.ScrollViewBar = ccui.ProtectedNode.extend(/** @lends ccui.ScrollViewBar# */
         this.addProtectedChild(this._upperHalfCircle);
         this.addProtectedChild(this._lowerHalfCircle);
 
-        this._body =  ccui.helper._createSpriteFromBase64(ccui.ScrollViewBar.BODY_IMAGE_1_PIXEL_HEIGHT, ccui.ScrollViewBar.BODY_IMAGE_1_PIXEL_HEIGHT_KEY);
+        this._body = ccui.helper._createSpriteFromBase64(ccui.ScrollViewBar.BODY_IMAGE_1_PIXEL_HEIGHT, ccui.ScrollViewBar.BODY_IMAGE_1_PIXEL_HEIGHT_KEY);
         this._body.setAnchorPoint(cc.p(0.5, 0));
         this.addProtectedChild(this._body);
 
@@ -100,8 +100,7 @@ ccui.ScrollViewBar = ccui.ProtectedNode.extend(/** @lends ccui.ScrollViewBar# */
         cc.ProtectedNode.prototype.setOpacity.call(this, 0);
         this._autoHideRemainingTime = 0;
 
-        if(this._direction === ccui.ScrollView.DIR_HORIZONTAL)
-        {
+        if (this._direction === ccui.ScrollView.DIR_HORIZONTAL) {
             this.setRotation(90);
         }
     },
@@ -110,22 +109,18 @@ ccui.ScrollViewBar = ccui.ProtectedNode.extend(/** @lends ccui.ScrollViewBar# */
      * Set the scroll bar position from the left-bottom corner (horizontal) or right-top corner (vertical).
      * @param {cc.Point} positionFromCorner The position from the left-bottom corner (horizontal) or right-top corner (vertical).
      */
-    setPositionFromCorner: function(positionFromCorner)
-    {
-        if(this._direction === ccui.ScrollView.DIR_VERTICAL)
-        {
+    setPositionFromCorner: function (positionFromCorner) {
+        if (this._direction === ccui.ScrollView.DIR_VERTICAL) {
             this._marginForLength = positionFromCorner.y;
             this._marginFromBoundary = positionFromCorner.x;
         }
-        else
-        {
+        else {
             this._marginForLength = positionFromCorner.x;
             this._marginFromBoundary = positionFromCorner.y;
         }
     },
 
-    onEnter: function()
-    {
+    onEnter: function () {
         cc.ProtectedNode.prototype.onEnter.call(this);
         this.scheduleUpdate();
     },
@@ -134,14 +129,11 @@ ccui.ScrollViewBar = ccui.ProtectedNode.extend(/** @lends ccui.ScrollViewBar# */
      * Get the scroll bar position from the left-bottom corner (horizontal) or right-top corner (vertical).
      * @returns {cc.Point}
      */
-    getPositionFromCorner: function()
-    {
-        if(this._direction === ccui.ScrollView.DIR_VERTICAL)
-        {
+    getPositionFromCorner: function () {
+        if (this._direction === ccui.ScrollView.DIR_VERTICAL) {
             return cc.p(this._marginFromBoundary, this._marginForLength);
         }
-        else
-        {
+        else {
             return cc.p(this._marginForLength, this._marginFromBoundary);
         }
     },
@@ -149,8 +141,7 @@ ccui.ScrollViewBar = ccui.ProtectedNode.extend(/** @lends ccui.ScrollViewBar# */
      * Set the scroll bar's width
      * @param {number} width The scroll bar's width
      */
-    setWidth: function(width)
-    {
+    setWidth: function (width) {
         var scale = width / this._body.width;
         this._body.setScaleX(scale);
         this._upperHalfCircle.setScale(scale);
@@ -161,8 +152,7 @@ ccui.ScrollViewBar = ccui.ProtectedNode.extend(/** @lends ccui.ScrollViewBar# */
      * Get the scroll bar's width
      * @returns {number} the scroll bar's width
      */
-    getWidth: function()
-    {
+    getWidth: function () {
         return this._body.getBoundingBox().width;
     },
 
@@ -170,11 +160,10 @@ ccui.ScrollViewBar = ccui.ProtectedNode.extend(/** @lends ccui.ScrollViewBar# */
      * Set scroll bar auto hide state
      * @param {boolean} autoHideEnabled scroll bar auto hide state
      */
-    setAutoHideEnabled: function(autoHideEnabled)
-    {
+    setAutoHideEnabled: function (autoHideEnabled) {
         this._autoHideEnabled = autoHideEnabled;
 
-        if(!this._autoHideEnabled && !this._touching && this._autoHideRemainingTime <= 0)
+        if (!this._autoHideEnabled && !this._touching && this._autoHideRemainingTime <= 0)
             cc.ProtectedNode.prototype.setOpacity.call(this, this.opacity);
         else
             cc.ProtectedNode.prototype.setOpacity.call(this, 0);
@@ -183,8 +172,7 @@ ccui.ScrollViewBar = ccui.ProtectedNode.extend(/** @lends ccui.ScrollViewBar# */
      * Query scroll bar auto hide state
      * @returns {boolean} True if scroll bar auto hide is enabled, false otherwise.
      */
-    isAutoHideEnabled: function()
-    {
+    isAutoHideEnabled: function () {
         return this._autoHideEnabled;
     },
 
@@ -192,8 +180,7 @@ ccui.ScrollViewBar = ccui.ProtectedNode.extend(/** @lends ccui.ScrollViewBar# */
      * Set scroll bar opacity
      * @param {number} opacity scroll bar opacity
      */
-    setOpacity: function(opacity)
-    {
+    setOpacity: function (opacity) {
         this._opacity = opacity;
     },
 
@@ -201,51 +188,42 @@ ccui.ScrollViewBar = ccui.ProtectedNode.extend(/** @lends ccui.ScrollViewBar# */
      * Get scroll bar opacity
      * @returns {number}
      */
-    getOpacity: function()
-    {
+    getOpacity: function () {
         return this._opacity;
     },
 
-    _updateLength: function(length)
-    {
+    _updateLength: function (length) {
         var ratio = length / this._body.getTextureRect().height;
         this._body.setScaleY(ratio);
         this._upperHalfCircle.setPositionY(this._body.getPositionY() + length);
     },
 
-    _processAutoHide: function(dt)
-    {
-        if(!this._autoHideEnabled || this._autoHideRemainingTime <= 0)
-        {
+    _processAutoHide: function (dt) {
+        if (!this._autoHideEnabled || this._autoHideRemainingTime <= 0) {
             return;
         }
-        else if(this._touching)
-        {
+        else if (this._touching) {
             // If it is touching, don't auto hide.
             return;
         }
 
         this._autoHideRemainingTime -= dt;
-        if(this._autoHideRemainingTime <= this.autoHideTime)
-        {
-            this. _autoHideRemainingTime = Math.max(0, this._autoHideRemainingTime);
+        if (this._autoHideRemainingTime <= this.autoHideTime) {
+            this._autoHideRemainingTime = Math.max(0, this._autoHideRemainingTime);
             cc.ProtectedNode.prototype.setOpacity.call(this, this._opacity * (this._autoHideRemainingTime / this.autoHideTime));
         }
     },
 
 
-    update: function(dt)
-    {
+    update: function (dt) {
         this._processAutoHide(dt);
     },
 
     /**
      * This is called by parent ScrollView when a touch is began. Don't call this directly.
      */
-    onTouchBegan: function()
-    {
-        if(!this._autoHideEnabled)
-        {
+    onTouchBegan: function () {
+        if (!this._autoHideEnabled) {
             return;
         }
         this._touching = true;
@@ -254,16 +232,13 @@ ccui.ScrollViewBar = ccui.ProtectedNode.extend(/** @lends ccui.ScrollViewBar# */
     /**
      * This is called by parent ScrollView when a touch is ended. Don't call this directly.
      */
-    onTouchEnded: function()
-    {
-        if(!this._autoHideEnabled)
-        {
+    onTouchEnded: function () {
+        if (!this._autoHideEnabled) {
             return;
         }
         this._touching = false;
 
-        if(this._autoHideRemainingTime <= 0)
-        {
+        if (this._autoHideRemainingTime <= 0) {
             // If the remaining time is 0, it means that it didn't moved after touch started so scroll bar is not showing.
             return;
         }
@@ -275,10 +250,8 @@ ccui.ScrollViewBar = ccui.ProtectedNode.extend(/** @lends ccui.ScrollViewBar# */
      *
      * @param {cc.Point} outOfBoundary amount how much the inner container of ScrollView is out of boundary
      */
-    onScrolled: function(outOfBoundary)
-    {
-        if(this._autoHideEnabled)
-        {
+    onScrolled: function (outOfBoundary) {
+        if (this._autoHideEnabled) {
             this._autoHideRemainingTime = this.autoHideTime;
             cc.ProtectedNode.prototype.setOpacity.call(this, this.opacity);
         }
@@ -290,15 +263,13 @@ ccui.ScrollViewBar = ccui.ProtectedNode.extend(/** @lends ccui.ScrollViewBar# */
         var outOfBoundaryValue = 0;
         var innerContainerPosition = 0;
 
-        if(this._direction === ccui.ScrollView.DIR_VERTICAL)
-        {
+        if (this._direction === ccui.ScrollView.DIR_VERTICAL) {
             innerContainerMeasure = innerContainer.height;
             scrollViewMeasure = this._parentScroll.height;
             outOfBoundaryValue = outOfBoundary.y;
             innerContainerPosition = -innerContainer.getPositionY();
         }
-        else if(this._direction === ccui.ScrollView.DIR_HORIZONTAL)
-        {
+        else if (this._direction === ccui.ScrollView.DIR_HORIZONTAL) {
             innerContainerMeasure = innerContainer.width;
             scrollViewMeasure = this._parentScroll.width;
             outOfBoundaryValue = outOfBoundary.x;
@@ -311,11 +282,9 @@ ccui.ScrollViewBar = ccui.ProtectedNode.extend(/** @lends ccui.ScrollViewBar# */
         this.setPosition(position);
     },
 
-    _calculateLength: function(innerContainerMeasure, scrollViewMeasure, outOfBoundaryValue)
-    {
+    _calculateLength: function (innerContainerMeasure, scrollViewMeasure, outOfBoundaryValue) {
         var denominatorValue = innerContainerMeasure;
-        if(outOfBoundaryValue !== 0)
-        {
+        if (outOfBoundaryValue !== 0) {
             // If it is out of boundary, the length of scroll bar gets shorter quickly.
             var GETTING_SHORTER_FACTOR = 20;
             denominatorValue += (outOfBoundaryValue > 0 ? outOfBoundaryValue : -outOfBoundaryValue) * GETTING_SHORTER_FACTOR;
@@ -325,18 +294,15 @@ ccui.ScrollViewBar = ccui.ProtectedNode.extend(/** @lends ccui.ScrollViewBar# */
         return Math.abs(scrollViewMeasure - 2 * this._marginForLength) * lengthRatio;
     },
 
-    _calculatePosition: function(innerContainerMeasure, scrollViewMeasure, innerContainerPosition, outOfBoundaryValue, length)
-    {
+    _calculatePosition: function (innerContainerMeasure, scrollViewMeasure, innerContainerPosition, outOfBoundaryValue, length) {
         var denominatorValue = innerContainerMeasure - scrollViewMeasure;
-        if(outOfBoundaryValue !== 0)
-        {
+        if (outOfBoundaryValue !== 0) {
             denominatorValue += Math.abs(outOfBoundaryValue);
         }
 
         var positionRatio = 0;
 
-        if(denominatorValue !== 0)
-        {
+        if (denominatorValue !== 0) {
             positionRatio = innerContainerPosition / denominatorValue;
             positionRatio = Math.max(positionRatio, 0);
             positionRatio = Math.min(positionRatio, 1);
@@ -344,12 +310,10 @@ ccui.ScrollViewBar = ccui.ProtectedNode.extend(/** @lends ccui.ScrollViewBar# */
 
         var position = (scrollViewMeasure - length - 2 * this._marginForLength) * positionRatio + this._marginForLength;
 
-        if(this._direction === ccui.ScrollView.DIR_VERTICAL)
-        {
+        if (this._direction === ccui.ScrollView.DIR_VERTICAL) {
             return cc.p(this._parentScroll.width - this._marginFromBoundary, position);
         }
-        else
-        {
+        else {
             return cc.p(position, this._marginFromBoundary);
         }
     }

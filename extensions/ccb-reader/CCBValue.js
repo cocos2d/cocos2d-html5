@@ -56,21 +56,21 @@ cc.Color3BWapper.create = function (color) {
 };
 
 cc.BuilderValue = cc.Class.extend({
-    _value:null,
-    _type:0,
+    _value: null,
+    _type: 0,
 
-    getIntValue:function () {
+    getIntValue: function () {
     },
-    getFloatValue:function () {
+    getFloatValue: function () {
     },
-    getBoolValue:function () {
+    getBoolValue: function () {
     },
-    getByteValue:function () {
+    getByteValue: function () {
     },
-    getPointer:function () {
+    getPointer: function () {
     },
 
-    getValue:function(){
+    getValue: function () {
         return this._value;
     }
 });

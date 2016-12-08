@@ -36,10 +36,10 @@
         wrapper = wrapper || cc._renderContext;
 
         var locSkeleton = node._skeleton, drawOrder = locSkeleton.drawOrder;
-        for(i = 0, n = drawOrder.length; i < n; i++){
+        for (i = 0, n = drawOrder.length; i < n; i++) {
             slot = drawOrder[i];
             slotNode = slot._slotNode;
-            if(slotNode._visible && slotNode._renderCmd && slot.currentSprite){
+            if (slotNode._visible && slotNode._renderCmd && slot.currentSprite) {
                 slotNode._renderCmd.transform(this, true);
                 slot.currentSprite._renderCmd.rendering(wrapper, scaleX, scaleY);
                 slotNode._renderCmd._dirtyFlag = slot.currentSprite._renderCmd._dirtyFlag = 0;
@@ -96,8 +96,8 @@
         }
     };
 
-    proto._updateRegionAttachmentSlot = function(attachment, slot, points) {
-        if(!points)
+    proto._updateRegionAttachmentSlot = function (attachment, slot, points) {
+        if (!points)
             return;
 
         var vertices = {}, VERTEX = sp.VERTEX_INDEX, bone = slot.bone;
@@ -109,7 +109,7 @@
         points.push(cc.p(vertices[VERTEX.X2], vertices[VERTEX.Y2]));
     };
 
-    proto._createChildFormSkeletonData = function(){
+    proto._createChildFormSkeletonData = function () {
         var node = this._node;
         var locSkeleton = node._skeleton, spriteName, sprite;
         for (var i = 0, n = locSkeleton.slots.length; i < n; i++) {
@@ -117,13 +117,13 @@
             var slotNode = new cc.Node();
             slot._slotNode = slotNode;
 
-            if(attachment instanceof spine.RegionAttachment){
+            if (attachment instanceof spine.RegionAttachment) {
                 spriteName = attachment.rendererObject.name;
                 sprite = this._createSprite(slot, attachment);
                 slot.currentSprite = sprite;
                 slot.currentSpriteName = spriteName;
                 slotNode.addChild(sprite);
-            } else if(attachment instanceof spine.MeshAttachment){
+            } else if (attachment instanceof spine.MeshAttachment) {
                 //todo for mesh
             }
         }
@@ -140,7 +140,7 @@
             rendererObject.height / rendererObject.originalHeight * attachment.scaleY);
     };
 
-    proto._createSprite = function(slot, attachment){
+    proto._createSprite = function (slot, attachment) {
         var rendererObject = attachment.rendererObject;
         var texture = rendererObject.page._texture;
         var sprite = new cc.Sprite();
@@ -156,30 +156,30 @@
         return sprite;
     };
 
-    proto._updateChild = function(){
+    proto._updateChild = function () {
         var locSkeleton = this._node._skeleton, slots = locSkeleton.slots;
         var i, n, selSprite;
 
         var slot, attachment, slotNode;
-        for(i = 0, n = slots.length; i < n; i++){
+        for (i = 0, n = slots.length; i < n; i++) {
             slot = slots[i];
             attachment = slot.attachment;
             slotNode = slot._slotNode;
-            if(!attachment){
+            if (!attachment) {
                 slotNode.setVisible(false);
                 continue;
             }
             var type = attachment.type;
-            if (type === spine.AttachmentType.region){
-                if(attachment.rendererObject){
-                    if(!slot.currentSpriteName || slot.currentSpriteName !== attachment.name){
-                         var spriteName = attachment.rendererObject.name;
-                        if(slot.currentSprite !== undefined)
+            if (type === spine.AttachmentType.region) {
+                if (attachment.rendererObject) {
+                    if (!slot.currentSpriteName || slot.currentSpriteName !== attachment.name) {
+                        var spriteName = attachment.rendererObject.name;
+                        if (slot.currentSprite !== undefined)
                             slot.currentSprite.setVisible(false);
-                        slot.sprites = slot.sprites ||{};
-                        if(slot.sprites[spriteName] !== undefined)
+                        slot.sprites = slot.sprites || {};
+                        if (slot.sprites[spriteName] !== undefined)
                             slot.sprites[spriteName].setVisible(true);
-                        else{
+                        else {
                             var sprite = this._createSprite(slot, attachment);
                             slotNode.addChild(sprite);
                         }
@@ -196,10 +196,10 @@
                 selSprite = slot.currentSprite;
                 selSprite._flippedX = bone.worldFlipX;
                 selSprite._flippedY = bone.worldFlipY;
-                if(selSprite._flippedY || selSprite._flippedX){
+                if (selSprite._flippedY || selSprite._flippedX) {
                     slotNode.setRotation(bone.worldRotation);
                     selSprite.setRotation(attachment.rotation);
-                }else{
+                } else {
                     slotNode.setRotation(-bone.worldRotation);
                     selSprite.setRotation(-attachment.rotation);
                 }
@@ -207,7 +207,7 @@
                 //hack for sprite
                 selSprite._renderCmd._displayedOpacity = 0 | (this._node.getOpacity() * locSkeleton.a * slot.a);
                 var r = 0 | (locSkeleton.r * slot.r * 255), g = 0 | (locSkeleton.g * slot.g * 255), b = 0 | (locSkeleton.b * slot.b * 255);
-                selSprite.setColor(cc.color(r,g,b));
+                selSprite.setColor(cc.color(r, g, b));
                 selSprite._renderCmd._updateColor();
             } else if (type === spine.AttachmentType.skinnedmesh) {
                 //todo for mesh

@@ -63,12 +63,12 @@ cc.Color = function (r, g, b, a) {
  */
 cc.color = function (r, g, b, a) {
     if (r === undefined)
-        return {r: 0, g: 0, b: 0, a: 255};
+        return new cc.Color(0, 0, 0, 255);
     if (typeof r === 'object')
-        return {r: r.r, g: r.g, b: r.b, a: (r.a == null) ? 255 : r.a};
+        return new cc.Color(r.r, r.g, r.b, (r.a == null) ? 255 : r.a);
     if (typeof r === 'string')
         return cc.hexToColor(r);
-    return  {r: r, g: g, b: b, a: (a == null ? 255 : a)};
+    return new cc.Color(r, g, b, (a == null ? 255 : a));
 };
 
 /**
@@ -280,7 +280,7 @@ _p._setTR = function (trValue) {
     this._tr._view[0] = trValue.x;
     this._tr._view[1] = trValue.y;
 };
-_p._getBL = function() {
+_p._getBL = function () {
     return this._bl;
 };
 _p._setBL = function (blValue) {
@@ -508,23 +508,31 @@ cc.V3F_C4B_T2F_QuadZero = function () {
  */
 cc.V3F_C4B_T2F_QuadCopy = function (sourceQuad) {
     if (!sourceQuad)
-        return  cc.V3F_C4B_T2F_QuadZero();
+        return cc.V3F_C4B_T2F_QuadZero();
 
     //return new cc.V3F_C4B_T2F_Quad(sourceQuad,tl,sourceQuad,bl,sourceQuad.tr,sourceQuad.br,null,0);
     var srcTL = sourceQuad.tl, srcBL = sourceQuad.bl, srcTR = sourceQuad.tr, srcBR = sourceQuad.br;
     return {
-        tl: {vertices: {x: srcTL.vertices.x, y: srcTL.vertices.y, z: srcTL.vertices.z},
+        tl: {
+            vertices: {x: srcTL.vertices.x, y: srcTL.vertices.y, z: srcTL.vertices.z},
             colors: {r: srcTL.colors.r, g: srcTL.colors.g, b: srcTL.colors.b, a: srcTL.colors.a},
-            texCoords: {u: srcTL.texCoords.u, v: srcTL.texCoords.v}},
-        bl: {vertices: {x: srcBL.vertices.x, y: srcBL.vertices.y, z: srcBL.vertices.z},
+            texCoords: {u: srcTL.texCoords.u, v: srcTL.texCoords.v}
+        },
+        bl: {
+            vertices: {x: srcBL.vertices.x, y: srcBL.vertices.y, z: srcBL.vertices.z},
             colors: {r: srcBL.colors.r, g: srcBL.colors.g, b: srcBL.colors.b, a: srcBL.colors.a},
-            texCoords: {u: srcBL.texCoords.u, v: srcBL.texCoords.v}},
-        tr: {vertices: {x: srcTR.vertices.x, y: srcTR.vertices.y, z: srcTR.vertices.z},
+            texCoords: {u: srcBL.texCoords.u, v: srcBL.texCoords.v}
+        },
+        tr: {
+            vertices: {x: srcTR.vertices.x, y: srcTR.vertices.y, z: srcTR.vertices.z},
             colors: {r: srcTR.colors.r, g: srcTR.colors.g, b: srcTR.colors.b, a: srcTR.colors.a},
-            texCoords: {u: srcTR.texCoords.u, v: srcTR.texCoords.v}},
-        br: {vertices: {x: srcBR.vertices.x, y: srcBR.vertices.y, z: srcBR.vertices.z},
+            texCoords: {u: srcTR.texCoords.u, v: srcTR.texCoords.v}
+        },
+        br: {
+            vertices: {x: srcBR.vertices.x, y: srcBR.vertices.y, z: srcBR.vertices.z},
             colors: {r: srcBR.colors.r, g: srcBR.colors.g, b: srcBR.colors.b, a: srcBR.colors.a},
-            texCoords: {u: srcBR.texCoords.u, v: srcBR.texCoords.v}}
+            texCoords: {u: srcBR.texCoords.u, v: srcBR.texCoords.v}
+        }
     };
 };
 
@@ -927,18 +935,18 @@ cc.FontDefinition = function (properties) {
     _t.shadowOpacity = 1.0;
 
     //properties mapping:
-    if(properties && properties instanceof Object){
-         for(var key in properties){
-             _t[key] = properties[key];
-         }
+    if (properties && properties instanceof Object) {
+        for (var key in properties) {
+            _t[key] = properties[key];
+        }
     }
 };
 /**
  * Web ONLY
  * */
-cc.FontDefinition.prototype._getCanvasFontStr = function(){
-    var lineHeight = !this.lineHeight.charAt ? this.lineHeight+"px" : this.lineHeight;
-    return this.fontStyle + " " + this.fontWeight + " " + this.fontSize + "px/"+lineHeight+" '" + this.fontName + "'";
+cc.FontDefinition.prototype._getCanvasFontStr = function () {
+    var lineHeight = !this.lineHeight.charAt ? this.lineHeight + "px" : this.lineHeight;
+    return this.fontStyle + " " + this.fontWeight + " " + this.fontSize + "px/" + lineHeight + " '" + this.fontName + "'";
 };
 
 cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {

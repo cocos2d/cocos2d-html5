@@ -32,7 +32,7 @@ ccui.RichElement = ccui.Class.extend(/** @lends ccui.RichElement# */{
     _type: 0,
     _tag: 0,
     _color: null,
-    _opacity:0,
+    _opacity: 0,
     /**
      * Constructor of ccui.RichElement
      */
@@ -46,7 +46,7 @@ ccui.RichElement = ccui.Class.extend(/** @lends ccui.RichElement# */{
             this._color.b = color.b;
         }
         this._opacity = opacity || 0;
-        if(opacity === undefined) {
+        if (opacity === undefined) {
             this._color.a = color.a;
         }
         else {
@@ -256,7 +256,7 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
     removeElement: function (element) {
         if (cc.isNumber(element))
             this._richElements.splice(element, 1);
-         else
+        else
             cc.arrayRemoveObject(this._richElements, element);
         this._formatTextDirty = true;
     },
@@ -276,7 +276,7 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
                     var elementRenderer = null;
                     switch (element._type) {
                         case ccui.RichElement.TEXT:
-                            if( element._fontDefinition)
+                            if (element._fontDefinition)
                                 elementRenderer = new cc.LabelTTF(element._text, element._fontDefinition);
                             else //todo: There may be ambiguous
                                 elementRenderer = new cc.LabelTTF(element._text, element._fontName, element._fontSize);
@@ -300,7 +300,7 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
                     element = locRichElements[i];
                     switch (element._type) {
                         case ccui.RichElement.TEXT:
-                            if( element._fontDefinition)
+                            if (element._fontDefinition)
                                 this._handleTextRenderer(element._text, element._fontDefinition, element._fontDefinition.fontSize, element._fontDefinition.fillStyle);
                             else
                                 this._handleTextRenderer(element._text, element._fontName, element._fontSize, element._color);
@@ -329,10 +329,10 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
      * @private
      */
     _handleTextRenderer: function (text, fontNameOrFontDef, fontSize, color) {
-        if(text === "")
+        if (text === "")
             return;
 
-        if(text === "\n"){ //Force Line Breaking
+        if (text === "\n") { //Force Line Breaking
             this._addNewLine();
             return;
         }
@@ -349,21 +349,20 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
             var cutWords = curText.substr(leftLength, curText.length - 1);
             var validLeftLength = leftLength > 0;
 
-            if(this._lineBreakOnSpace){
+            if (this._lineBreakOnSpace) {
                 var lastSpaceIndex = leftWords.lastIndexOf(' ');
-                leftLength = lastSpaceIndex === -1 ? leftLength : lastSpaceIndex+1 ;
+                leftLength = lastSpaceIndex === -1 ? leftLength : lastSpaceIndex + 1;
                 cutWords = curText.substr(leftLength, curText.length - 1);
                 validLeftLength = leftLength > 0 && cutWords !== " ";
             }
 
             if (validLeftLength) {
                 var leftRenderer = null;
-                if( fontNameOrFontDef instanceof cc.FontDefinition)
-                {
+                if (fontNameOrFontDef instanceof cc.FontDefinition) {
                     leftRenderer = new cc.LabelTTF(leftWords.substr(0, leftLength), fontNameOrFontDef);
                     leftRenderer.setOpacity(fontNameOrFontDef.fillStyle.a); //TODO: Verify that might not be needed...
-                }else{
-                    leftRenderer =  new cc.LabelTTF(leftWords.substr(0, leftLength), fontNameOrFontDef, fontSize);
+                } else {
+                    leftRenderer = new cc.LabelTTF(leftWords.substr(0, leftLength), fontNameOrFontDef, fontSize);
                     leftRenderer.setColor(color);
                     leftRenderer.setOpacity(color.a);
                 }
@@ -373,9 +372,9 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
             this._addNewLine();
             this._handleTextRenderer(cutWords, fontNameOrFontDef, fontSize, color);
         } else {
-            if( fontNameOrFontDef instanceof cc.FontDefinition) {
+            if (fontNameOrFontDef instanceof cc.FontDefinition) {
                 textRenderer.setOpacity(fontNameOrFontDef.fillStyle.a); //TODO: Verify that might not be needed...
-            }else {
+            } else {
                 textRenderer.setColor(color);
                 textRenderer.setOpacity(color.a);
             }
@@ -432,7 +431,7 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
             }
 
             //Text flow horizontal alignment:
-            if(this._textHorizontalAlignment !== cc.TEXT_ALIGNMENT_LEFT) {
+            if (this._textHorizontalAlignment !== cc.TEXT_ALIGNMENT_LEFT) {
                 offsetX = 0;
                 if (this._textHorizontalAlignment === cc.TEXT_ALIGNMENT_RIGHT)
                     offsetX = this._contentSize.width - nextPosX;
@@ -473,7 +472,7 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
                     nextPosX += l.getContentSize().width;
                 }
                 //Text flow alignment(s)
-                if( this._textHorizontalAlignment !== cc.TEXT_ALIGNMENT_LEFT || this._textVerticalAlignment !== cc.VERTICAL_TEXT_ALIGNMENT_TOP) {
+                if (this._textHorizontalAlignment !== cc.TEXT_ALIGNMENT_LEFT || this._textVerticalAlignment !== cc.VERTICAL_TEXT_ALIGNMENT_TOP) {
                     offsetX = 0;
                     if (this._textHorizontalAlignment === cc.TEXT_ALIGNMENT_RIGHT)
                         offsetX = this._contentSize.width - nextPosX;
@@ -498,12 +497,12 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
         }
 
         var length = locElementRenders.length;
-        for (i = 0; i<length; i++){
+        for (i = 0; i < length; i++) {
             locElementRenders[i].length = 0;
         }
         this._elementRenders.length = 0;
 
-        this.setContentSize(this._ignoreSize?this.getVirtualRendererSize():this._customSize);
+        this.setContentSize(this._ignoreSize ? this.getVirtualRendererSize() : this._customSize);
         this._updateContentSizeWithTextureSize(this._contentSize);
 
         locRenderersContainer.setPosition(this._contentSize.width * 0.5, this._contentSize.height * 0.5);
@@ -515,7 +514,7 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
         this._elementRenders[this._elementRenders.length - 1].push(renderer);
     },
 
-    _adaptRenderers: function(){
+    _adaptRenderers: function () {
         this.formatText();
     },
 
@@ -550,7 +549,7 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
      * @override
      * @returns {cc.Size}
      */
-    getVirtualRendererSize: function(){
+    getVirtualRendererSize: function () {
         return this._elementRenderersContainer.getContentSize();
     },
 
@@ -571,20 +570,20 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
      * @override
      * @return {cc.Size}
      */
-    getContentSize: function(){
+    getContentSize: function () {
         this.formatText();
         return cc.Node.prototype.getContentSize.call(this);
     },
-    _getWidth: function() {
+    _getWidth: function () {
         this.formatText();
         return cc.Node.prototype._getWidth.call(this);
     },
-    _getHeight: function() {
+    _getHeight: function () {
         this.formatText();
         return cc.Node.prototype._getHeight.call(this);
     },
 
-    setContentSize: function(contentSize, height){
+    setContentSize: function (contentSize, height) {
         var locWidth = (height === undefined) ? contentSize.width : contentSize;
         var locHeight = (height === undefined) ? contentSize.height : height;
         ccui.Widget.prototype.setContentSize.call(this, locWidth, locHeight);
@@ -595,15 +594,15 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
      * Returns the class name of ccui.RichText.
      * @returns {string}
      */
-    getDescription: function(){
+    getDescription: function () {
         return "RichText";
     },
     /**
      * Allow child renderer to be affected by ccui.RichText's opacity
      * @param {boolean} value
      */
-    setCascadeOpacityEnabled: function(value) {
-        this._super(value);
+    setCascadeOpacityEnabled: function (value) {
+        ccui.Widget.prototype.setCascadeOpacityEnabled.call(this, value);
         this._elementRenderersContainer.setCascadeOpacityEnabled(value);
     },
     /**
@@ -611,7 +610,7 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
      * by default the property is false, which break the line on characters
      * @param value
      */
-    setLineBreakOnSpace: function(value){
+    setLineBreakOnSpace: function (value) {
         this._lineBreakOnSpace = value;
         this._formatTextDirty = true;
         this.formatText();
@@ -627,8 +626,8 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
      *
      * @param {Number} value - example cc.TEXT_ALIGNMENT_RIGHT
      */
-    setTextHorizontalAlignment: function(value){
-        if(value !== this._textHorizontalAlignment) {
+    setTextHorizontalAlignment: function (value) {
+        if (value !== this._textHorizontalAlignment) {
             this._textHorizontalAlignment = value;
             this.formatText();
         }
@@ -643,8 +642,8 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
      *
      * @param {Number} value - example cc.VERTICAL_TEXT_ALIGNMENT_CENTER
      */
-    setTextVerticalAlignment: function(value){
-        if(value !== this._textVerticalAlignment) {
+    setTextVerticalAlignment: function (value) {
+        if (value !== this._textVerticalAlignment) {
             this._textVerticalAlignment = value;
             this.formatText();
         }
@@ -656,7 +655,7 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
  * @deprecated since v3.0, please use new ccui.RichText() instead.
  * @returns {RichText}
  */
-ccui.RichText.create = function(){
+ccui.RichText.create = function () {
     return new ccui.RichText();
 };
 

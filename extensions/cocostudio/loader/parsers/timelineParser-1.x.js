@@ -22,22 +22,22 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-(function(load, baseParser){
+(function (load, baseParser) {
 
     var loadedPlist = {};
 
     var Parser = baseParser.extend({
 
-        getNodeJson: function(json){
+        getNodeJson: function (json) {
             return json["nodeTree"];
         },
 
-        addSpriteFrame: function(plists, pngs, resourcePath){
-            if(!plists || !pngs || plists.length !== pngs.length)
+        addSpriteFrame: function (plists, pngs, resourcePath) {
+            if (!plists || !pngs || plists.length !== pngs.length)
                 return;
             for (var i = 0; i < plists.length; i++) {
                 var plist = resourcePath + plists[i];
-                if(!cc.loader.getRes(plist) && !loadedPlist[plist])
+                if (!cc.loader.getRes(plist) && !loadedPlist[plist])
                     cc.log("%s need to be preloaded", plist);
                 else
                     loadedPlist[plist] = true;
@@ -48,67 +48,65 @@
             }
         },
 
-        pretreatment: function(json, resourcePath, file){
+        pretreatment: function (json, resourcePath, file) {
             this.addSpriteFrame(json["textures"], json["texturesPng"], resourcePath);
         }
 
     });
     var parser = new Parser();
 
-    parser.generalAttributes = function(node, options){
-        var width         = options["width"]        !=null ? options["width"] : 0;
-        var height        = options["height"]       !=null ? options["height"] : 0;
-        var x             = options["x"]            !=null ? options["x"] : 0;
-        var y             = options["y"]            !=null ? options["y"] : 0;
-        var scalex        = options["scaleX"]       !=null ? options["scaleX"] : 1;
-        var scaley        = options["scaleY"]       !=null ? options["scaleY"] : 1;
-        var rotation      = options["rotation"]     !=null ? options["rotation"] : 0;
-        var rotationSkewX = options["rotationSkewX"]!=null ? options["rotationSkewX"] : 0;
-        var rotationSkewY = options["rotationSkewY"]!=null ? options["rotationSkewY"] : 0;
-        var skewx         = options["skewX"]        !=null ? options["skewX"] : 0;
-        var skewy         = options["skewY"]        !=null ? options["skewY"] : 0;
-        var anchorx       = options["anchorPointX"] !=null ? options["anchorPointX"] : 0.5;
-        var anchory       = options["anchorPointY"] !=null ? options["anchorPointY"] : 0.5;
-        var alpha         = options["opacity"]      !=null ? options["opacity"] : 255;
-        var red           = options["colorR"]       !=null ? options["colorR"] : 255;
-        var green         = options["colorG"]       !=null ? options["colorG"] : 255;
-        var blue          = options["colorB"]       !=null ? options["colorB"] : 255;
-        var zorder        = options["colorR"]       !=null ? options["colorR"] : 0;
-        var tag           = options["tag"]          !=null ? options["tag"] : 0;
-        var actionTag     = options["actionTag"]    !=null ? options["actionTag"] : 0;
-        var visible       = options["visible"]      !=null ? options["visible"] : true;
+    parser.generalAttributes = function (node, options) {
+        var width = options["width"] != null ? options["width"] : 0;
+        var height = options["height"] != null ? options["height"] : 0;
+        var x = options["x"] != null ? options["x"] : 0;
+        var y = options["y"] != null ? options["y"] : 0;
+        var scalex = options["scaleX"] != null ? options["scaleX"] : 1;
+        var scaley = options["scaleY"] != null ? options["scaleY"] : 1;
+        var rotation = options["rotation"] != null ? options["rotation"] : 0;
+        var rotationSkewX = options["rotationSkewX"] != null ? options["rotationSkewX"] : 0;
+        var rotationSkewY = options["rotationSkewY"] != null ? options["rotationSkewY"] : 0;
+        var skewx = options["skewX"] != null ? options["skewX"] : 0;
+        var skewy = options["skewY"] != null ? options["skewY"] : 0;
+        var anchorx = options["anchorPointX"] != null ? options["anchorPointX"] : 0.5;
+        var anchory = options["anchorPointY"] != null ? options["anchorPointY"] : 0.5;
+        var alpha = options["opacity"] != null ? options["opacity"] : 255;
+        var red = options["colorR"] != null ? options["colorR"] : 255;
+        var green = options["colorG"] != null ? options["colorG"] : 255;
+        var blue = options["colorB"] != null ? options["colorB"] : 255;
+        var zorder = options["colorR"] != null ? options["colorR"] : 0;
+        var tag = options["tag"] != null ? options["tag"] : 0;
+        var actionTag = options["actionTag"] != null ? options["actionTag"] : 0;
+        var visible = options["visible"] != null ? options["visible"] : true;
 
-        if(x != 0 || y != 0)
+        if (x != 0 || y != 0)
             node.setPosition(cc.p(x, y));
-        if(scalex != 1)
+        if (scalex != 1)
             node.setScaleX(scalex);
-        if(scaley != 1)
+        if (scaley != 1)
             node.setScaleY(scaley);
         if (rotation != 0)
             node.setRotation(rotation);
-        if(rotationSkewX != 0)
+        if (rotationSkewX != 0)
             node.setRotationX(rotationSkewX);
-        if(rotationSkewY != 0)
+        if (rotationSkewY != 0)
             node.setRotationY(rotationSkewY);
-        if(skewx != 0)
+        if (skewx != 0)
             node.setSkewX(skewx);
-        if(skewy != 0)
+        if (skewy != 0)
             node.setSkewY(skewy);
-        if(anchorx != 0.5 || anchory != 0.5)
+        if (anchorx != 0.5 || anchory != 0.5)
             node.setAnchorPoint(cc.p(anchorx, anchory));
-        if(width != 0 || height != 0)
+        if (width != 0 || height != 0)
             node.setContentSize(cc.size(width, height));
-        if(zorder != 0)
+        if (zorder != 0)
             node.setLocalZOrder(zorder);
-        if(visible != true)
+        if (visible != true)
             node.setVisible(visible);
 
-        if(alpha != 255)
-        {
+        if (alpha != 255) {
             node.setOpacity(alpha);
         }
-        if(red != 255 || green != 255 || blue != 255)
-        {
+        if (red != 255 || green != 255 || blue != 255) {
             node.setColor(cc.color(red, green, blue));
         }
 
@@ -117,32 +115,32 @@
         node.setUserObject(new ccs.ActionTimelineData(actionTag));
     };
 
-    parser.parseComponent = function(node, options){
-        if(!options) return;
-        for (var i = 0; i < options.length; ++i){
+    parser.parseComponent = function (node, options) {
+        if (!options) return;
+        for (var i = 0; i < options.length; ++i) {
             var dic = options[i];
             var component = this.loadComponent(dic);
-            if (component){
+            if (component) {
                 node.addComponent(component);
             }
         }
     };
 
-    parser.parseChild = function(parse, widget, options, resourcePath){
+    parser.parseChild = function (parse, widget, options, resourcePath) {
         var children = options["children"];
         for (var i = 0; i < children.length; i++) {
             var child = this.parseNode(children[i], resourcePath);
-            if(child){
-                if(widget instanceof ccui.PageView){
-                    if(child instanceof ccui.Layout)
+            if (child) {
+                if (widget instanceof ccui.PageView) {
+                    if (child instanceof ccui.Layout)
                         widget.addPage(child);
                 } else {
-                    if(widget instanceof ccui.ListView){
-                        if(child instanceof ccui.Widget)
+                    if (widget instanceof ccui.ListView) {
+                        if (child instanceof ccui.Widget)
                             widget.pushBackCustomItem(child);
                     } else {
-                        if(!(widget instanceof ccui.Layout) && child instanceof ccui.Widget) {
-                            if(child.getPositionType() === ccui.Widget.POSITION_PERCENT) {
+                        if (!(widget instanceof ccui.Layout) && child instanceof ccui.Widget) {
+                            if (child.getPositionType() === ccui.Widget.POSITION_PERCENT) {
                                 var position = child.getPositionPercent();
                                 var anchor = widget.getAnchorPoint();
                                 child.setPositionPercent(cc.p(position.x + anchor.x, position.y + anchor.y));
@@ -158,53 +156,53 @@
         }
     };
 
-    parser.initNode = function(options){
+    parser.initNode = function (options) {
         var node = new cc.Node();
         this.generalAttributes(node, options);
         return node;
     };
-    parser.initSubGraph = function(options){
+    parser.initSubGraph = function (options) {
         var filePath = options["fileName"];
 
         var node;
-        if (filePath && "" !== filePath){
+        if (filePath && "" !== filePath) {
             node = this.createNode(filePath);
-        }else{
+        } else {
             node = new ccs.Node();
         }
         this.generalAttributes(node, options);
         return node;
     };
-    parser.initSprite = function(options, resourcePath){
+    parser.initSprite = function (options, resourcePath) {
         var path = options["fileName"];
         var sprite;
-        if(path != null){
+        if (path != null) {
             var spriteFrame = cc.spriteFrameCache.getSpriteFrame(path);
-            if(!spriteFrame){
+            if (!spriteFrame) {
                 path = resourcePath + path;
                 sprite = new ccs.Sprite(path);
-            }else{
+            } else {
                 sprite = ccs.Sprite.createWithSpriteFrame(spriteFrame);
             }
 
-            if(!sprite){
+            if (!sprite) {
                 sprite = new cc.Sprite();
                 cc.log("filePath is empty. Create a sprite with no texture");
             }
-        }else{
+        } else {
             sprite = new ccs.Sprite();
         }
         this.generalAttributes(sprite, options);
         var flipX = options["flipX"];
         var flipY = options["flipY"];
 
-        if(flipX != false)
+        if (flipX != false)
             sprite.setFlippedX(flipX);
-        if(flipY != false)
+        if (flipY != false)
             sprite.setFlippedY(flipY);
         return sprite;
     };
-    parser.initParticle = function(options, resourcePath){
+    parser.initParticle = function (options, resourcePath) {
         var filePath = options["plistFile"];
         var num = options["tmxFile"];
         var particle = new cc.ParticleSystemQuad(filePath);
@@ -212,41 +210,41 @@
         this.generalAttributes(particle, options);
         return particle;
     };
-    parser.initTMXTiledMap = function(options, resourcePath){
+    parser.initTMXTiledMap = function (options, resourcePath) {
         var tmxFile = options["tmxFile"];
         var tmxString = options["tmxString"];
         //todo check path and resourcePath
         var path = options["resourcePath"];
 
         var tmx = null;
-        if (tmxFile && "" !== tmxFile){
+        if (tmxFile && "" !== tmxFile) {
             tmx = new cc.TMXTiledMap(tmxFile);
-        }else if (tmxString && "" !== tmxString && path && "" !== path){
+        } else if (tmxString && "" !== tmxString && path && "" !== path) {
             tmx = new cc.TMXTiledMap(tmxString, path);
         }
         return tmx;
     };
     var uiParser = load.getParser("ccui")["*"];
-    parser.initWidget = function(options, resourcePath){
+    parser.initWidget = function (options, resourcePath) {
         var type = options["classname"];
 
         var parser = uiParser.parsers[type];
-        if(!parser)
+        if (!parser)
             return cc.log("%s parser is not found", type);
 
         var node = parser.call(uiParser, options, resourcePath);
-        if(node){
+        if (node) {
             var rotationSkewX = options["rotationSkewX"];
             var rotationSkewY = options["rotationSkewY"];
-            var skewx         = options["skewX"];
-            var skewy         = options["skewY"];
-            if(rotationSkewX != 0)
+            var skewx = options["skewX"];
+            var skewy = options["skewY"];
+            if (rotationSkewX != 0)
                 node.setRotationX(rotationSkewX);
-            if(rotationSkewY != 0)
+            if (rotationSkewY != 0)
                 node.setRotationY(rotationSkewY);
-            if(skewx != 0)
+            if (skewx != 0)
                 node.setSkewX(skewx);
-            if(skewy != 0)
+            if (skewy != 0)
                 node.setSkewY(skewy);
 
             var actionTag = options["actionTag"];
@@ -278,8 +276,8 @@
         {name: "TextField", handle: parser.initWidget}
     ];
 
-    register.forEach(function(item){
-        parser.registerParser(item.name, function(options, parse, resourcePath){
+    register.forEach(function (item) {
+        parser.registerParser(item.name, function (options, parse, resourcePath) {
             var node = item.handle.call(this, options["options"]);
             this.parseComponent(node, options["components"]);
             this.parseChild(parse, node, options, resourcePath);

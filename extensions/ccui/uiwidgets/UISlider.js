@@ -75,7 +75,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
      * var uiSlider = new ccui.Slider();
      */
     ctor: function (barTextureName, normalBallTextureName, resType) {
-        this._barTextureSize = cc.size(0,0);
+        this._barTextureSize = cc.size(0, 0);
         this._progressBarTextureSize = cc.size(0, 0);
         this._capInsetsBarRenderer = cc.rect(0, 0, 0, 0);
         this._capInsetsProgressBarRenderer = cc.rect(0, 0, 0, 0);
@@ -128,8 +128,8 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
         var barRenderer = this._barRenderer;
 
         var self = this;
-        if(!barRenderer._textureLoaded){
-            barRenderer.addEventListener("load", function(){
+        if (!barRenderer._textureLoaded) {
+            barRenderer.addEventListener("load", function () {
                 self.loadBarTexture(self._textureFile, self._barTexType);
             });
         }
@@ -170,8 +170,8 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
         var progressBarRenderer = this._progressBarRenderer;
 
         var self = this;
-        if(!progressBarRenderer._textureLoaded){
-            progressBarRenderer.addEventListener("load", function(){
+        if (!progressBarRenderer._textureLoaded) {
+            progressBarRenderer.addEventListener("load", function () {
                 self.loadProgressBarTexture(self._progressBarTextureFile, self._progressBarTexType);
             });
         }
@@ -268,7 +268,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
      * @param {cc.Rect} capInsets
      */
     setCapInsetsBarRenderer: function (capInsets) {
-        if(!capInsets)
+        if (!capInsets)
             return;
         var locInsets = this._capInsetsBarRenderer;
         locInsets.x = capInsets.x;
@@ -293,7 +293,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
      * @param {cc.Rect} capInsets
      */
     setCapInsetProgressBarRenderer: function (capInsets) {
-        if(!capInsets)
+        if (!capInsets)
             return;
         var locInsets = this._capInsetsProgressBarRenderer;
         locInsets.x = capInsets.x;
@@ -340,8 +340,8 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
         this._ballNTexType = texType;
 
         var self = this;
-        if(!this._slidBallNormalRenderer._textureLoaded){
-            this._slidBallNormalRenderer.addEventListener("load", function(){
+        if (!this._slidBallNormalRenderer._textureLoaded) {
+            this._slidBallNormalRenderer.addEventListener("load", function () {
                 self.loadSlidBallTextureNormal(self._slidBallNormalTextureFile, self._ballNTexType);
             });
         }
@@ -376,8 +376,8 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
         this._ballPTexType = texType;
 
         var self = this;
-        if(!this._slidBallPressedRenderer._textureLoaded){
-            this._slidBallPressedRenderer.addEventListener("load", function(){
+        if (!this._slidBallPressedRenderer._textureLoaded) {
+            this._slidBallPressedRenderer.addEventListener("load", function () {
                 self.loadSlidBallTexturePressed(self._slidBallPressedTextureFile, self._ballPTexType);
             });
         }
@@ -412,8 +412,8 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
         this._ballDTexType = texType;
 
         var self = this;
-        if(!this._slidBallDisabledRenderer._textureLoaded){
-            this._slidBallDisabledRenderer.addEventListener("load", function(){
+        if (!this._slidBallDisabledRenderer._textureLoaded) {
+            this._slidBallDisabledRenderer.addEventListener("load", function () {
                 self.loadSlidBallTextureDisabled(self._slidBallDisabledTextureFile, self._ballDTexType);
             });
         }
@@ -465,11 +465,10 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
      * @param {cc.Point} pt
      * @returns {boolean}
      */
-    hitTest: function(pt){
+    hitTest: function (pt) {
         var nsp = this._slidBallNormalRenderer.convertToNodeSpace(pt);
         var ballSize = this._slidBallNormalRenderer.getContentSize();
-        var ballRect = cc.rect(0,0, ballSize.width, ballSize.height);
-//        if (ballRect.containsPoint(nsp)) {
+        var ballRect = cc.rect(0, 0, ballSize.width, ballSize.height);
         return (nsp.x >= ballRect.x &&
             nsp.x <= (ballRect.x + ballRect.width) &&
             nsp.y >= ballRect.y &&
@@ -507,7 +506,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
      * @returns {number}
      */
     _getPercentWithBallPos: function (px) {
-        return ((px/this._barLength)*100);
+        return ((px / this._barLength) * 100);
     },
 
     /**
@@ -525,13 +524,13 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
      * @param {Function} selector
      * @param {Object} [target=]
      */
-    addEventListener: function(selector, target){
+    addEventListener: function (selector, target) {
         this._sliderEventSelector = selector;      //when target is undefined, _sliderEventSelector = _eventCallback
         this._sliderEventListener = target;
     },
 
     _percentChangedEvent: function () {
-        if(this._sliderEventSelector){
+        if (this._sliderEventSelector) {
             if (this._sliderEventListener)
                 this._sliderEventSelector.call(this._sliderEventListener, this, ccui.Slider.EVENT_PERCENT_CHANGED);
             else
@@ -555,14 +554,12 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
         this._progressBarRendererDirty = true;
     },
 
-    _adaptRenderers: function(){
-        if (this._barRendererAdaptDirty)
-        {
+    _adaptRenderers: function () {
+        if (this._barRendererAdaptDirty) {
             this._barRendererScaleChangedWithSize();
             this._barRendererAdaptDirty = false;
         }
-        if (this._progressBarRendererDirty)
-        {
+        if (this._progressBarRendererDirty) {
             this._progressBarRendererScaleChangedWithSize();
             this._progressBarRendererDirty = false;
         }
@@ -572,7 +569,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
      * Returns the content size of bar renderer.
      * @returns {cc.Size}
      */
-    getVirtualRendererSize: function(){
+    getVirtualRendererSize: function () {
         return this._barRenderer.getContentSize();
     },
 
@@ -585,13 +582,13 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
     },
 
     _barRendererScaleChangedWithSize: function () {
-        if (this._unifySize){
+        if (this._unifySize) {
             this._barLength = this._contentSize.width;
             this._barRenderer.setPreferredSize(this._contentSize);
-        }else if(this._ignoreSize) {
+        } else if (this._ignoreSize) {
             this._barRenderer.setScale(1.0);
             this._barLength = this._contentSize.width;
-        }else {
+        } else {
             this._barLength = this._contentSize.width;
             if (this._scale9Enabled) {
                 this._barRenderer.setPreferredSize(this._contentSize);
@@ -600,7 +597,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
                 var btextureSize = this._barTextureSize;
                 if (btextureSize.width <= 0.0 || btextureSize.height <= 0.0) {
                     this._barRenderer.setScale(1.0);
-                }else{
+                } else {
                     var bscaleX = this._contentSize.width / btextureSize.width;
                     var bscaleY = this._contentSize.height / btextureSize.height;
                     this._barRenderer.setScaleX(bscaleX);
@@ -613,9 +610,9 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
     },
 
     _progressBarRendererScaleChangedWithSize: function () {
-        if(this._unifySize){
+        if (this._unifySize) {
             this._progressBarRenderer.setPreferredSize(this._contentSize);
-        }else if(this._ignoreSize) {
+        } else if (this._ignoreSize) {
             if (!this._scale9Enabled) {
                 var ptextureSize = this._progressBarTextureSize;
                 var pscaleX = this._contentSize.width / ptextureSize.width;
@@ -654,9 +651,9 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
     },
 
     _onPressStateChangedToPressed: function () {
-        if (!this._slidBallPressedTextureFile){
+        if (!this._slidBallPressedTextureFile) {
             this._slidBallNormalRenderer.setScale(this._sliderBallNormalTextureScaleX + this._zoomScale, this._sliderBallNormalTextureScaleY + this._zoomScale);
-        }else{
+        } else {
             this._slidBallNormalRenderer.setVisible(false);
             this._slidBallPressedRenderer.setVisible(true);
             this._slidBallDisabledRenderer.setVisible(false);
@@ -664,7 +661,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
     },
 
     _onPressStateChangedToDisabled: function () {
-        if (this._slidBallDisabledTextureFile){
+        if (this._slidBallDisabledTextureFile) {
             this._slidBallNormalRenderer.setVisible(false);
             this._slidBallDisabledRenderer.setVisible(true);
         }
@@ -672,27 +669,27 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
         this._slidBallPressedRenderer.setVisible(false);
     },
 
-    setZoomScale: function(scale){
+    setZoomScale: function (scale) {
         this._zoomScale = scale;
     },
 
-    getZoomScale: function(){
+    getZoomScale: function () {
         return this._zoomScale;
     },
 
-    getSlidBallNormalRenderer : function () {
+    getSlidBallNormalRenderer: function () {
         return this._slidBallNormalRenderer;
     },
 
-    getSlidBallPressedRenderer : function () {
+    getSlidBallPressedRenderer: function () {
         return this._slidBallPressedRenderer;
     },
 
-    getSlidBallDisabledRenderer : function () {
+    getSlidBallDisabledRenderer: function () {
         return this._slidBallDisabledRenderer;
     },
 
-    getSlidBallRenderer : function () {
+    getSlidBallRenderer: function () {
         return this._slidBallRenderer;
     },
 

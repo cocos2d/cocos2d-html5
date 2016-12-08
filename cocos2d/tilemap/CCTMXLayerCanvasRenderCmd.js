@@ -132,10 +132,10 @@
             if (maxRow > rows) maxRow = rows;
         }
 
-        var i, row, col, colOffset = startRow * cols, z, 
+        var i, row, col, colOffset = startRow * cols, z,
             gid, grid, tex, cmd,
             mask = cc.TMX_TILE_FLIPPED_MASK,
-            top, left, bottom, right, dw = tilew, dh = tileh ,
+            top, left, bottom, right, dw = tilew, dh = tileh,
             w = tilew * a, h = tileh * d, gt, gl, gb, gr,
             flippedX = false, flippedY = false;
 
@@ -198,18 +198,18 @@
                 top = bottom - tileh;
                 // TMX_ORIENTATION_ISO trim
                 if (!hasRotation && layerOrientation === cc.TMX_ORIENTATION_ISO) {
-                    gb = -mapy + bottom*d;
-                    if (gb < -winh-h) {
-                        col += Math.floor((-winh - gb)*2/h) - 1;
+                    gb = -mapy + bottom * d;
+                    if (gb < -winh - h) {
+                        col += Math.floor((-winh - gb) * 2 / h) - 1;
                         continue;
                     }
-                    gr = mapx + right*a;
+                    gr = mapx + right * a;
                     if (gr < -w) {
-                        col += Math.floor((-gr)*2/w) - 1;
+                        col += Math.floor((-gr) * 2 / w) - 1;
                         continue;
                     }
-                    gl = mapx + left*a;
-                    gt = -mapy + top*d;
+                    gl = mapx + left * a;
+                    gt = -mapy + top * d;
                     if (gl > winw || gt > 0) {
                         col = maxCol;
                         continue;

@@ -37,7 +37,7 @@
  *
  * May be modifications for a few browser version
  */
-(function(){
+(function () {
 
     var DEBUG = false;
 
@@ -48,7 +48,7 @@
     // check Web Audio's context
     var supportWebAudio = !!(window.AudioContext || window.webkitAudioContext || window.mozAudioContext);
 
-    var support = {ONLY_ONE: false, WEB_AUDIO: supportWebAudio, DELAY_CREATE_CTX: false, ONE_SOURCE: false };
+    var support = {ONLY_ONE: false, WEB_AUDIO: supportWebAudio, DELAY_CREATE_CTX: false, ONE_SOURCE: false};
 
     if (sys.browserType === sys.BROWSER_TYPE_FIREFOX) {
         support.DELAY_CREATE_CTX = true;
@@ -67,8 +67,8 @@
 
     window.__audioSupport = support;
 
-    if(DEBUG){
-        setTimeout(function(){
+    if (DEBUG) {
+        setTimeout(function () {
             cc.log("browse type: " + sys.browserType);
             cc.log("browse version: " + version);
             cc.log("MULTI_CHANNEL: " + window.__audioSupport.MULTI_CHANNEL);
@@ -87,7 +87,7 @@ cc.Audio = cc.Class.extend({
     _element: null,
     _AUDIO_TYPE: "AUDIO",
 
-    ctor: function(url){
+    ctor: function (url) {
         this.src = url;
     },
 
@@ -133,9 +133,10 @@ cc.Audio = cc.Class.extend({
     stop: function () {
         if (!this._element) return;
         this._element.pause();
-        try{
+        try {
             this._element.currentTime = 0;
-        } catch (err) {}
+        } catch (err) {
+        }
     },
 
     pause: function () {
@@ -163,7 +164,7 @@ cc.Audio = cc.Class.extend({
         if (this._AUDIO_TYPE === "AUDIO") {
             var elem = document.createElement("audio");
             var sources = elem.getElementsByTagName('source');
-            for (var i=0; i<sources.length; i++) {
+            for (var i = 0; i < sources.length; i++) {
                 elem.appendChild(sources[i]);
             }
             elem.src = this.src;
@@ -213,7 +214,7 @@ cc.Audio.WebAudio = function (buffer) {
 cc.Audio.WebAudio.prototype = {
     constructor: cc.Audio.WebAudio,
 
-    get paused () {
+    get paused() {
         // If the current audio is a loop, then paused is false
         if (this._currentSource && this._currentSource.loop)
             return false;
@@ -225,16 +226,29 @@ cc.Audio.WebAudio.prototype = {
         // currentTime - startTime > durationTime
         return this.context.currentTime - this._startTime > this.buffer.duration;
     },
-    set paused (bool) {},
+    set paused(bool) {
+    },
 
-    get loop () { return this._loop; },
-    set loop (bool) { return this._loop = bool; },
+    get loop() {
+        return this._loop;
+    },
+    set loop(bool) {
+        return this._loop = bool;
+    },
 
-    get volume () { return this._volume['gain'].value; },
-    set volume (num) { return this._volume['gain'].value = num; },
+    get volume() {
+        return this._volume['gain'].value;
+    },
+    set volume(num) {
+        return this._volume['gain'].value = num;
+    },
 
-    get currentTime () { return this.playedLength; },
-    set currentTime (num) { return this.playedLength = num; },
+    get currentTime() {
+        return this.playedLength;
+    },
+    set currentTime(num) {
+        return this.playedLength = num;
+    },
 
     play: function (offset) {
 
@@ -300,15 +314,15 @@ cc.Audio.WebAudio.prototype = {
     }
 };
 
-(function(polyfill){
+(function (polyfill) {
 
     var SWA = polyfill.WEB_AUDIO, SWB = polyfill.ONLY_ONE;
 
     var support = [];
 
-    (function(){
+    (function () {
         var audio = document.createElement("audio");
-        if(audio.canPlayType) {
+        if (audio.canPlayType) {
             var ogg = audio.canPlayType('audio/ogg; codecs="vorbis"');
             if (ogg && ogg !== "") support.push(".ogg");
             var mp3 = audio.canPlayType("audio/mpeg");
@@ -321,17 +335,17 @@ cc.Audio.WebAudio.prototype = {
             if (m4a && m4a !== "") support.push(".m4a");
         }
     })();
-    try{
-        if(SWA){
+    try {
+        if (SWA) {
             var context = new (window.AudioContext || window.webkitAudioContext || window.mozAudioContext)();
             cc.Audio._context = context;
-            if(polyfill.DELAY_CREATE_CTX)
-                setTimeout(function(){
+            if (polyfill.DELAY_CREATE_CTX)
+                setTimeout(function () {
                     context = new (window.AudioContext || window.webkitAudioContext || window.mozAudioContext)();
                     cc.Audio._context = context;
                 }, 0);
         }
-    }catch(error){
+    } catch (error) {
         SWA = false;
         cc.log("browser don't support web audio");
     }
@@ -351,26 +365,26 @@ cc.Audio.WebAudio.prototype = {
 
             // Our asynchronous callback
             request.onload = function () {
-                context["decodeAudioData"](request.response, function(buffer){
+                context["decodeAudioData"](request.response, function (buffer) {
                     //success
                     cb(null, buffer);
                     //audio.setBuffer(buffer);
-                }, function(){
+                }, function () {
                     //error
                     cb('decode error - ' + url);
                 });
             };
 
-            request.onerror = function(){
+            request.onerror = function () {
                 cb('request error - ' + url);
             };
 
             request.send();
         },
 
-        load: function(realUrl, url, res, cb){
+        load: function (realUrl, url, res, cb) {
 
-            if(support.length === 0)
+            if (support.length === 0)
                 return cb("can not support audio!");
 
             var audio = cc.loader.getRes(url);
@@ -379,14 +393,14 @@ cc.Audio.WebAudio.prototype = {
 
             var i;
 
-            if(cc.loader.audioPath)
+            if (cc.loader.audioPath)
                 realUrl = cc.path.join(cc.loader.audioPath, realUrl);
 
             var extname = cc.path.extname(realUrl);
 
             var typeList = [extname];
-            for(i=0; i<support.length; i++){
-                if(extname !== support[i]){
+            for (var i = 0; i < support.length; i++) {
+                if (extname !== support[i]) {
                     typeList.push(support[i]);
                 }
             }
@@ -397,15 +411,15 @@ cc.Audio.WebAudio.prototype = {
             return audio;
         },
 
-        loadAudioFromExtList: function(realUrl, typeList, audio, cb){
-            if(typeList.length === 0){
+        loadAudioFromExtList: function (realUrl, typeList, audio, cb) {
+            if (typeList.length === 0) {
                 var ERRSTR = "can not found the resource of audio! Last match url is : ";
                 ERRSTR += realUrl.replace(/\.(.*)?$/, "(");
-                support.forEach(function(ext){
+                support.forEach(function (ext) {
                     ERRSTR += ext + "|";
                 });
                 ERRSTR = ERRSTR.replace(/\|$/, ")");
-                return cb({status:520, errorMessage:ERRSTR}, null);
+                return cb({status: 520, errorMessage: ERRSTR}, null);
             }
 
             if (SWA && this.useWebAudio) {
@@ -425,7 +439,7 @@ cc.Audio.WebAudio.prototype = {
 
             // 加载统一使用dom
             var dom = document.createElement('audio');
-            for (var i=0; i<num; i++) {
+            for (var i = 0; i < num; i++) {
                 var source = document.createElement('source');
                 source.src = cc.path.changeExtname(realUrl, typeList[i]);
                 dom.appendChild(source);
@@ -433,7 +447,7 @@ cc.Audio.WebAudio.prototype = {
 
             audio.setElement(dom);
 
-            var timer = setTimeout(function(){
+            var timer = setTimeout(function () {
                 if (dom.readyState === 0) {
                     failure();
                 } else {
@@ -456,7 +470,7 @@ cc.Audio.WebAudio.prototype = {
             };
             dom.addEventListener("canplaythrough", success, false);
             dom.addEventListener("error", failure, false);
-            if(polyfill.USE_LOADER_EVENT)
+            if (polyfill.USE_LOADER_EVENT)
                 dom.addEventListener(polyfill.USE_LOADER_EVENT, success, false);
         }
     };
@@ -476,7 +490,9 @@ cc.Audio.WebAudio.prototype = {
          * Indicates whether any background music can be played or not.
          * @returns {boolean} <i>true</i> if the background music is playing, otherwise <i>false</i>
          */
-        willPlayMusic: function(){return false;},
+        willPlayMusic: function () {
+            return false;
+        },
 
         /**
          * Play music.
@@ -549,9 +565,9 @@ cc.Audio.WebAudio.prototype = {
          * //example
          * cc.audioEngine.rewindMusic();
          */
-        rewindMusic: function(){
+        rewindMusic: function () {
             var audio = this._currMusic;
-            if (audio){
+            if (audio) {
                 audio.stop();
                 audio.play();
             }
@@ -564,7 +580,7 @@ cc.Audio.WebAudio.prototype = {
          * //example
          * var volume = cc.audioEngine.getMusicVolume();
          */
-        getMusicVolume: function(){
+        getMusicVolume: function () {
             return this._musicVolume;
         },
 
@@ -575,7 +591,7 @@ cc.Audio.WebAudio.prototype = {
          * //example
          * cc.audioEngine.setMusicVolume(0.5);
          */
-        setMusicVolume: function(volume){
+        setMusicVolume: function (volume) {
             volume = volume - 0;
             if (isNaN(volume)) volume = 1;
             if (volume > 1) volume = 1;
@@ -600,7 +616,7 @@ cc.Audio.WebAudio.prototype = {
          *      cc.log("music is not playing");
          *  }
          */
-        isMusicPlaying: function(){
+        isMusicPlaying: function () {
             var audio = this._currMusic;
             if (audio) {
                 return audio.getPlaying();
@@ -621,7 +637,7 @@ cc.Audio.WebAudio.prototype = {
          * //example
          * var soundId = cc.audioEngine.playEffect(path);
          */
-        playEffect: function(url, loop){
+        playEffect: function (url, loop) {
 
             if (SWB && this._currMusic && this._currMusic.getPlaying()) {
                 cc.log('Browser is only allowed to play one audio');
@@ -703,18 +719,18 @@ cc.Audio.WebAudio.prototype = {
          * //example
          * cc.audioEngine.setEffectsVolume(0.5);
          */
-        setEffectsVolume: function(volume){
+        setEffectsVolume: function (volume) {
             volume = volume - 0;
-            if(isNaN(volume)) volume = 1;
-            if(volume > 1) volume = 1;
-            if(volume < 0) volume = 0;
+            if (isNaN(volume)) volume = 1;
+            if (volume > 1) volume = 1;
+            if (volume < 0) volume = 0;
 
             this._effectVolume = volume;
             var audioPool = this._audioPool;
-            for(var p in audioPool){
+            for (var p in audioPool) {
                 var audioList = audioPool[p];
-                if(Array.isArray(audioList))
-                    for(var i=0; i<audioList.length; i++){
+                if (Array.isArray(audioList))
+                    for (var i = 0; i < audioList.length; i++) {
                         audioList[i].setVolume(volume);
                     }
             }
@@ -727,7 +743,7 @@ cc.Audio.WebAudio.prototype = {
          * //example
          * var effectVolume = cc.audioEngine.getEffectsVolume();
          */
-        getEffectsVolume: function(){
+        getEffectsVolume: function () {
             return this._effectVolume;
         },
 
@@ -738,8 +754,8 @@ cc.Audio.WebAudio.prototype = {
          * //example
          * cc.audioEngine.pauseEffect(audioID);
          */
-        pauseEffect: function(audio){
-            if(audio){
+        pauseEffect: function (audio) {
+            if (audio) {
                 audio.pause();
             }
         },
@@ -750,12 +766,12 @@ cc.Audio.WebAudio.prototype = {
          * //example
          * cc.audioEngine.pauseAllEffects();
          */
-        pauseAllEffects: function(){
+        pauseAllEffects: function () {
             var ap = this._audioPool;
-            for(var p in ap){
+            for (var p in ap) {
                 var list = ap[p];
-                for(var i=0; i<ap[p].length; i++){
-                    if(list[i].getPlaying()){
+                for (var i = 0; i < ap[p].length; i++) {
+                    if (list[i].getPlaying()) {
                         list[i].pause();
                     }
                 }
@@ -769,8 +785,8 @@ cc.Audio.WebAudio.prototype = {
          * //example
          * cc.audioEngine.resumeEffect(audioID);
          */
-        resumeEffect: function(audio){
-            if(audio)
+        resumeEffect: function (audio) {
+            if (audio)
                 audio.resume();
         },
 
@@ -780,11 +796,11 @@ cc.Audio.WebAudio.prototype = {
          * //example
          * cc.audioEngine.resumeAllEffects();
          */
-        resumeAllEffects: function(){
+        resumeAllEffects: function () {
             var ap = this._audioPool;
-            for(var p in ap){
+            for (var p in ap) {
                 var list = ap[p];
-                for(var i=0; i<ap[p].length; i++){
+                for (var i = 0; i < ap[p].length; i++) {
                     list[i].resume();
                 }
             }
@@ -797,8 +813,8 @@ cc.Audio.WebAudio.prototype = {
          * //example
          * cc.audioEngine.stopEffect(audioID);
          */
-        stopEffect: function(audio){
-            if(audio) {
+        stopEffect: function (audio) {
+            if (audio) {
                 audio.stop();
             }
         },
@@ -809,11 +825,11 @@ cc.Audio.WebAudio.prototype = {
          * //example
          * cc.audioEngine.stopAllEffects();
          */
-        stopAllEffects: function(){
+        stopAllEffects: function () {
             var ap = this._audioPool;
-            for(var p in ap){
+            for (var p in ap) {
                 var list = ap[p];
-                for(var i=0; i<list.length; i++){
+                for (var i = 0; i < list.length; i++) {
                     list[i].stop();
                 }
                 list.length = 0;
@@ -827,8 +843,8 @@ cc.Audio.WebAudio.prototype = {
          * //example
          * cc.audioEngine.unloadEffect(EFFECT_FILE);
          */
-        unloadEffect: function(url){
-            if(!url){
+        unloadEffect: function (url) {
+            if (!url) {
                 return;
             }
 
@@ -841,23 +857,23 @@ cc.Audio.WebAudio.prototype = {
         /**
          * End music and effects.
          */
-        end: function(){
+        end: function () {
             this.stopMusic();
             this.stopAllEffects();
         },
 
         _pauseCache: [],
-        _pausePlaying: function(){
+        _pausePlaying: function () {
             var bgMusic = this._currMusic;
-            if(bgMusic && bgMusic.getPlaying()){
+            if (bgMusic && bgMusic.getPlaying()) {
                 bgMusic.pause();
                 this._pauseCache.push(bgMusic);
             }
             var ap = this._audioPool;
-            for(var p in ap){
+            for (var p in ap) {
                 var list = ap[p];
-                for(var i=0; i<ap[p].length; i++){
-                    if(list[i].getPlaying()){
+                for (var i = 0; i < ap[p].length; i++) {
+                    if (list[i].getPlaying()) {
                         list[i].pause();
                         this._pauseCache.push(list[i]);
                     }
@@ -865,9 +881,9 @@ cc.Audio.WebAudio.prototype = {
             }
         },
 
-        _resumePlaying: function(){
+        _resumePlaying: function () {
             var list = this._pauseCache;
-            for(var i=0; i<list.length; i++){
+            for (var i = 0; i < list.length; i++) {
                 list[i].resume();
             }
             list.length = 0;

@@ -45,7 +45,7 @@ ccui.getLayoutManager = function (type) {
  * @name ccui.linearVerticalLayoutManager
  */
 ccui.linearVerticalLayoutManager = /** @lends ccui.linearVerticalLayoutManager# */{
-    _doLayout: function(layout){
+    _doLayout: function (layout) {
         var layoutSize = layout._getLayoutContentSize();
         var container = layout._getLayoutElements();
         var topBoundary = layoutSize.height;
@@ -55,13 +55,13 @@ ccui.linearVerticalLayoutManager = /** @lends ccui.linearVerticalLayoutManager# 
             if (child) {
                 var layoutParameter = child.getLayoutParameter();
 
-                if (layoutParameter){
+                if (layoutParameter) {
                     var childGravity = layoutParameter.getGravity();
                     var ap = child.getAnchorPoint();
                     var cs = child.getContentSize();
                     var finalPosX = ap.x * cs.width;
                     var finalPosY = topBoundary - ((1.0 - ap.y) * cs.height);
-                    switch (childGravity){
+                    switch (childGravity) {
                         case ccui.LinearLayoutParameter.NONE:
                         case ccui.LinearLayoutParameter.LEFT:
                             break;
@@ -91,21 +91,21 @@ ccui.linearVerticalLayoutManager = /** @lends ccui.linearVerticalLayoutManager# 
  * @name ccui.linearHorizontalLayoutManager
  */
 ccui.linearHorizontalLayoutManager = /** @lends ccui.linearHorizontalLayoutManager# */{
-    _doLayout: function(layout){
+    _doLayout: function (layout) {
         var layoutSize = layout._getLayoutContentSize();
         var container = layout._getLayoutElements();
         var leftBoundary = 0.0;
-        for (var i = 0, len = container.length;  i < len; i++) {
+        for (var i = 0, len = container.length; i < len; i++) {
             var child = container[i];
             if (child) {
                 var layoutParameter = child.getLayoutParameter();
-                if (layoutParameter){
+                if (layoutParameter) {
                     var childGravity = layoutParameter.getGravity();
                     var ap = child.getAnchorPoint();
                     var cs = child.getContentSize();
                     var finalPosX = leftBoundary + (ap.x * cs.width);
                     var finalPosY = layoutSize.height - (1.0 - ap.y) * cs.height;
-                    switch (childGravity){
+                    switch (childGravity) {
                         case ccui.LinearLayoutParameter.NONE:
                         case ccui.LinearLayoutParameter.TOP:
                             break;
@@ -138,16 +138,16 @@ ccui.relativeLayoutManager = /** @lends ccui.relativeLayoutManager# */{
     _unlayoutChildCount: 0,
     _widgetChildren: [],
     _widget: null,
-    _finalPositionX:0,
-    _finalPositionY:0,
-    _relativeWidgetLP:null,
+    _finalPositionX: 0,
+    _finalPositionY: 0,
+    _relativeWidgetLP: null,
 
-    _doLayout: function(layout){
+    _doLayout: function (layout) {
         this._widgetChildren = this._getAllWidgets(layout);
 
         var locChildren = this._widgetChildren;
         while (this._unlayoutChildCount > 0) {
-            for (var i = 0, len = locChildren.length;  i < len; i++) {
+            for (var i = 0, len = locChildren.length; i < len; i++) {
                 this._widget = locChildren[i];
 
                 var layoutParameter = this._widget.getLayoutParameter();
@@ -170,11 +170,11 @@ ccui.relativeLayoutManager = /** @lends ccui.relativeLayoutManager# */{
         this._widgetChildren.length = 0;
     },
 
-    _getAllWidgets: function(layout){
+    _getAllWidgets: function (layout) {
         var container = layout._getLayoutElements();
         var locWidgetChildren = this._widgetChildren;
         locWidgetChildren.length = 0;
-        for (var i = 0, len = container.length; i < len; i++){
+        for (var i = 0, len = container.length; i < len; i++) {
             var child = container[i];
             if (child && child instanceof ccui.Widget) {
                 var layoutParameter = child.getLayoutParameter();
@@ -186,14 +186,14 @@ ccui.relativeLayoutManager = /** @lends ccui.relativeLayoutManager# */{
         return locWidgetChildren;
     },
 
-    _getRelativeWidget: function(widget){
+    _getRelativeWidget: function (widget) {
         var relativeWidget = null;
         var layoutParameter = widget.getLayoutParameter();
         var relativeName = layoutParameter.getRelativeToWidgetName();
 
         if (relativeName && relativeName.length !== 0) {
-            var locChildren =  this._widgetChildren;
-            for(var i = 0, len = locChildren.length;  i  < len; i++){
+            var locChildren = this._widgetChildren;
+            for (var i = 0, len = locChildren.length; i < len; i++) {
                 var child = locChildren[i];
                 if (child){
                     var rlayoutParameter = child.getLayoutParameter();
@@ -208,7 +208,7 @@ ccui.relativeLayoutManager = /** @lends ccui.relativeLayoutManager# */{
         return relativeWidget;
     },
 
-    _calculateFinalPositionWithRelativeWidget: function(layout){
+    _calculateFinalPositionWithRelativeWidget: function (layout) {
         var locWidget = this._widget;
         var ap = locWidget.getAnchorPoint();
         var cs = locWidget.getContentSize();
@@ -261,7 +261,7 @@ ccui.relativeLayoutManager = /** @lends ccui.relativeLayoutManager# */{
                 break;
 
             case ccui.RelativeLayoutParameter.LOCATION_ABOVE_LEFTALIGN:
-                if (relativeWidget){
+                if (relativeWidget) {
                     if (this._relativeWidgetLP && !this._relativeWidgetLP._put)
                         return false;
                     this._finalPositionY = relativeWidget.getTopBoundary() + ap.y * cs.height;
@@ -269,7 +269,7 @@ ccui.relativeLayoutManager = /** @lends ccui.relativeLayoutManager# */{
                 }
                 break;
             case ccui.RelativeLayoutParameter.LOCATION_ABOVE_CENTER:
-                if (relativeWidget){
+                if (relativeWidget) {
                     if (this._relativeWidgetLP && !this._relativeWidgetLP._put)
                         return false;
                     var rbs = relativeWidget.getContentSize();
@@ -286,7 +286,7 @@ ccui.relativeLayoutManager = /** @lends ccui.relativeLayoutManager# */{
                 }
                 break;
             case ccui.RelativeLayoutParameter.LOCATION_LEFT_OF_TOPALIGN:
-                if (relativeWidget){
+                if (relativeWidget) {
                     if (this._relativeWidgetLP && !this._relativeWidgetLP._put)
                         return false;
                     this._finalPositionY = relativeWidget.getTopBoundary() - (1.0 - ap.y) * cs.height;
@@ -311,7 +311,7 @@ ccui.relativeLayoutManager = /** @lends ccui.relativeLayoutManager# */{
                 }
                 break;
             case ccui.RelativeLayoutParameter.LOCATION_RIGHT_OF_TOPALIGN:
-                if (relativeWidget){
+                if (relativeWidget) {
                     if (this._relativeWidgetLP && !this._relativeWidgetLP._put)
                         return false;
                     this._finalPositionY = relativeWidget.getTopBoundary() - (1.0 - ap.y) * cs.height;
@@ -319,7 +319,7 @@ ccui.relativeLayoutManager = /** @lends ccui.relativeLayoutManager# */{
                 }
                 break;
             case ccui.RelativeLayoutParameter.LOCATION_RIGHT_OF_CENTER:
-                if (relativeWidget){
+                if (relativeWidget) {
                     if (this._relativeWidgetLP && !this._relativeWidgetLP._put)
                         return false;
                     var rbs = relativeWidget.getContentSize();
@@ -329,7 +329,7 @@ ccui.relativeLayoutManager = /** @lends ccui.relativeLayoutManager# */{
                 }
                 break;
             case ccui.RelativeLayoutParameter.LOCATION_RIGHT_OF_BOTTOMALIGN:
-                if (relativeWidget){
+                if (relativeWidget) {
                     if (this._relativeWidgetLP && !this._relativeWidgetLP._put)
                         return false;
                     this._finalPositionY = relativeWidget.getBottomBoundary() + ap.y * cs.height;
@@ -337,10 +337,10 @@ ccui.relativeLayoutManager = /** @lends ccui.relativeLayoutManager# */{
                 }
                 break;
             case ccui.RelativeLayoutParameter.LOCATION_BELOW_LEFTALIGN:
-                if (relativeWidget){
+                if (relativeWidget) {
                     if (this._relativeWidgetLP && !this._relativeWidgetLP._put)
                         return false;
-                    this._finalPositionY =  relativeWidget.getBottomBoundary() - (1.0 - ap.y) * cs.height;
+                    this._finalPositionY = relativeWidget.getBottomBoundary() - (1.0 - ap.y) * cs.height;
                     this._finalPositionX = relativeWidget.getLeftBoundary() + ap.x * cs.width;
                 }
                 break;
@@ -367,7 +367,7 @@ ccui.relativeLayoutManager = /** @lends ccui.relativeLayoutManager# */{
         return true;
     },
 
-    _calculateFinalPositionWithRelativeAlign: function(){
+    _calculateFinalPositionWithRelativeAlign: function () {
         var layoutParameter = this._widget.getLayoutParameter();
 
         var mg = layoutParameter.getMargin();

@@ -22,14 +22,14 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-(function(){
+(function () {
 
     ccs.Armature.WebGLRenderCmd = function(renderableObject){
         cc.Node.WebGLRenderCmd.call(this, renderableObject);
         this._needDraw = true;
 
         this._parentCmd = null;
-        this._realAnchorPointInPoints = new cc.Point(0,0);
+        this._realAnchorPointInPoints = new cc.Point(0, 0);
     };
 
     var proto = ccs.Armature.WebGLRenderCmd.prototype = Object.create(cc.Node.WebGLRenderCmd.prototype);
@@ -62,8 +62,8 @@
                                 selNode.setBlendFunc(selBone.getBlendFunc());
                             else {
                                 var tex = selNode.getTexture();
-                                if (node._blendFunc.src === alphaPremultiplied.src && 
-                                    node._blendFunc.dst === alphaPremultiplied.dst && 
+                                if (node._blendFunc.src === alphaPremultiplied.src &&
+                                    node._blendFunc.dst === alphaPremultiplied.dst &&
                                     tex && !tex.hasPremultipliedAlpha()) {
                                     selNode.setBlendFunc(alphaNonPremultipled);
                                 }
@@ -79,7 +79,7 @@
                         selNode.setShaderProgram(this._shaderProgram);
                         this._updateColorAndOpacity(cmd, selBone);
                         cmd._parentCmd = this;
-                        // Continue rendering in default
+                    // Continue rendering in default
                     default:
                         boneCmd._syncStatus(parentCmd);
                         cmd._syncStatus(boneCmd);
@@ -110,30 +110,30 @@
         return 0;
     };
 
-    proto.initShaderCache = function(){
+    proto.initShaderCache = function () {
         this._shaderProgram = cc.shaderCache.programForKey(cc.SHADER_SPRITE_POSITION_TEXTURECOLOR);
     };
 
-    proto.setShaderProgram = function(shaderProgram){
+    proto.setShaderProgram = function (shaderProgram) {
         this._shaderProgram = shaderProgram;
     };
 
-    proto._updateColorAndOpacity = function(skinRenderCmd, bone){
+    proto._updateColorAndOpacity = function (skinRenderCmd, bone) {
         //update displayNode's color and opacity
         var parentColor = bone._renderCmd._displayedColor, parentOpacity = bone._renderCmd._displayedOpacity;
 
         var flags = cc.Node._dirtyFlags, locFlag = skinRenderCmd._dirtyFlag;
         var colorDirty = locFlag & flags.colorDirty,
             opacityDirty = locFlag & flags.opacityDirty;
-        if(colorDirty)
+        if (colorDirty)
             skinRenderCmd._updateDisplayColor(parentColor);
-        if(opacityDirty)
+        if (opacityDirty)
             skinRenderCmd._updateDisplayOpacity(parentOpacity);
-        if(colorDirty || opacityDirty)
+        if (colorDirty || opacityDirty)
             skinRenderCmd._updateColor();
     };
 
-    proto.visit = function(parentCmd){
+    proto.visit = function (parentCmd) {
         var node = this._node;
         // quick return if not visible. children won't be drawn.
         if (!node._visible)

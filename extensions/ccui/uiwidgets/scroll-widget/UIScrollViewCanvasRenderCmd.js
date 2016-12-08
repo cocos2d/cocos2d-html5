@@ -1,5 +1,5 @@
-(function(){
-    if(!ccui.ProtectedNode.CanvasRenderCmd)
+(function () {
+    if (!ccui.ProtectedNode.CanvasRenderCmd)
         return;
     ccui.ScrollView.CanvasRenderCmd = function(renderable){
         ccui.Layout.CanvasRenderCmd.call(this, renderable);
@@ -27,7 +27,7 @@
 
     proto.rendering = function (ctx) {
         var currentID = this._node.__instanceId;
-        var locCmds = cc.renderer._cacheToCanvasCmds[currentID], i, len,
+        var i, locCmds = cc.renderer._cacheToCanvasCmds[currentID], len,
             scaleX = cc.view.getScaleX(),
             scaleY = cc.view.getScaleY();
         var context = ctx || cc._renderContext;
@@ -37,9 +37,9 @@
 
         for (i = 0, len = locCmds.length; i < len; i++) {
             var checkNode = locCmds[i]._node;
-            if(checkNode instanceof ccui.ScrollView)
+            if (checkNode instanceof ccui.ScrollView)
                 continue;
-            if(checkNode && checkNode._parent && checkNode._parent._inViewRect === false)
+            if (checkNode && checkNode._parent && checkNode._parent._inViewRect === false)
                 continue;
             locCmds[i].rendering(context, scaleX, scaleY);
         }

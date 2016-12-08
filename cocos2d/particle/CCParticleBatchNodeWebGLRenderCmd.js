@@ -22,7 +22,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-(function(){
+(function () {
     /**
      * cc.ParticleBatchNode's rendering objects of WebGL
      */
@@ -55,7 +55,7 @@
         _t.textureAtlas.drawQuads();
     };
 
-    proto._initWithTexture = function(){
+    proto._initWithTexture = function () {
         this._shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
     };
 

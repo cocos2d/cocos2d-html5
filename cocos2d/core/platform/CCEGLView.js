@@ -36,17 +36,17 @@ cc.DENSITYDPI_MEDIUM = "medium-dpi";
 cc.DENSITYDPI_LOW = "low-dpi";
 
 var __BrowserGetter = {
-    init: function(){
+    init: function () {
         this.html = document.getElementsByTagName("html")[0];
     },
-    availWidth: function(frame){
-        if(!frame || frame === this.html)
+    availWidth: function (frame) {
+        if (!frame || frame === this.html)
             return window.innerWidth;
         else
             return frame.clientWidth;
     },
-    availHeight: function(frame){
-        if(!frame || frame === this.html)
+    availHeight: function (frame) {
+        if (!frame || frame === this.html)
             return window.innerHeight;
         else
             return frame.clientHeight;
@@ -57,39 +57,39 @@ var __BrowserGetter = {
     adaptationType: cc.sys.browserType
 };
 
-if(window.navigator.userAgent.indexOf("OS 8_1_") > -1) //this mistake like MIUI, so use of MIUI treatment method
+if (window.navigator.userAgent.indexOf("OS 8_1_") > -1) //this mistake like MIUI, so use of MIUI treatment method
     __BrowserGetter.adaptationType = cc.sys.BROWSER_TYPE_MIUI;
 
-if(cc.sys.os === cc.sys.OS_IOS) // All browsers are WebView
+if (cc.sys.os === cc.sys.OS_IOS) // All browsers are WebView
     __BrowserGetter.adaptationType = cc.sys.BROWSER_TYPE_SAFARI;
 
-switch(__BrowserGetter.adaptationType){
+switch (__BrowserGetter.adaptationType) {
     case cc.sys.BROWSER_TYPE_SAFARI:
         __BrowserGetter.meta["minimal-ui"] = "true";
-        __BrowserGetter.availWidth = function(frame){
+        __BrowserGetter.availWidth = function (frame) {
             return frame.clientWidth;
         };
-        __BrowserGetter.availHeight = function(frame){
+        __BrowserGetter.availHeight = function (frame) {
             return frame.clientHeight;
         };
         break;
     case cc.sys.BROWSER_TYPE_CHROME:
-        __BrowserGetter.__defineGetter__("target-densitydpi", function(){
+        __BrowserGetter.__defineGetter__("target-densitydpi", function () {
             return cc.view._targetDensityDPI;
         });
     case cc.sys.BROWSER_TYPE_SOUGOU:
     case cc.sys.BROWSER_TYPE_UC:
-        __BrowserGetter.availWidth = function(frame){
+        __BrowserGetter.availWidth = function (frame) {
             return frame.clientWidth;
         };
-        __BrowserGetter.availHeight = function(frame){
+        __BrowserGetter.availHeight = function (frame) {
             return frame.clientHeight;
         };
         break;
     case cc.sys.BROWSER_TYPE_MIUI:
-        __BrowserGetter.init = function(view){
-            if(view.__resizeWithBrowserSize) return;
-            var resize = function(){
+        __BrowserGetter.init = function (view) {
+            if (view.__resizeWithBrowserSize) return;
+            var resize = function () {
                 view.setDesignResolutionSize(
                     view._designResolutionSize.width,
                     view._designResolutionSize.height,
@@ -244,7 +244,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
      * </p>
      * @param {String} densityDPI
      */
-    setTargetDensityDPI: function(densityDPI){
+    setTargetDensityDPI: function (densityDPI) {
         this._targetDensityDPI = densityDPI;
         this._adjustViewportMeta();
     },
@@ -253,7 +253,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
      * Returns the current target-densitydpi value of cc.view.
      * @returns {String}
      */
-    getTargetDensityDPI: function(){
+    getTargetDensityDPI: function () {
         return this._targetDensityDPI;
     },
 
@@ -295,9 +295,9 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
 
     /**
      * Sets the orientation of the game, it can be landscape, portrait or auto.
-     * When set it to landscape or portrait, and screen w/h ratio doesn't fit, 
+     * When set it to landscape or portrait, and screen w/h ratio doesn't fit,
      * cc.view will automatically rotate the game canvas using CSS.
-     * Note that this function doesn't have any effect in native, 
+     * Note that this function doesn't have any effect in native,
      * in native, you need to set the application orientation in native project settings
      * @param {Number} orientation - Possible values: cc.ORIENTATION_LANDSCAPE | cc.ORIENTATION_PORTRAIT | cc.ORIENTATION_AUTO
      */
@@ -330,7 +330,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         var isLandscape = w >= h;
 
         if (!this._orientationChanging || !cc.sys.isMobile ||
-            (isLandscape && this._orientation & cc.ORIENTATION_LANDSCAPE) || 
+            (isLandscape && this._orientation & cc.ORIENTATION_LANDSCAPE) ||
             (!isLandscape && this._orientation & cc.ORIENTATION_PORTRAIT)) {
             locFrameSize.width = w;
             locFrameSize.height = h;
@@ -362,7 +362,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
 
     _setViewportMeta: function (metas, overwrite) {
         var vp = document.getElementById("cocosMetaElement");
-        if(vp && overwrite){
+        if (vp && overwrite) {
             document.head.removeChild(vp);
         }
 
@@ -381,11 +381,11 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
                 content += "," + key + "=" + metas[key];
             }
             else if (overwrite) {
-                pattern = new RegExp(key+"\s*=\s*[^,]+");
+                pattern = new RegExp(key + "\s*=\s*[^,]+");
                 content.replace(pattern, key + "=" + metas[key]);
             }
         }
-        if(/^,/.test(content))
+        if (/^,/.test(content))
             content = content.substr(1);
 
         vp.content = content;
@@ -443,7 +443,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
      * Only useful on web
      * @param {Boolean} enabled  Enable or disable retina display
      */
-    enableRetina: function(enabled) {
+    enableRetina: function (enabled) {
         this._retinaEnabled = !!enabled;
     },
 
@@ -452,7 +452,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
      * Only useful on web
      * @return {Boolean}
      */
-    isRetinaEnabled: function() {
+    isRetinaEnabled: function () {
         return this._retinaEnabled;
     },
 
@@ -462,7 +462,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
      * Only useful on web
      * @param {Boolean} enabled  Enable or disable auto full screen on mobile devices
      */
-    enableAutoFullScreen: function(enabled) {
+    enableAutoFullScreen: function (enabled) {
         if (enabled && enabled !== this._autoFullScreen && cc.sys.isMobile && this._frame === document.documentElement) {
             // Automatically full screen when user touches on mobile version
             this._autoFullScreen = true;
@@ -478,7 +478,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
      * Only useful on web
      * @return {Boolean} Auto full screen enabled or not
      */
-    isAutoFullScreenEnabled: function() {
+    isAutoFullScreenEnabled: function () {
         return this._autoFullScreen;
     },
 
@@ -584,7 +584,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
      * @return {cc.Size}
      */
     getVisibleSize: function () {
-        return cc.size(this._visibleRect.width,this._visibleRect.height);
+        return cc.size(this._visibleRect.width, this._visibleRect.height);
     },
 
     /**
@@ -601,7 +601,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
      * @return {cc.Point}
      */
     getVisibleOrigin: function () {
-        return cc.p(this._visibleRect.x,this._visibleRect.y);
+        return cc.p(this._visibleRect.x, this._visibleRect.y);
     },
 
     /**
@@ -643,15 +643,15 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         // Ensure compatibility with JSB
         else {
             var _locPolicy = cc.ResolutionPolicy;
-            if(resolutionPolicy === _locPolicy.EXACT_FIT)
+            if (resolutionPolicy === _locPolicy.EXACT_FIT)
                 _t._resolutionPolicy = _t._rpExactFit;
-            if(resolutionPolicy === _locPolicy.SHOW_ALL)
+            if (resolutionPolicy === _locPolicy.SHOW_ALL)
                 _t._resolutionPolicy = _t._rpShowAll;
-            if(resolutionPolicy === _locPolicy.NO_BORDER)
+            if (resolutionPolicy === _locPolicy.NO_BORDER)
                 _t._resolutionPolicy = _t._rpNoBorder;
-            if(resolutionPolicy === _locPolicy.FIXED_HEIGHT)
+            if (resolutionPolicy === _locPolicy.FIXED_HEIGHT)
                 _t._resolutionPolicy = _t._rpFixedHeight;
-            if(resolutionPolicy === _locPolicy.FIXED_WIDTH)
+            if (resolutionPolicy === _locPolicy.FIXED_WIDTH)
                 _t._resolutionPolicy = _t._rpFixedWidth;
         }
     },
@@ -671,7 +671,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
      */
     setDesignResolutionSize: function (width, height, resolutionPolicy) {
         // Defensive code
-        if( !(width > 0 || height > 0) ){
+        if (!(width > 0 || height > 0)) {
             cc.log(cc._LogInfos.EGLView_setDesignResolutionSize);
             return;
         }
@@ -685,7 +685,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         policy.preApply(this);
 
         // Reinit frame size
-        if(cc.sys.isMobile)
+        if (cc.sys.isMobile)
             this._adjustViewportMeta();
 
         // Permit to re-detect the orientation of device.
@@ -697,12 +697,12 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
 
         var result = policy.apply(this, this._designResolutionSize);
 
-        if(result.scale && result.scale.length === 2){
+        if (result.scale && result.scale.length === 2) {
             this._scaleX = result.scale[0];
             this._scaleY = result.scale[1];
         }
 
-        if(result.viewport){
+        if (result.viewport) {
             var vp = this._viewPortRect,
                 vb = this._visibleRect,
                 rv = result.viewport;
@@ -871,7 +871,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
      * Returns device pixel ratio for retina display.
      * @return {Number}
      */
-    getDevicePixelRatio: function() {
+    getDevicePixelRatio: function () {
         return this._devicePixelRatio;
     },
 
@@ -903,7 +903,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     _convertTouchesWithScale: function (touches) {
         var viewport = this._viewPortRect, scaleX = this._scaleX, scaleY = this._scaleY,
             selTouch, selPoint, selPrePoint;
-        for( var i = 0; i < touches.length; i++){
+        for (var i = 0; i < touches.length; i++) {
             selTouch = touches[i];
             selPoint = selTouch._point;
             selPrePoint = selTouch._prevPoint;
@@ -1021,7 +1021,7 @@ cc.ContentStrategy = cc.Class.extend(/** @lends cc.ContentStrategy# */{
                                contentW, contentH);
 
         // Translate the content
-        if (cc._renderType === cc.game.RENDER_TYPE_CANVAS){
+        if (cc._renderType === cc.game.RENDER_TYPE_CANVAS) {
             //TODO: modify something for setTransform
             //cc._renderContext.translate(viewport.x, viewport.y + contentH);
         }

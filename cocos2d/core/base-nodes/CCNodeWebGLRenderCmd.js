@@ -31,7 +31,8 @@
     var proto = cc.Node.WebGLRenderCmd.prototype = Object.create(cc.Node.RenderCmd.prototype);
     proto.constructor = cc.Node.WebGLRenderCmd;
 
-    proto._updateColor = function(){};
+    proto._updateColor = function () {
+    };
 
     proto.setShaderProgram = function (shaderProgram) {
         this._shaderProgram = shaderProgram;

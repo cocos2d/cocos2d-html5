@@ -1,6 +1,5 @@
-
-(function(){
-    if(!ccui.ProtectedNode.WebGLRenderCmd)
+(function () {
+    if (!ccui.ProtectedNode.WebGLRenderCmd)
         return;
     ccui.ScrollView.WebGLRenderCmd = function(renderable){
         ccui.Layout.WebGLRenderCmd.call(this, renderable);
@@ -28,7 +27,7 @@
         cc.renderer._turnToNormalMode();
     };
 
-    proto.rendering = function(ctx){
+    proto.rendering = function (ctx) {
         var currentID = this._node.__instanceId,
             locCmds = cc.renderer._cacheToBufferCmds[currentID],
             i, len, checkNode, cmd,
@@ -45,9 +44,9 @@
         for (i = 0, len = locCmds.length; i < len; i++) {
             cmd = locCmds[i];
             checkNode = cmd._node;
-            if(checkNode instanceof ccui.ScrollView)
+            if (checkNode instanceof ccui.ScrollView)
                 continue;
-            if(checkNode && checkNode._parent && checkNode._parent._inViewRect === false)
+            if (checkNode && checkNode._parent && checkNode._parent._inViewRect === false)
                 continue;
 
             if (cmd.uploadData) {

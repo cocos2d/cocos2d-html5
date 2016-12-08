@@ -1772,7 +1772,7 @@ var _initSys = function () {
      * Indicate the running browser version
      * @memberof cc.sys
      * @name browserVersion
-     * @type {Number}
+     * @type {String}
      */
     sys.browserVersion = "";
     /* Determine the browser version number */
@@ -1792,7 +1792,7 @@ var _initSys = function () {
      * Indicate the real pixel resolution of the whole game window
      * @memberof cc.sys
      * @name windowPixelResolution
-     * @type {Number}
+     * @type {Size}
      */
     sys.windowPixelResolution = {
         width: ratio * w,
@@ -1811,7 +1811,7 @@ var _initSys = function () {
         canvas.height = 1;
         var context = canvas.getContext('2d');
         context.fillStyle = '#000';
-        context.fillRect(0,0,1,1);
+        context.fillRect(0, 0, 1, 1);
         context.globalCompositeOperation = 'multiply';
 
         var canvas2 = _tmpCanvas2;
@@ -1819,10 +1819,10 @@ var _initSys = function () {
         canvas2.height = 1;
         var context2 = canvas2.getContext('2d');
         context2.fillStyle = '#fff';
-        context2.fillRect(0,0,1,1);
+        context2.fillRect(0, 0, 1, 1);
         context.drawImage(canvas2, 0, 0, 1, 1);
 
-        return context.getImageData(0,0,1,1).data[0] === 0;
+        return context.getImageData(0, 0, 1, 1).data[0] === 0;
     })();
 
     // Adjust mobile css settings

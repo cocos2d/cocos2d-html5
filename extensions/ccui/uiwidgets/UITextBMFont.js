@@ -77,18 +77,18 @@ ccui.LabelBMFont = ccui.TextBMFont = ccui.Widget.extend(/** @lends ccui.TextBMFo
 
         var _self = this;
         var locRenderer = _self._labelBMFontRenderer;
-        if(!locRenderer._textureLoaded){
-             locRenderer.addEventListener("load", function(){
-                 _self.setFntFile(_self._fntFileName);
-                 var parent = _self.parent;
-                 while (parent) {
-                     if (parent.requestDoLayout) {
-                         parent.requestDoLayout();
-                         break;
-                     }
-                     parent = parent.parent;
-                 }
-             });
+        if (!locRenderer._textureLoaded) {
+            locRenderer.addEventListener("load", function () {
+                _self.setFntFile(_self._fntFileName);
+                var parent = _self.parent;
+                while (parent) {
+                    if (parent.requestDoLayout) {
+                        parent.requestDoLayout();
+                        break;
+                    }
+                    parent = parent.parent;
+                }
+            });
         }
     },
 
@@ -107,7 +107,7 @@ ccui.LabelBMFont = ccui.TextBMFont = ccui.Widget.extend(/** @lends ccui.TextBMFo
      * @param {String} value
      */
     setString: function (value) {
-        if(value === this._labelBMFontRenderer.getString())
+        if (value === this._labelBMFontRenderer.getString())
             return;
         this._stringValue = value;
         this._labelBMFontRenderer.setString(value);
@@ -129,7 +129,7 @@ ccui.LabelBMFont = ccui.TextBMFont = ccui.Widget.extend(/** @lends ccui.TextBMFo
      * Returns the length of TextBMFont's string.
      * @returns {Number}
      */
-    getStringLength: function(){
+    getStringLength: function () {
         return this._labelBMFontRenderer.getStringLength();
     },
 
@@ -138,8 +138,8 @@ ccui.LabelBMFont = ccui.TextBMFont = ccui.Widget.extend(/** @lends ccui.TextBMFo
         this._labelBMFontRendererAdaptDirty = true;
     },
 
-    _adaptRenderers: function(){
-        if (this._labelBMFontRendererAdaptDirty){
+    _adaptRenderers: function () {
+        if (this._labelBMFontRendererAdaptDirty) {
             this._labelBMFontScaleChangedWithSize();
             this._labelBMFontRendererAdaptDirty = false;
         }
@@ -150,7 +150,7 @@ ccui.LabelBMFont = ccui.TextBMFont = ccui.Widget.extend(/** @lends ccui.TextBMFo
      * @override
      * @returns {cc.Size}
      */
-    getVirtualRendererSize: function(){
+    getVirtualRendererSize: function () {
         return this._labelBMFontRenderer.getContentSize();
     },
 

@@ -267,39 +267,39 @@ cc.EditBox = cc.Node.extend({
         this._updateEditBoxSize(width, height);
     },
 
-    setVisible: function ( visible ) {
+    setVisible: function (visible) {
         cc.Node.prototype.setVisible.call(this, visible);
         this._renderCmd.updateVisibility();
     },
 
     createDomElementIfNeeded: function () {
-        if(!this._renderCmd._edTxt) {
+        if (!this._renderCmd._edTxt) {
             this._renderCmd.createNativeControl();
         }
     },
 
-    setTabIndex: function(index) {
-        if(this._renderCmd._edTxt) {
+    setTabIndex: function (index) {
+        if (this._renderCmd._edTxt) {
             this._renderCmd._edTxt.tabIndex = index;
         }
     },
 
-    getTabIndex: function() {
-        if(this._renderCmd._edTxt) {
+    getTabIndex: function () {
+        if (this._renderCmd._edTxt) {
             return this._renderCmd._edTxt.tabIndex;
         }
         cc.warn('The dom control is not created!');
         return -1;
     },
 
-    setFocus: function() {
-        if(this._renderCmd._edTxt) {
+    setFocus: function () {
+        if (this._renderCmd._edTxt) {
             this._renderCmd._edTxt.focus();
         }
     },
 
-    isFocused: function() {
-        if(this._renderCmd._edTxt) {
+    isFocused: function () {
+        if (this._renderCmd._edTxt) {
             return document.activeElement === this._renderCmd._edTxt;
         }
         cc.warn('The dom control is not created!');
@@ -307,7 +307,7 @@ cc.EditBox = cc.Node.extend({
     },
 
     stayOnTop: function (flag) {
-        if(this._alwaysOnTop === flag) return;
+        if (this._alwaysOnTop === flag) return;
 
         this._alwaysOnTop = flag;
         this._renderCmd.stayOnTop(this._alwaysOnTop);
@@ -321,9 +321,9 @@ cc.EditBox = cc.Node.extend({
 
     _onTouchBegan: function (touch) {
         var touchPoint = touch.getLocation();
-        var bb = cc.rect(0,0, this._contentSize.width, this._contentSize.height);
+        var bb = cc.rect(0, 0, this._contentSize.width, this._contentSize.height);
         var hitted = cc.rectContainsPoint(bb, this.convertToNodeSpace(touchPoint));
-        if(hitted) {
+        if (hitted) {
             return true;
         }
         else {
@@ -337,12 +337,12 @@ cc.EditBox = cc.Node.extend({
     },
 
     _updateBackgroundSpriteSize: function (width, height) {
-        if(this._backgroundSprite) {
+        if (this._backgroundSprite) {
             this._backgroundSprite.setContentSize(width, height);
         }
     },
 
-    _updateEditBoxSize: function(size, height) {
+    _updateEditBoxSize: function (size, height) {
         var newWidth = (typeof size.width === 'number') ? size.width : size;
         var newHeight = (typeof size.height === 'number') ? size.height : height;
 
@@ -367,7 +367,7 @@ cc.EditBox = cc.Node.extend({
         this._renderCmd._setFont(fontStyle);
     },
 
-    getBackgroundSprite: function() {
+    getBackgroundSprite: function () {
         return this._backgroundSprite;
     },
 
@@ -415,7 +415,7 @@ cc.EditBox = cc.Node.extend({
      */
     setMaxLength: function (maxLength) {
         if (!isNaN(maxLength)) {
-            if(maxLength < 0) {
+            if (maxLength < 0) {
                 //we can't set Number.MAX_VALUE to input's maxLength property
                 //so we use a magic number here, it should works at most use cases.
                 maxLength = 65535;
@@ -515,13 +515,13 @@ cc.EditBox = cc.Node.extend({
      * @param {cc.Color | cc.Scale9Sprite} normal9SpriteBg
      */
     initWithSizeAndBackgroundSprite: function (size, normal9SpriteBg) {
-        if(this._backgroundSprite) {
+        if (this._backgroundSprite) {
             this._backgroundSprite.removeFromParent();
         }
         this._backgroundSprite = normal9SpriteBg;
         this.setContentSize(size);
 
-        if(this._backgroundSprite && !this._backgroundSprite.parent) {
+        if (this._backgroundSprite && !this._backgroundSprite.parent) {
             this._backgroundSprite.setAnchorPoint(cc.p(0, 0));
             this.addChild(this._backgroundSprite);
 
@@ -662,7 +662,7 @@ cc.EditBox.create = function (size, normal9SpriteBg, press9SpriteBg, disabled9Sp
 
     if (cc.sys.OS_ANDROID === cc.sys.os
         && (cc.sys.browserType === cc.sys.BROWSER_TYPE_SOUGOU
-            || cc.sys.browserType === cc.sys.BROWSER_TYPE_360)) {
+        || cc.sys.browserType === cc.sys.BROWSER_TYPE_360)) {
         editbox._polyfill.zoomInvalid = true;
     }
 })(cc.EditBox);
@@ -673,31 +673,33 @@ cc.EditBox.create = function (size, normal9SpriteBg, press9SpriteBg, disabled9Sp
     var TIMER_NAME = 400;
     var LEFT_PADDING = 2;
 
-    function scrollWindowUp (editBox) {
+    function scrollWindowUp(editBox) {
         // if (cc.sys.os === cc.sys.OS_IOS && cc.sys.osMainVersion === 9) {
-            var worldPos = editBox.convertToWorldSpace(cc.p(0,0));
-            var windowHeight = cc.visibleRect.height;
-            var windowWidth = cc.visibleRect.width;
-            var factor = 0.5;
-            if(windowWidth > windowHeight) {
-                factor = 0.7;
+        var worldPos = editBox.convertToWorldSpace(cc.p(0, 0));
+        var windowHeight = cc.visibleRect.height;
+        var windowWidth = cc.visibleRect.width;
+        var factor = 0.5;
+        if (windowWidth > windowHeight) {
+            factor = 0.7;
+        }
+        setTimeout(function () {
+            if (window.scrollY < SCROLLY && worldPos.y < windowHeight * factor) {
+                var scrollOffset = windowHeight * factor - worldPos.y - window.scrollY;
+                if (scrollOffset < 35) scrollOffset = 35;
+                if (scrollOffset > 320) scrollOffset = 320;
+                window.scrollTo(0, scrollOffset);
             }
-            setTimeout(function() {
-                if(window.scrollY < SCROLLY && worldPos.y < windowHeight * factor) {
-                    var scrollOffset = windowHeight * factor - worldPos.y - window.scrollY;
-                    if (scrollOffset < 35) scrollOffset = 35;
-                    if (scrollOffset > 320) scrollOffset = 320;
-                    window.scrollTo(0, scrollOffset);
-                }
-            }, TIMER_NAME);
+        }, TIMER_NAME);
         // }
     }
 
-    function capitalize (string) {
-        return string.replace(/(?:^|\s)\S/g, function(a) { return a.toUpperCase(); });
+    function capitalize(string) {
+        return string.replace(/(?:^|\s)\S/g, function (a) {
+            return a.toUpperCase();
+        });
     }
 
-    function capitalizeFirstLetter (string) {
+    function capitalizeFirstLetter(string) {
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
 
@@ -718,7 +720,7 @@ cc.EditBox.create = function (size, normal9SpriteBg, press9SpriteBg, disabled9Sp
         var container = cc.game.container;
         var a = t.a * scaleX, b = t.b, c = t.c, d = t.d * scaleY;
 
-        var offsetX = container && container.style.paddingLeft &&  parseInt(container.style.paddingLeft);
+        var offsetX = container && container.style.paddingLeft && parseInt(container.style.paddingLeft);
         var offsetY = container && container.style.paddingBottom && parseInt(container.style.paddingBottom);
         var tx = t.tx * scaleX + offsetX, ty = t.ty * scaleY + offsetY;
 
@@ -746,18 +748,18 @@ cc.EditBox.create = function (size, normal9SpriteBg, press9SpriteBg, disabled9Sp
         } else {
             editBox.style.visibility = 'hidden';
             var hasChild = false;
-            if('contains' in cc.game.container) {
+            if ('contains' in cc.game.container) {
                 hasChild = cc.game.container.contains(editBox);
-            }else {
+            } else {
                 hasChild = cc.game.container.compareDocumentPosition(editBox) % 16;
             }
-            if(hasChild)
+            if (hasChild)
                 cc.game.container.removeChild(editBox);
         }
     };
 
     proto.stayOnTop = function (flag) {
-        if(flag) {
+        if (flag) {
             this._removeLabels();
             this._edTxt.style.display = '';
         } else {
@@ -812,7 +814,7 @@ cc.EditBox.create = function (size, normal9SpriteBg, press9SpriteBg, disabled9Sp
             if (e.keyCode === cc.KEY.enter) {
                 e.stopPropagation();
                 e.preventDefault();
-                if(this.value === '') {
+                if (this.value === '') {
                     this.style.fontSize = editBox._placeholderFontSize + 'px';
                     this.style.color = cc.colorToHex(editBox._placeholderColor);
                 }
@@ -833,7 +835,7 @@ cc.EditBox.create = function (size, normal9SpriteBg, press9SpriteBg, disabled9Sp
             this.style.color = cc.colorToHex(editBox._textColor);
             thisPointer._hiddenLabels();
 
-            if(cc.view.isAutoFullScreenEnabled()) {
+            if (cc.view.isAutoFullScreenEnabled()) {
                 thisPointer.__fullscreen = true;
                 cc.view.enableAutoFullScreen(false);
                 cc.screen.exitFullScreen();
@@ -853,7 +855,7 @@ cc.EditBox.create = function (size, normal9SpriteBg, press9SpriteBg, disabled9Sp
             var editBox = thisPointer._editBox;
             editBox._text = this.value;
             thisPointer._updateEditBoxContentStyle();
-            if(thisPointer.__fullscreen) {
+            if (thisPointer.__fullscreen) {
                 cc.view.enableAutoFullScreen(true);
             }
             if (this.__autoResize) {
@@ -904,7 +906,7 @@ cc.EditBox.create = function (size, normal9SpriteBg, press9SpriteBg, disabled9Sp
 
             var editBox = thisPointer._editBox;
             if (editBox._delegate && editBox._delegate.editBoxTextChanged) {
-                if(editBox._text.toLowerCase() !== this.value.toLowerCase()) {
+                if (editBox._text.toLowerCase() !== this.value.toLowerCase()) {
                     editBox._text = this.value;
                     thisPointer._updateEditBoxContentStyle();
                     editBox._delegate.editBoxTextChanged(editBox, editBox._text);
@@ -918,7 +920,7 @@ cc.EditBox.create = function (size, normal9SpriteBg, press9SpriteBg, disabled9Sp
 
             this.style.fontSize = thisPointer._edFontSize + 'px';
             this.style.color = cc.colorToHex(editBox._textColor);
-            if(cc.view.isAutoFullScreenEnabled()) {
+            if (cc.view.isAutoFullScreenEnabled()) {
                 thisPointer.__fullscreen = true;
                 cc.view.enableAutoFullScreen(false);
                 cc.screen.exitFullScreen();
@@ -951,7 +953,7 @@ cc.EditBox.create = function (size, normal9SpriteBg, press9SpriteBg, disabled9Sp
             editBox._text = this.value;
             thisPointer._updateEditBoxContentStyle();
             window.scrollY = 0;
-            if(thisPointer.__fullscreen) {
+            if (thisPointer.__fullscreen) {
                 cc.view.enableAutoFullScreen(true);
             }
             if (this.__autoResize) {
@@ -975,14 +977,14 @@ cc.EditBox.create = function (size, normal9SpriteBg, press9SpriteBg, disabled9Sp
 
     proto._createLabels = function () {
         var editBoxSize = this._editBox.getContentSize();
-        if(!this._textLabel) {
+        if (!this._textLabel) {
             this._textLabel = new cc.LabelTTF();
             this._textLabel.setVisible(false);
             this._textLabel.setAnchorPoint(cc.p(0, 1));
             this._editBox.addChild(this._textLabel, 100);
         }
 
-        if(!this._placeholderLabel) {
+        if (!this._placeholderLabel) {
             this._placeholderLabel = new cc.LabelTTF();
             this._placeholderLabel.setAnchorPoint(cc.p(0, 1));
             this._placeholderLabel.setColor(cc.color.GRAY);
@@ -993,14 +995,14 @@ cc.EditBox.create = function (size, normal9SpriteBg, press9SpriteBg, disabled9Sp
     };
 
     proto._removeLabels = function () {
-        if(!this._textLabel) return;
+        if (!this._textLabel) return;
 
         this._editBox.removeChild(this._textLabel);
         this._textLabel = null;
     };
 
     proto._updateLabelPosition = function (editBoxSize) {
-        if(!this._textLabel || !this._placeholderLabel) return;
+        if (!this._textLabel || !this._placeholderLabel) return;
 
         var labelContentSize = cc.size(editBoxSize.width - LEFT_PADDING, editBoxSize.height);
         this._textLabel.setContentSize(labelContentSize);
@@ -1008,7 +1010,7 @@ cc.EditBox.create = function (size, normal9SpriteBg, press9SpriteBg, disabled9Sp
         this._placeholderLabel.setLineHeight(editBoxSize.height);
         var placeholderLabelSize = this._placeholderLabel.getContentSize();
 
-        if (this._editBox._editBoxInputMode === cc.EDITBOX_INPUT_MODE_ANY){
+        if (this._editBox._editBoxInputMode === cc.EDITBOX_INPUT_MODE_ANY) {
             this._textLabel.setPosition(LEFT_PADDING, editBoxSize.height);
             this._placeholderLabel.setPosition(LEFT_PADDING, editBoxSize.height);
             this._placeholderLabel.setVerticalAlignment(cc.VERTICAL_TEXT_ALIGNMENT_TOP);
@@ -1026,22 +1028,22 @@ cc.EditBox.create = function (size, normal9SpriteBg, press9SpriteBg, disabled9Sp
     };
 
     proto.setLineHeight = function (lineHeight) {
-        if(this._textLabel) {
+        if (this._textLabel) {
             this._textLabel.setLineHeight(lineHeight);
         }
     };
 
     proto._hiddenLabels = function () {
-        if(this._textLabel) {
+        if (this._textLabel) {
             this._textLabel.setVisible(false);
         }
 
-        if(this._placeholderLabel) {
+        if (this._placeholderLabel) {
             this._placeholderLabel.setVisible(false);
         }
     };
 
-    proto._updateEditBoxContentStyle = function() {
+    proto._updateEditBoxContentStyle = function () {
         var inputFlag = this._editBox._editBoxInputFlag;
         if (inputFlag === cc.EDITBOX_INPUT_FLAG_INITIAL_CAPS_ALL_CHARACTERS) {
             this._editBox._text = this._editBox._text.toUpperCase();
@@ -1054,10 +1056,10 @@ cc.EditBox.create = function (size, normal9SpriteBg, press9SpriteBg, disabled9Sp
         }
     };
 
-    proto._updateLabelString = function() {
+    proto._updateLabelString = function () {
         this._updateInputType();
 
-        if(this._textLabel) {
+        if (this._textLabel) {
             this._textLabel.setVisible(true);
             this._textLabel.setString(this._editBox._text);
         }
@@ -1068,12 +1070,12 @@ cc.EditBox.create = function (size, normal9SpriteBg, press9SpriteBg, disabled9Sp
             for (var i = 0; i < len; ++i) {
                 passwordString += '\u25CF';
             }
-            if(this._textLabel) {
+            if (this._textLabel) {
                 this._textLabel.setString(passwordString);
             }
         } else {
             this._updateEditBoxContentStyle();
-            if(this._textLabel) {
+            if (this._textLabel) {
                 this._textLabel.setString(this._editBox._text);
             }
         }
@@ -1082,7 +1084,7 @@ cc.EditBox.create = function (size, normal9SpriteBg, press9SpriteBg, disabled9Sp
     proto._showLabels = function () {
         this._hiddenLabels();
         if (this._edTxt.value === '') {
-            if(this._placeholderLabel) {
+            if (this._placeholderLabel) {
                 this._placeholderLabel.setVisible(true);
                 this._placeholderLabel.setString(this._editBox._placeholderText);
             }
@@ -1092,8 +1094,8 @@ cc.EditBox.create = function (size, normal9SpriteBg, press9SpriteBg, disabled9Sp
         }
     };
 
-    proto.show = function() {
-        if(!this._editBox._alwaysOnTop) {
+    proto.show = function () {
+        if (!this._editBox._alwaysOnTop) {
             if (this._edTxt.style.display === 'none') {
                 this._edTxt.style.display = '';
                 this._edTxt.focus();
@@ -1102,8 +1104,8 @@ cc.EditBox.create = function (size, normal9SpriteBg, press9SpriteBg, disabled9Sp
         this._hiddenLabels();
     };
 
-    proto.hidden = function() {
-        if(!this._editBox._alwaysOnTop) {
+    proto.hidden = function () {
+        if (!this._editBox._alwaysOnTop) {
             this._edTxt.style.display = 'none';
         }
         this._showLabels();
@@ -1135,12 +1137,12 @@ cc.EditBox.create = function (size, normal9SpriteBg, press9SpriteBg, disabled9Sp
     };
 
     proto.setFontColor = function (color) {
-        if(!this._edTxt) return;
+        if (!this._edTxt) return;
 
         if (this._edTxt.value !== this._editBox._placeholderText) {
             this._edTxt.style.color = cc.colorToHex(color);
         }
-        if(this._textLabel) {
+        if (this._textLabel) {
             this._textLabel.setColor(color);
         }
     };
@@ -1150,7 +1152,7 @@ cc.EditBox.create = function (size, normal9SpriteBg, press9SpriteBg, disabled9Sp
     };
 
     proto.setMaxLength = function (maxLength) {
-        if(!this._edTxt) return;
+        if (!this._edTxt) return;
         this._edTxt.maxLength = maxLength;
     };
 
@@ -1164,20 +1166,20 @@ cc.EditBox.create = function (size, normal9SpriteBg, press9SpriteBg, disabled9Sp
     };
 
     proto._updateInputType = function () {
-        if(this._editBox._keyboardReturnType === cc.KEYBOARD_RETURNTYPE_SEARCH) {
+        if (this._editBox._keyboardReturnType === cc.KEYBOARD_RETURNTYPE_SEARCH) {
             this._edTxt.type = 'search';
         }
 
         var inputMode = this._editBox._editBoxInputMode;
-        if(inputMode === cc.EDITBOX_INPUT_MODE_EMAILADDR) {
+        if (inputMode === cc.EDITBOX_INPUT_MODE_EMAILADDR) {
             this._edTxt.type = 'email';
-        } else if(inputMode === cc.EDITBOX_INPUT_MODE_DECIMAL ||
-                 inputMode === cc.EDITBOX_INPUT_MODE_NUMERIC) {
+        } else if (inputMode === cc.EDITBOX_INPUT_MODE_DECIMAL ||
+            inputMode === cc.EDITBOX_INPUT_MODE_NUMERIC) {
             this._edTxt.type = 'number';
-        } else if(inputMode === cc.EDITBOX_INPUT_MODE_PHONENUMBER) {
+        } else if (inputMode === cc.EDITBOX_INPUT_MODE_PHONENUMBER) {
             this._edTxt.type = 'number';
             this._edTxt.pattern = '[0-9]*';
-        } else if(inputMode === cc.EDITBOX_INPUT_MODE_URL) {
+        } else if (inputMode === cc.EDITBOX_INPUT_MODE_URL) {
             this._edTxt.type = 'url';
         } else {
             this._edTxt.type = 'text';
@@ -1190,7 +1192,7 @@ cc.EditBox.create = function (size, normal9SpriteBg, press9SpriteBg, disabled9Sp
     };
 
     proto.setInputFlag = function (inputFlag) {
-        if(!this._edTxt) return;
+        if (!this._edTxt) return;
 
         this._updateInputType();
 
@@ -1221,28 +1223,28 @@ cc.EditBox.create = function (size, normal9SpriteBg, press9SpriteBg, disabled9Sp
     };
 
     proto.setString = function (text) {
-        if(!this._edTxt) return;
+        if (!this._edTxt) return;
 
         if (text !== null) {
             this._edTxt.value = text;
 
             if (text === '') {
-                if(this._placeholderLabel) {
+                if (this._placeholderLabel) {
                     this._placeholderLabel.setString(this._editBox._placeholderText);
                     this._placeholderLabel.setColor(this._editBox._placeholderColor);
                     this._placeholderLabel.setVisible(true);
                 }
 
-                if(this._textLabel) {
+                if (this._textLabel) {
                     this._textLabel.setVisible(false);
                 }
             }
             else {
                 this._edTxt.style.color = cc.colorToHex(this._editBox._textColor);
-                if(this._textLabel) {
+                if (this._textLabel) {
                     this._textLabel.setColor(this._editBox._textColor);
                 }
-                if(this._placeholderLabel) {
+                if (this._placeholderLabel) {
                     this._placeholderLabel.setVisible(false);
                 }
 
@@ -1251,21 +1253,21 @@ cc.EditBox.create = function (size, normal9SpriteBg, press9SpriteBg, disabled9Sp
         }
     };
 
-    proto._updateDOMFontStyle = function() {
-        if(!this._edTxt) return;
+    proto._updateDOMFontStyle = function () {
+        if (!this._edTxt) return;
 
         if (this._edTxt.value !== '') {
             this._edTxt.style.fontFamily = this._edFontName;
             this._edTxt.style.fontSize = this._edFontSize + 'px';
         }
-        if(this._textLabel) {
+        if (this._textLabel) {
             this._textLabel.setFontSize(this._edFontSize);
             this._textLabel.setFontName(this._edFontName);
         }
     };
 
 
-    proto.updateSize = function(newWidth, newHeight) {
+    proto.updateSize = function (newWidth, newHeight) {
         var editboxDomNode = this._edTxt;
         if (!editboxDomNode) return;
 
@@ -1275,7 +1277,7 @@ cc.EditBox.create = function (size, normal9SpriteBg, press9SpriteBg, disabled9Sp
         this._updateLabelPosition(cc.size(newWidth, newHeight));
     };
 
-    proto.createNativeControl = function() {
+    proto.createNativeControl = function () {
         this._createDomTextArea();
         this._addDomInputControl();
     };
@@ -1286,14 +1288,14 @@ cc.EditBox.create = function (size, normal9SpriteBg, press9SpriteBg, disabled9Sp
 
     proto._removeDomInputControl = function () {
         var editBox = this._edTxt;
-        if(editBox){
+        if (editBox) {
             var hasChild = false;
-            if('contains' in cc.game.container) {
+            if ('contains' in cc.game.container) {
                 hasChild = cc.game.container.contains(editBox);
-            }else {
+            } else {
                 hasChild = cc.game.container.compareDocumentPosition(editBox) % 16;
             }
-            if(hasChild)
+            if (hasChild)
                 cc.game.container.removeChild(editBox);
         }
         this._edTxt = null;
@@ -1317,7 +1319,7 @@ cc.EditBox.create = function (size, normal9SpriteBg, press9SpriteBg, disabled9Sp
 
     var canvasRenderCmdProto = cc.EditBox.CanvasRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
 
-    function _getPropertyDescriptor (obj, name) {
+    function _getPropertyDescriptor(obj, name) {
         var pd = Object.getOwnPropertyDescriptor(obj, name);
         if (pd) {
             return pd;
@@ -1345,8 +1347,8 @@ cc.EditBox.create = function (size, normal9SpriteBg, press9SpriteBg, disabled9Sp
                     cc.error('cc.js.mixin: arguments must be type object:', source);
                     continue;
                 }
-                for ( var name in source) {
-                    _copyprop( name, source, obj);
+                for (var name in source) {
+                    _copyprop(name, source, obj);
                 }
             }
         }

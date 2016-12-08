@@ -22,7 +22,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-(function(){
+(function () {
     cc.ProtectedNode.RenderCmd = {
         _updateDisplayColor: function (parentColor) {
             var node = this._node;
@@ -55,16 +55,16 @@
                     selChildren = node._children;
                     for (i = 0, len = selChildren.length; i < len; i++) {
                         item = selChildren[i];
-                        if (item && item._renderCmd){
+                        if (item && item._renderCmd) {
                             item._renderCmd._updateDisplayColor(locDispColor);
                             item._renderCmd._updateColor();
                         }
                     }
                 }
                 selChildren = node._protectedChildren;
-                for(i = 0, len = selChildren.length;i < len; i++){
+                for (i = 0, len = selChildren.length; i < len; i++) {
                     item = selChildren[i];
-                    if(item && item._renderCmd){
+                    if (item && item._renderCmd) {
                         item._renderCmd._updateDisplayColor(locDispColor);
                         item._renderCmd._updateColor();
                     }
@@ -97,16 +97,16 @@
                     selChildren = node._children;
                     for (i = 0, len = selChildren.length; i < len; i++) {
                         item = selChildren[i];
-                        if (item && item._renderCmd){
+                        if (item && item._renderCmd) {
                             item._renderCmd._updateDisplayOpacity(this._displayedOpacity);
                             item._renderCmd._updateColor();
                         }
                     }
                 }
                 selChildren = node._protectedChildren;
-                for(i = 0, len = selChildren.length;i < len; i++){
+                for (i = 0, len = selChildren.length; i < len; i++) {
                     item = selChildren[i];
-                    if(item && item._renderCmd){
+                    if (item && item._renderCmd) {
                         item._renderCmd._updateDisplayOpacity(this._displayedOpacity);
                         item._renderCmd._updateColor();
                     }
@@ -199,17 +199,17 @@
         this._cacheDirty = false;
     };
 
-    proto.transform = function(parentCmd, recursive){
+    proto.transform = function (parentCmd, recursive) {
         var node = this._node;
 
-        if(node._changePosition)
+        if (node._changePosition)
             node._changePosition();
 
         this.originTransform(parentCmd, recursive);
 
         var i, len, locChildren = node._protectedChildren;
-        if(recursive && locChildren && locChildren.length !== 0){
-            for(i = 0, len = locChildren.length; i< len; i++){
+        if (recursive && locChildren && locChildren.length !== 0) {
+            for (i = 0, len = locChildren.length; i < len; i++) {
                 locChildren[i]._renderCmd.transform(this, recursive);
             }
         }

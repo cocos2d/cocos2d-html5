@@ -43,7 +43,7 @@ cc.g_NumberOfDraws = 0;
  *      - setting the OpenGL pixel format (default on is RGB565)<br/>
  *      - setting the OpenGL pixel format (default on is RGB565)<br/>
  *      - setting the OpenGL buffer depth (default one is 0-bit)<br/>
-        - setting the color for clear screen (default one is BLACK)<br/>
+ *      - setting the color for clear screen (default one is BLACK)<br/>
  *      - setting the projection (default one is 3D)<br/>
  *      - setting the orientation (default one is Portrait)<br/>
  *      <br/>
@@ -134,9 +134,9 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         //scheduler
         this._scheduler = new cc.Scheduler();
         //action manager
-        if(cc.ActionManager){
+        if (cc.ActionManager) {
             this._actionManager = new cc.ActionManager();
-        }else{
+        } else {
             this._actionManager = null;
         }
 

@@ -42,14 +42,16 @@
         this._node.setOpacityModifyRGB(this._node._texture.hasPremultipliedAlpha());
     };
 
-    proto._updateCharTexture = function(fontChar, rect, key){
+    proto._updateCharTexture = function (fontChar, rect, key) {
         // updating previous sprite
         fontChar.setTextureRect(rect, false);
         // restore to default in case they were modified
         fontChar.visible = true;
     };
 
-    proto._changeTextureColor = function(){};
+    proto._changeTextureColor = function () {
+    };
 
-    proto._updateCharColorAndOpacity = function(){};
+    proto._updateCharColorAndOpacity = function () {
+    };
 })();

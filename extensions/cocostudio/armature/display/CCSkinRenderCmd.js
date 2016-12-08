@@ -23,7 +23,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-(function(){
+(function () {
     ccs.Skin.RenderCmd = {
         _realWorldTM: null,
         transform: function (parentCmd, recursive) {
@@ -40,10 +40,10 @@
             }
 
             if (pt) {
-                wt.a  = t.a  * pt.a + t.b  * pt.c;
-                wt.b  = t.a  * pt.b + t.b  * pt.d;
-                wt.c  = t.c  * pt.a + t.d  * pt.c;
-                wt.d  = t.c  * pt.b + t.d  * pt.d;
+                wt.a = t.a * pt.a + t.b * pt.c;
+                wt.b = t.a * pt.b + t.b * pt.d;
+                wt.c = t.c * pt.a + t.d * pt.c;
+                wt.d = t.c * pt.b + t.d * pt.d;
                 wt.tx = t.tx * pt.a + t.ty * pt.c + pt.tx;
                 wt.ty = t.tx * pt.b + t.ty * pt.d + pt.ty;
 
@@ -63,16 +63,16 @@
                 }
             }
             else {
-                wt.a  = t.a;
-                wt.b  = t.b;
-                wt.c  = t.c;
-                wt.d  = t.d;
+                wt.a = t.a;
+                wt.b = t.b;
+                wt.c = t.c;
+                wt.d = t.d;
                 wt.tx = t.tx;
                 wt.ty = t.ty;
             }
             var rwtm = this._realWorldTM;
-            if(rwtm) {
-                rwtm.a = t.a; rwtm.b = t.b; rwtm.c = t.c; rwtm.d = t.d; rwtm.tx= t.tx; rwtm.ty = t.ty;
+            if (rwtm) {
+                rwtm.a = t.a; rwtm.b = t.b; rwtm.c = t.c; rwtm.d = t.d; rwtm.tx = t.tx; rwtm.ty = t.ty;
                 cc.affineTransformConcatIn(rwtm, this._node.bone.getArmature()._renderCmd._worldTransform);
             }
         },

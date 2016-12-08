@@ -31,16 +31,16 @@
  * @param {ccs.Bone} bone The bone for the display manager
  */
 ccs.DisplayManager = ccs.Class.extend(/** @lends ccs.DisplayManager */{
-    _decoDisplayList:null,
-    _currentDecoDisplay:null,
-    _displayRenderNode:null,
+    _decoDisplayList: null,
+    _currentDecoDisplay: null,
+    _displayRenderNode: null,
     _displayIndex: null,
-    _forceChangeDisplay:false,
-    _bone:null,
-    _visible:true,
+    _forceChangeDisplay: false,
+    _bone: null,
+    _visible: true,
     _displayType: null,
 
-    ctor:function (bone) {
+    ctor: function (bone) {
         this._decoDisplayList = [];
         this._currentDecoDisplay = null;
         this._displayRenderNode = null;
@@ -58,7 +58,7 @@ ccs.DisplayManager = ccs.Class.extend(/** @lends ccs.DisplayManager */{
      * @param bone
      * @returns {boolean}
      */
-    init:function (bone) {
+    init: function (bone) {
         this._bone = bone;
         this.initDisplayList(bone.getBoneData());
         return true;
@@ -75,17 +75,17 @@ ccs.DisplayManager = ccs.Class.extend(/** @lends ccs.DisplayManager */{
      */
     addDisplay: function (display, index) {
         var decoDisplay, locDisplayList = this._decoDisplayList;
-        if( (index >= 0) && (index < locDisplayList.length) )
+        if ((index >= 0) && (index < locDisplayList.length))
             decoDisplay = locDisplayList[index];
-        else{
+        else {
             decoDisplay = new ccs.DecorativeDisplay();
             locDisplayList.push(decoDisplay);
         }
 
-        if(display instanceof ccs.DisplayData){
+        if (display instanceof ccs.DisplayData) {
             ccs.displayFactory.addDisplay(this._bone, decoDisplay, display);
             //! if changed display index is current display index, then change current display to the new display
-            if(index === this._displayIndex) {
+            if (index === this._displayIndex) {
                 this._displayIndex = -1;
                 this.changeDisplayWithIndex(index, false);
             }
@@ -117,14 +117,14 @@ ccs.DisplayManager = ccs.Class.extend(/** @lends ccs.DisplayManager */{
                 if (!find)
                     display.setSkinData(new ccs.BaseData());
             }
-        } else if (display instanceof cc.ParticleSystem){
+        } else if (display instanceof cc.ParticleSystem) {
             displayData = new ccs.ParticleDisplayData();
             display.removeFromParent();
             display.cleanup();
             var armature = this._bone.getArmature();
             if (armature)
                 display.setParent(armature);
-        } else if(display instanceof ccs.Armature) {
+        } else if (display instanceof ccs.Armature) {
             displayData = new ccs.ArmatureDisplayData();
             displayData.displayName = display.getName();
             display.setParentBone(this._bone);
@@ -134,15 +134,15 @@ ccs.DisplayManager = ccs.Class.extend(/** @lends ccs.DisplayManager */{
         decoDisplay.setDisplayData(displayData);
 
         //! if changed display index is current display index, then change current display to the new display
-        if(index === this._displayIndex) {
+        if (index === this._displayIndex) {
             this._displayIndex = -1;
             this.changeDisplayWithIndex(index, false);
         }
     },
 
-    _addDisplayOther:function(decoDisplay,display){
+    _addDisplayOther: function (decoDisplay, display) {
         var displayData = null;
-        if (display instanceof ccs.Skin){
+        if (display instanceof ccs.Skin) {
             var skin = display;
             skin.setBone(this._bone);
             displayData = new ccs.SpriteDisplayData();
@@ -151,7 +151,7 @@ ccs.DisplayManager = ccs.Class.extend(/** @lends ccs.DisplayManager */{
             var spriteDisplayData = decoDisplay.getDisplayData();
             if (spriteDisplayData instanceof ccs.SpriteDisplayData)
                 skin.setSkinData(spriteDisplayData.skinData);
-            else{
+            else {
                 var find = false;
                 for (var i = this._decoDisplayList.length - 2; i >= 0; i--) {
                     var dd = this._decoDisplayList[i];
@@ -170,16 +170,16 @@ ccs.DisplayManager = ccs.Class.extend(/** @lends ccs.DisplayManager */{
             }
                 
         }
-        else if (display instanceof cc.ParticleSystem){
+        else if (display instanceof cc.ParticleSystem) {
             displayData = new ccs.ParticleDisplayData();
             displayData.displayName = display._plistFile;
         }
-        else if (display instanceof ccs.Armature){
+        else if (display instanceof ccs.Armature) {
             displayData = new ccs.ArmatureDisplayData();
             displayData.displayName = display.getName();
             display.setParentBone(this._bone);
         }
-        else  {
+        else {
             displayData = new ccs.DisplayData();
         }
         decoDisplay.setDisplay(display);
@@ -190,7 +190,7 @@ ccs.DisplayManager = ccs.Class.extend(/** @lends ccs.DisplayManager */{
      * Removes display node from list.
      * @param {Number} index
      */
-    removeDisplay:function (index) {
+    removeDisplay: function (index) {
         this._decoDisplayList.splice(index, 1);
         if (index === this._displayIndex) {
             this.setCurrentDecorativeDisplay(null);
@@ -202,7 +202,7 @@ ccs.DisplayManager = ccs.Class.extend(/** @lends ccs.DisplayManager */{
      * Returns the display node list.
      * @returns {Array}
      */
-    getDecorativeDisplayList:function(){
+    getDecorativeDisplayList: function () {
         return this._decoDisplayList;
     },
 
@@ -215,7 +215,7 @@ ccs.DisplayManager = ccs.Class.extend(/** @lends ccs.DisplayManager */{
      * @param {Number} index  The index of the display you want to change
      * @param {Boolean} force  If true, then force change display to specified display, or current display will set to  display index edit in the flash every key frame.
      */
-    changeDisplayWithIndex:function (index, force) {
+    changeDisplayWithIndex: function (index, force) {
         if (index >= this._decoDisplayList.length) {
             cc.log("the index value is out of range");
             return;
@@ -230,7 +230,7 @@ ccs.DisplayManager = ccs.Class.extend(/** @lends ccs.DisplayManager */{
 
         //! If displayIndex < 0, it means you want to hide you display
         if (index < 0) {
-            if(this._displayRenderNode) {
+            if (this._displayRenderNode) {
                 this._displayRenderNode.removeFromParent(true);
                 this.setCurrentDecorativeDisplay(null);
             }
@@ -258,7 +258,7 @@ ccs.DisplayManager = ccs.Class.extend(/** @lends ccs.DisplayManager */{
      * Sets current decorative display.
      * @param {ccs.DecorativeDisplay} decoDisplay
      */
-    setCurrentDecorativeDisplay:function (decoDisplay) {
+    setCurrentDecorativeDisplay: function (decoDisplay) {
         var locCurrentDecoDisplay = this._currentDecoDisplay;
         if (ccs.ENABLE_PHYSICS_CHIPMUNK_DETECT || ccs.ENABLE_PHYSICS_SAVE_CALCULATED_VERTEX) {
             if (locCurrentDecoDisplay && locCurrentDecoDisplay.getColliderDetector())
@@ -299,7 +299,7 @@ ccs.DisplayManager = ccs.Class.extend(/** @lends ccs.DisplayManager */{
 
             this._displayRenderNode.setVisible(this._visible);
             this._displayType = this._currentDecoDisplay.getDisplayData().displayType;
-        }else
+        } else
             this._displayType = ccs.DISPLAY_TYPE_MAX;
 
 
@@ -310,7 +310,7 @@ ccs.DisplayManager = ccs.Class.extend(/** @lends ccs.DisplayManager */{
      *  Returns the current display render node.
      * @returns {cc.Node}
      */
-    getDisplayRenderNode:function () {
+    getDisplayRenderNode: function () {
         return this._displayRenderNode;
     },
 
@@ -318,7 +318,7 @@ ccs.DisplayManager = ccs.Class.extend(/** @lends ccs.DisplayManager */{
      * Returns the type of display render node.
      * @returns {Number}
      */
-    getDisplayRenderNodeType:function(){
+    getDisplayRenderNodeType: function () {
         return this._displayType;
     },
 
@@ -326,7 +326,7 @@ ccs.DisplayManager = ccs.Class.extend(/** @lends ccs.DisplayManager */{
      * Returns the index of display render node.
      * @returns {Number}
      */
-    getCurrentDisplayIndex:function () {
+    getCurrentDisplayIndex: function () {
         return this._displayIndex;
     },
 
@@ -334,7 +334,7 @@ ccs.DisplayManager = ccs.Class.extend(/** @lends ccs.DisplayManager */{
      * Returns the current decorative display
      * @returns {ccs.DecorativeDisplay}
      */
-    getCurrentDecorativeDisplay:function () {
+    getCurrentDecorativeDisplay: function () {
         return this._currentDecoDisplay;
     },
 
@@ -343,7 +343,7 @@ ccs.DisplayManager = ccs.Class.extend(/** @lends ccs.DisplayManager */{
      * @param index
      * @returns {ccs.DecorativeDisplay}
      */
-    getDecorativeDisplayByIndex:function (index) {
+    getDecorativeDisplayByIndex: function (index) {
         return this._decoDisplayList[index];
     },
 
@@ -355,7 +355,7 @@ ccs.DisplayManager = ccs.Class.extend(/** @lends ccs.DisplayManager */{
      * </p>
      * @param {ccs.BoneData} boneData
      */
-    initDisplayList:function (boneData) {
+    initDisplayList: function (boneData) {
         this._decoDisplayList.length = 0;
         if (!boneData)
             return;
@@ -382,7 +382,7 @@ ccs.DisplayManager = ccs.Class.extend(/** @lends ccs.DisplayManager */{
         if (y !== undefined)
             point = cc.p(point, y);
 
-        if(this._currentDecoDisplay.getDisplayData().displayType === ccs.DISPLAY_TYPE_SPRITE){
+        if (this._currentDecoDisplay.getDisplayData().displayType === ccs.DISPLAY_TYPE_SPRITE) {
             /*
              *  First we first check if the point is in the sprite content rect. If false, then we continue to check
              *  the contour point. If this step is also false, then we can say the bone not contain this point.
@@ -402,7 +402,7 @@ ccs.DisplayManager = ccs.Class.extend(/** @lends ccs.DisplayManager */{
      * </p>
      * @param {boolean} visible
      */
-    setVisible:function (visible) {
+    setVisible: function (visible) {
         if (!this._displayRenderNode)
             return;
         this._visible = visible;
@@ -413,39 +413,39 @@ ccs.DisplayManager = ccs.Class.extend(/** @lends ccs.DisplayManager */{
      * Determines if the display is visible
      * @returns {boolean} true if the node is visible, false if the node is hidden.
      */
-    isVisible:function () {
+    isVisible: function () {
         return this._visible;
     },
 
-    getContentSize:function () {
+    getContentSize: function () {
         if (!this._displayRenderNode)
             return cc.size(0, 0);
         return this._displayRenderNode.getContentSize();
     },
 
-    getBoundingBox:function () {
+    getBoundingBox: function () {
         if (!this._displayRenderNode)
             return cc.rect(0, 0, 0, 0);
         return this._displayRenderNode.getBoundingBox();
     },
 
-    getAnchorPoint:function () {
+    getAnchorPoint: function () {
         if (!this._displayRenderNode)
-            return  cc.p(0, 0);
+            return cc.p(0, 0);
         return this._displayRenderNode.getAnchorPoint();
     },
 
-    getAnchorPointInPoints:function () {
+    getAnchorPointInPoints: function () {
         if (!this._displayRenderNode)
-            return  cc.p(0, 0);
+            return cc.p(0, 0);
         return this._displayRenderNode.getAnchorPointInPoints();
     },
 
-    getForceChangeDisplay:function () {
+    getForceChangeDisplay: function () {
         return this._forceChangeDisplay;
     },
 
-    release:function () {
+    release: function () {
         this._decoDisplayList = null;
         if (this._displayRenderNode) {
             this._displayRenderNode.removeFromParent(true);

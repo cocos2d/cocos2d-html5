@@ -40,9 +40,9 @@
         //  This is a special class
         //  Sprite can not obtain sign
         //  So here must to calculate of each frame
-        var node  = this._node;
+        var node = this._node;
         node._syncPosition();
-        if(!node._ignoreBodyRotation)
+        if (!node._ignoreBodyRotation)
             node._syncRotation();
         this.transform(this.getParentRenderCmd(), true);
 

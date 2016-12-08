@@ -116,7 +116,7 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
     setBoneData: function (boneData) {
         cc.assert(boneData, "_boneData must not be null");
 
-        if(this._boneData !== boneData)
+        if (this._boneData !== boneData)
             this._boneData = boneData;
 
         this.setName(this._boneData.name);
@@ -165,9 +165,9 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
         if (this._armatureParentBone && !this._boneTransformDirty)
             this._boneTransformDirty = this._armatureParentBone.isTransformDirty();
 
-        if (this._boneTransformDirty){
+        if (this._boneTransformDirty) {
             var locTweenData = this._tweenData;
-            if (this._dataVersion >= ccs.CONST_VERSION_COMBINED){
+            if (this._dataVersion >= ccs.CONST_VERSION_COMBINED) {
                 ccs.TransformHelp.nodeConcat(locTweenData, this._boneData);
                 locTweenData.scaleX -= 1;
                 locTweenData.scaleY -= 1;
@@ -182,7 +182,7 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
             locWorldInfo.skewX = locTweenData.skewX + this._skewX + cc.degreesToRadians(this._rotationX);
             locWorldInfo.skewY = locTweenData.skewY + this._skewY - cc.degreesToRadians(this._rotationY);
 
-            if(this._parentBone)
+            if (this._parentBone)
                 this._applyParentTransform(this._parentBone);
             else {
                 if (this._armatureParentBone)
@@ -195,7 +195,7 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
         }
 
         ccs.displayFactory.updateDisplay(this, delta, this._boneTransformDirty || this._armature.getArmatureTransformDirty());
-        for(var i=0; i<this._children.length; i++) {
+        for (var i = 0; i < this._children.length; i++) {
             var childBone = this._children[i];
             childBone.update(delta);
         }
@@ -223,7 +223,7 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
      */
     setBlendFunc: function (blendFunc, dst) {
         var locBlendFunc = this._blendFunc, srcValue, dstValue;
-        if(dst === undefined){
+        if (dst === undefined) {
             srcValue = blendFunc.src;
             dstValue = blendFunc.dst;
         } else {
@@ -246,9 +246,9 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
             var cmd = this._renderCmd;
             display.setColor(
                 cc.color(
-                        cmd._displayedColor.r * this._tweenData.r / 255,
-                        cmd._displayedColor.g * this._tweenData.g / 255,
-                        cmd._displayedColor.b * this._tweenData.b / 255));
+                    cmd._displayedColor.r * this._tweenData.r / 255,
+                    cmd._displayedColor.g * this._tweenData.g / 255,
+                    cmd._displayedColor.b * this._tweenData.b / 255));
             display.setOpacity(cmd._displayedOpacity * this._tweenData.a / 255);
         }
     },
@@ -284,10 +284,10 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
      * @param {Boolean} recursion
      */
     removeChildBone: function (bone, recursion) {
-        if (this._children.length > 0 && this._children.getIndex(bone) !== -1 ) {
-            if(recursion) {
+        if (this._children.length > 0 && this._children.getIndex(bone) !== -1) {
+            if (recursion) {
                 var ccbones = bone._children;
-                for(var i=0; i<ccbones.length; i++){
+                for (var i = 0; i < ccbones.length; i++) {
                     var ccBone = ccbones[i];
                     bone.removeChildBone(ccBone, recursion);
                 }
@@ -322,7 +322,7 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
      * Returns the parent bone of ccs.Bone.
      * @returns {ccs.Bone}
      */
-    getParentBone: function(){
+    getParentBone: function () {
         return this._parentBone;
     },
 
@@ -367,7 +367,7 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
      * Return the worldTransform of ccs.Bone.
      * @returns {cc.AffineTransform}
      */
-    getNodeToArmatureTransform: function(){
+    getNodeToArmatureTransform: function () {
         return this._worldTransform;
     },
 
@@ -376,7 +376,7 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
      * @override
      * @returns {cc.AffineTransform}
      */
-    getNodeToWorldTransform: function(){
+    getNodeToWorldTransform: function () {
         return cc.affineTransformConcat(this._worldTransform, this._armature.getNodeToWorldTransform());
     },
 
@@ -435,7 +435,7 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
      * @param {String} name
      * @param {Boolean} force
      */
-    changeDisplayByName: function(name, force){
+    changeDisplayByName: function (name, force) {
         cc.log("changeDisplayByName is deprecated. Use changeDisplayWithName instead.");
         this.changeDisplayWithName(name, force);
     },
@@ -462,9 +462,9 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
      * Returns the collide detector of ccs.Bone.
      * @returns {*}
      */
-    getColliderDetector: function(){
+    getColliderDetector: function () {
         var decoDisplay = this._displayManager.getCurrentDecorativeDisplay();
-        if (decoDisplay){
+        if (decoDisplay) {
             var detector = decoDisplay.getColliderDetector();
             if (detector)
                 return detector;
@@ -537,7 +537,7 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
      * Returns whether is ignore movement bone data.
      * @returns {Boolean}
      */
-    isIgnoreMovementBoneData: function(){
+    isIgnoreMovementBoneData: function () {
         return this._ignoreMovementBoneData;
     },
 
@@ -577,7 +577,7 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
      * Returns the world information of ccs.Bone.
      * @returns {ccs.BaseData}
      */
-    getWorldInfo: function(){
+    getWorldInfo: function () {
         return this._worldInfo;
     },
 
@@ -615,7 +615,7 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
      */
     getColliderBodyList: function () {
         var detector = this.getColliderDetector();
-        if(detector)
+        if (detector)
             return detector.getColliderBodyList();
         return null;
     },
@@ -629,8 +629,8 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
         return this.isIgnoreMovementBoneData();
     },
 
-    _createRenderCmd: function(){
-        if(cc._renderType === cc.game.RENDER_TYPE_CANVAS)
+    _createRenderCmd: function () {
+        if (cc._renderType === cc.game.RENDER_TYPE_CANVAS)
             return new ccs.Bone.CanvasRenderCmd(this);
         else
             return new ccs.Bone.WebGLRenderCmd(this);
@@ -699,18 +699,18 @@ ccs.Bone.RenderCmd = {
         }
 
         if (pt) {
-            wt.a  = t.a  * pt.a + t.b  * pt.c;
-            wt.b  = t.a  * pt.b + t.b  * pt.d;
-            wt.c  = t.c  * pt.a + t.d  * pt.c;
-            wt.d  = t.c  * pt.b + t.d  * pt.d;
+            wt.a = t.a * pt.a + t.b * pt.c;
+            wt.b = t.a * pt.b + t.b * pt.d;
+            wt.c = t.c * pt.a + t.d * pt.c;
+            wt.d = t.c * pt.b + t.d * pt.d;
             wt.tx = t.tx * pt.a + t.ty * pt.c + pt.tx;
             wt.ty = t.tx * pt.b + t.ty * pt.d + pt.ty;
         }
         else {
-            wt.a  = t.a;
-            wt.b  = t.b;
-            wt.c  = t.c;
-            wt.d  = t.d;
+            wt.a = t.a;
+            wt.b = t.b;
+            wt.c = t.c;
+            wt.d = t.d;
             wt.tx = t.tx;
             wt.ty = t.ty;
         }
@@ -728,8 +728,8 @@ ccs.Bone.RenderCmd = {
     proto.constructor = ccs.Bone.CanvasRenderCmd;
 })();
 
-(function(){
-    if(!cc.Node.WebGLRenderCmd)
+(function () {
+    if (!cc.Node.WebGLRenderCmd)
         return;
     ccs.Bone.WebGLRenderCmd = function(renderable){
         cc.Node.WebGLRenderCmd.call(this, renderable);

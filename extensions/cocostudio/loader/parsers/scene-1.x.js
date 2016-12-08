@@ -22,18 +22,18 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-(function(load, baseParser){
+(function (load, baseParser) {
 
     var Parser = baseParser.extend({
 
-        getNodeJson: function(json){
+        getNodeJson: function (json) {
             return json;
         },
 
-        parseNode: function(json, resourcePath){
+        parseNode: function (json, resourcePath) {
             var parser = this.parsers[this.getClass(json)];
             var node = null;
-            if(parser)
+            if (parser)
                 node = parser.call(this, json, resourcePath);
             else
                 cc.log("Can't find the parser : %s", this.getClass(json));
@@ -41,32 +41,32 @@
             return node;
         },
 
-        deferred: function(json, resourcePath, node, file){
-            ccs.triggerManager.parse(json["Triggers"]||[]);
-            if(ccs.sceneReader)
+        deferred: function (json, resourcePath, node, file) {
+            ccs.triggerManager.parse(json["Triggers"] || []);
+            if (ccs.sceneReader)
                 ccs.sceneReader._node = node;
         },
 
-        setPropertyFromJsonDict: function(node, json){
-            var x = (cc.isUndefined(json["x"]))?0:json["x"];
-            var y = (cc.isUndefined(json["y"]))?0:json["y"];
+        setPropertyFromJsonDict: function (node, json) {
+            var x = (cc.isUndefined(json["x"])) ? 0 : json["x"];
+            var y = (cc.isUndefined(json["y"])) ? 0 : json["y"];
             node.setPosition(x, y);
 
-            var bVisible = Boolean((cc.isUndefined(json["visible"]))?1:json["visible"]);
+            var bVisible = Boolean((cc.isUndefined(json["visible"])) ? 1 : json["visible"]);
             node.setVisible(bVisible);
 
-            var nTag = (cc.isUndefined(json["objecttag"]))?-1:json["objecttag"];
+            var nTag = (cc.isUndefined(json["objecttag"])) ? -1 : json["objecttag"];
             node.setTag(nTag);
 
-            var nZorder = (cc.isUndefined(json["zorder"]))?0:json["zorder"];
+            var nZorder = (cc.isUndefined(json["zorder"])) ? 0 : json["zorder"];
             node.setLocalZOrder(nZorder);
 
-            var fScaleX = (cc.isUndefined(json["scalex"]))?1:json["scalex"];
-            var fScaleY = (cc.isUndefined(json["scaley"]))?1:json["scaley"];
+            var fScaleX = (cc.isUndefined(json["scalex"])) ? 1 : json["scalex"];
+            var fScaleY = (cc.isUndefined(json["scaley"])) ? 1 : json["scaley"];
             node.setScaleX(fScaleX);
             node.setScaleY(fScaleY);
 
-            var fRotationZ = (cc.isUndefined(json["rotation"]))?0:json["rotation"];
+            var fRotationZ = (cc.isUndefined(json["rotation"])) ? 0 : json["rotation"];
             node.setRotation(fRotationZ);
 
             var sName = json["name"] || "";
@@ -77,24 +77,24 @@
 
     var parser = new Parser();
 
-    parser.parseChild = function(node, objects, resourcePath){
+    parser.parseChild = function (node, objects, resourcePath) {
         for (var i = 0; i < objects.length; i++) {
             var child,
                 options = objects[i];
-            if(options)
+            if (options)
                 child = this.parseNode(options, resourcePath);
-            if(child)
+            if (child)
                 node.addChild(child);
         }
     };
 
     var componentsParser = {
-        "CCSprite": function(node, component, resourcePath){
+        "CCSprite": function (node, component, resourcePath) {
             var child = new cc.Sprite();
-            loadTexture(component["fileData"], resourcePath, function(path, type){
-                if(type === 0)
+            loadTexture(component["fileData"], resourcePath, function (path, type) {
+                if (type === 0)
                     child.setTexture(path);
-                else if(type === 1){
+                else if (type === 1) {
                     var spriteFrame = cc.spriteFrameCache.getSpriteFrame(path);
                     child.setSpriteFrame(spriteFrame);
                 }
@@ -103,20 +103,20 @@
             node.addComponent(render);
             return render;
         },
-        "CCTMXTiledMap": function(node, component, resourcePath){
+        "CCTMXTiledMap": function (node, component, resourcePath) {
             var child = null;
-            loadTexture(component["fileData"], resourcePath, function(path, type){
-                if(type === 0)
+            loadTexture(component["fileData"], resourcePath, function (path, type) {
+                if (type === 0)
                     child = new cc.TMXTiledMap(path);
             });
             var render = new ccs.ComRender(child, "CCTMXTiledMap");
             node.addComponent(render);
             return render;
         },
-        "CCParticleSystemQuad": function(node, component, resourcePath){
+        "CCParticleSystemQuad": function (node, component, resourcePath) {
             var child = null;
-            loadTexture(component["fileData"], resourcePath, function(path, type){
-                if(type === 0)
+            loadTexture(component["fileData"], resourcePath, function (path, type) {
+                if (type === 0)
                     child = new cc.ParticleSystem(path);
                 else
                     cc.log("unknown resourcetype on CCParticleSystemQuad!");
@@ -126,10 +126,10 @@
             node.addComponent(render);
             return render;
         },
-        "CCArmature": function(node, component, resourcePath){
+        "CCArmature": function (node, component, resourcePath) {
             var child = null;
-            loadTexture(component["fileData"], resourcePath, function(path, type){
-                if(type === 0){
+            loadTexture(component["fileData"], resourcePath, function (path, type) {
+                if (type === 0) {
                     var jsonDict = cc.loader.getRes(path);
                     if (!jsonDict) cc.log("Please load the resource [%s] first!", path);
                     var armature_data = jsonDict["armature_data"];
@@ -139,7 +139,7 @@
                     child = new ccs.Armature(name);
                 }
             });
-            if(child){
+            if (child) {
                 var render = new ccs.ComRender(child, "CCArmature");
                 node.addComponent(render);
                 var actionName = component["selectedactionname"];
@@ -150,101 +150,103 @@
             }
 
         },
-        "CCComAudio": function(node, component, resourcePath){
+        "CCComAudio": function (node, component, resourcePath) {
             var audio = null;
-            loadTexture(component["fileData"], resourcePath, function(path, type){
-                if(type === 0){
+            loadTexture(component["fileData"], resourcePath, function (path, type) {
+                if (type === 0) {
                     audio = new ccs.ComAudio();
                     audio.preloadEffect(path);
                     var name = component["name"];
-                    if(name)
+                    if (name)
                         audio.setName(name);
                     node.addComponent(audio);
                 }
             });
         },
-        "CCComAttribute": function(node, component, resourcePath){
+        "CCComAttribute": function (node, component, resourcePath) {
             var attribute = null;
-            loadTexture(component["fileData"], resourcePath, function(path, type){
-                if(type === 0){
+            loadTexture(component["fileData"], resourcePath, function (path, type) {
+                if (type === 0) {
                     attribute = new ccs.ComAttribute();
                     if (path !== "")
                         attribute.parse(path);
                     node.addComponent(attribute);
-                }else
+                } else
                     cc.log("unknown resourcetype on CCComAttribute!");
             });
             return attribute;
         },
-        "CCBackgroundAudio": function(node, component, resourcePath){
+        "CCBackgroundAudio": function (node, component, resourcePath) {
             var audio = null;
-            loadTexture(component["fileData"], resourcePath, function(path, type){
-                if(type === 0){
+            loadTexture(component["fileData"], resourcePath, function (path, type) {
+                if (type === 0) {
                     audio = new ccs.ComAudio();
                     audio.preloadBackgroundMusic(path);
-                    audio.setFile(path);var bLoop = Boolean(component["loop"] || 0);
+                    audio.setFile(path);
+                    var bLoop = Boolean(component["loop"] || 0);
                     audio.setLoop(bLoop);
                     var name = component["name"];
-                    if(name)
+                    if (name)
                         audio.setName(name);
                     node.addComponent(audio);
                     audio.playBackgroundMusic(path, bLoop);
                 }
             });
         },
-        "GUIComponent": function(node, component, resourcePath){
+        "GUIComponent": function (node, component, resourcePath) {
             var widget = null;
-            loadTexture(component["fileData"], resourcePath, function(path, type){
+            loadTexture(component["fileData"], resourcePath, function (path, type) {
                 widget = ccs._load(path, "ccui");
             });
             var render = new ccs.ComRender(widget, "GUIComponent");
             node.addComponent(render);
             return render;
         },
-        "CCScene": function(){}
+        "CCScene": function () {
+        }
     };
     var loadedPlist = {};
-    var loadTexture = function(json, resourcePath, cb){
-        if(json != null){
+    var loadTexture = function (json, resourcePath, cb) {
+        if (json != null) {
             var path = json["path"];
             var type = json["resourceType"];
             var plist = json["plist"];
-            if(!path)
+            if (!path)
                 return;
-            if(plist){
-                if(cc.loader.getRes(resourcePath + plist)){
+            if (plist) {
+                if (cc.loader.getRes(resourcePath + plist)) {
                     loadedPlist[resourcePath + plist] = true;
                     cc.spriteFrameCache.addSpriteFrames(resourcePath + plist);
-                }else{
-                    if(!loadedPlist[resourcePath + plist])
+                } else {
+                    if (!loadedPlist[resourcePath + plist])
                         cc.log("%s need to be preloaded", resourcePath + plist);
                 }
             }
-            if(type !== 0)
+            if (type !== 0)
                 cb(path, type);
             else
                 cb(resourcePath + path, type);
         }
     };
 
-    parser.parseComponents = function(node, json, resourcePath){
-        if(!node || !json)
+    parser.parseComponents = function (node, json, resourcePath) {
+        if (!node || !json)
             return;
-        json.forEach(function(component){
+        json.forEach(function (component) {
             var parser = componentsParser[component["classname"]];
             var render = null;
-            if(parser)
+            if (parser)
                 render = parser(node, component, resourcePath);
             else
                 cc.log("Can't find the component parser : %s", component["classname"]);
             var name = component["name"];
-            if(render && name){
+            if (render && name) {
                 render.setName(name);
             }
         });
     };
 
-    parser.registerParser("CCNode", function(options, resourcePath){
+    parser.registerParser("CCNode", function (options, resourcePath) {
         var node = new cc.Node();
         this.setPropertyFromJsonDict(node, options);
         this.parseChild.call(this, node, options["gameobjects"], resourcePath);

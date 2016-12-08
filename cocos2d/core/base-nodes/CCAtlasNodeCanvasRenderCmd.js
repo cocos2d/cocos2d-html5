@@ -25,8 +25,8 @@
 /**
  * cc.AtlasNode's rendering objects of Canvas
  */
-(function(){
-    cc.AtlasNode.CanvasRenderCmd = function(renderableObject){
+(function () {
+    cc.AtlasNode.CanvasRenderCmd = function (renderableObject) {
         cc.Node.CanvasRenderCmd.call(this, renderableObject);
         this._needDraw = false;
         this._colorUnmodified = cc.color.WHITE;
@@ -36,7 +36,7 @@
     var proto = cc.AtlasNode.CanvasRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
     proto.constructor = cc.AtlasNode.CanvasRenderCmd;
 
-    proto.initWithTexture = function(texture, tileWidth, tileHeight, itemsToRender){
+    proto.initWithTexture = function (texture, tileWidth, tileHeight, itemsToRender) {
         var node = this._node;
         node._itemWidth = tileWidth;
         node._itemHeight = tileHeight;
@@ -54,7 +54,7 @@
         return true;
     };
 
-    proto.setColor = function(color3){
+    proto.setColor = function (color3) {
         var node = this._node;
         var locRealColor = node._realColor;
         if ((locRealColor.r === color3.r) && (locRealColor.g === color3.g) && (locRealColor.b === color3.b))
@@ -63,24 +63,24 @@
         this._changeTextureColor();
     };
 
-    proto._changeTextureColor = function(){
+    proto._changeTextureColor = function () {
         var node = this._node;
         var texture = node._texture,
             color = this._colorUnmodified,
             element = texture.getHtmlElementObj();
         var textureRect = cc.rect(0, 0, element.width, element.height);
-        if(texture === this._textureToRender)
+        if (texture === this._textureToRender)
             this._textureToRender = texture._generateColorTexture(color.r, color.g, color.b, textureRect);
         else
             texture._generateColorTexture(color.r, color.g, color.b, textureRect, this._textureToRender.getHtmlElementObj());
     };
 
-    proto.setOpacity = function(opacity){
+    proto.setOpacity = function (opacity) {
         var node = this._node;
         cc.Node.prototype.setOpacity.call(node, opacity);
     };
 
-    proto._calculateMaxItems = function(){
+    proto._calculateMaxItems = function () {
         var node = this._node;
         var selTexture = node._texture;
         var size = selTexture.getContentSize();

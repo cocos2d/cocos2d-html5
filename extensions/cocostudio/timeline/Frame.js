@@ -37,7 +37,7 @@ ccs.Frame = ccs.Class.extend({
     _easingParam: null,
     _enterWhenPassed: null,
 
-    ctor: function(){
+    ctor: function () {
         this._frameIndex = 0;
         this._tween = true;
         this._timeline = null;
@@ -46,13 +46,13 @@ ccs.Frame = ccs.Class.extend({
         this._easingParam = [];
     },
 
-    _emitEvent: function(){
-        if (this._timeline){
+    _emitEvent: function () {
+        if (this._timeline) {
             this._timeline.getActionTimeline()._emitFrameEvent(this);
         }
     },
 
-    _cloneProperty: function(frame){
+    _cloneProperty: function (frame) {
         this._frameIndex = frame.getFrameIndex();
         this._tween = frame.isTween();
         this._tweenType = frame.getTweenType();
@@ -63,7 +63,7 @@ ccs.Frame = ccs.Class.extend({
      * Set the frame index
      * @param {number} frameIndex
      */
-    setFrameIndex: function(frameIndex){
+    setFrameIndex: function (frameIndex) {
         this._frameIndex = frameIndex;
     },
 
@@ -71,7 +71,7 @@ ccs.Frame = ccs.Class.extend({
      * Get the frame index
      * @returns {null}
      */
-    getFrameIndex: function(){
+    getFrameIndex: function () {
         return this._frameIndex;
     },
 
@@ -79,7 +79,7 @@ ccs.Frame = ccs.Class.extend({
      * Set timeline
      * @param timeline
      */
-    setTimeline: function(timeline){
+    setTimeline: function (timeline) {
         this._timeline = timeline;
     },
 
@@ -88,7 +88,7 @@ ccs.Frame = ccs.Class.extend({
      * @param timeline
      * @returns {ccs.timeline}
      */
-    getTimeline: function(timeline){
+    getTimeline: function (timeline) {
         return this._timeline;
     },
 
@@ -96,7 +96,7 @@ ccs.Frame = ccs.Class.extend({
      * Set Node
      * @param {cc.Node} node
      */
-    setNode: function(node){
+    setNode: function (node) {
         this._node = node;
     },
 
@@ -104,7 +104,7 @@ ccs.Frame = ccs.Class.extend({
      * gets the Node
      * @return node
      */
-    getNode: function(){
+    getNode: function () {
         return this._node;
     },
 
@@ -112,7 +112,7 @@ ccs.Frame = ccs.Class.extend({
      * set tween
      * @param tween
      */
-    setTween: function(tween){
+    setTween: function (tween) {
         this._tween = tween;
     },
 
@@ -120,7 +120,7 @@ ccs.Frame = ccs.Class.extend({
      * Gets the tween
      * @returns {boolean | null}
      */
-    isTween: function(){
+    isTween: function () {
         return this._tween;
     },
 
@@ -129,7 +129,7 @@ ccs.Frame = ccs.Class.extend({
      * @override
      * @param {ccs.Frame} nextFrame
      */
-    onEnter: function(nextFrame){ // = 0
+    onEnter: function (nextFrame) { // = 0
     },
 
     /**
@@ -137,15 +137,15 @@ ccs.Frame = ccs.Class.extend({
      * @override
      * @param {number} percent
      */
-    apply: function(percent){
-        if(!this._tween)
+    apply: function (percent) {
+        if (!this._tween)
             return;
-        if(this._tweenType !== ccs.FrameEaseType.TWEEN_EASING_MAX  && this._tweenType !==  ccs.FrameEaseType.LINEAR)
+        if (this._tweenType !== ccs.FrameEaseType.TWEEN_EASING_MAX && this._tweenType !== ccs.FrameEaseType.LINEAR)
             percent = this.tweenPercent(percent);
         this._onApply(percent);
     },
 
-    _onApply: function(percent){
+    _onApply: function (percent) {
 
     },
 
@@ -155,48 +155,47 @@ ccs.Frame = ccs.Class.extend({
      * @override
      * @return {ccs.Frame}
      */
-    clone: function(){ // = 0
+    clone: function () { // = 0
     },
 
-    tweenPercent: function(percent){
+    tweenPercent: function (percent) {
         var func = ccs.Frame.tweenToMap[this._tweenType];
-        if(func)
+        if (func)
             return func(percent, this._easingParam);
         else
             return percent;
     },
 
-    setEasingParams: function(easingParams){
-        if(easingParams){
+    setEasingParams: function (easingParams) {
+        if (easingParams) {
             this._easingParam.length = 0;
-            for(var i=0; i<easingParams.length; i++)
+            for (var i = 0; i < easingParams.length; i++)
                 this._easingParam[i] = easingParams[i];
         }
     },
 
-    getEasingParams: function(){
+    getEasingParams: function () {
         return this._easingParam;
     },
 
-    setTweenType: function(tweenType){
+    setTweenType: function (tweenType) {
         this._tweenType = tweenType;
     },
 
-    getTweenType: function(){
+    getTweenType: function () {
         return this._tweenType;
     },
 
-    isEnterWhenPassed: function(){
+    isEnterWhenPassed: function () {
         return this._enterWhenPassed;
     }
 });
 
 ccs.Frame.tweenToMap = {
-    "-1": function(time, easingParam){
-        if (easingParam)
-        {
+    "-1": function (time, easingParam) {
+        if (easingParam) {
             var tt = 1 - time;
-            return easingParam[1]*tt*tt*tt + 3*easingParam[3]*time*tt*tt + 3*easingParam[5]*time*time*tt + easingParam[7]*time*time*time;
+            return easingParam[1] * tt * tt * tt + 3 * easingParam[3] * time * tt * tt + 3 * easingParam[5] * time * time * tt + easingParam[7] * time * time * time;
         }
         return time;
     },
@@ -228,17 +227,17 @@ ccs.Frame.tweenToMap = {
     20: cc._easeCircleActionOut.easing,//Circ_EaseOut
     21: cc._easeCircleActionInOut.easing,//Circ_EaseInOut
 
-    22: function(time, easingParam){
+    22: function (time, easingParam) {
         var period = 0.3;
         easingParam != null && ( period = easingParam[0] );
         return cc.easeElasticIn(period).easing(time);
     },//Elastic_EaesIn
-    23: function(time, easingParam){
+    23: function (time, easingParam) {
         var period = 0.3;
         easingParam != null && ( period = easingParam[0] );
         return cc.easeElasticOut(period).easing(time);
     },//Elastic_EaesOut
-    24: function(time, easingParam){
+    24: function (time, easingParam) {
         var period = 0.3;
         easingParam != null && ( period = easingParam[0] );
         return cc.easeElasticInOut(period).easing(time);
@@ -263,7 +262,7 @@ ccs.VisibleFrame = ccs.Frame.extend({
 
     _visible: true,
 
-    ctor: function(){
+    ctor: function () {
         ccs.Frame.prototype.ctor.call(this);
         this._visible = true;
     },
@@ -272,8 +271,8 @@ ccs.VisibleFrame = ccs.Frame.extend({
      * the execution of the callback
      * @param {ccs.Frame} nextFrame
      */
-    onEnter: function(nextFrame){
-        if(this._node)
+    onEnter: function (nextFrame) {
+        if (this._node)
             this._node.setVisible(this._visible);
     },
 
@@ -282,7 +281,7 @@ ccs.VisibleFrame = ccs.Frame.extend({
      * returns a clone of action.
      * @return {ccs.VisibleFrame}
      */
-    clone: function(){
+    clone: function () {
         var frame = new ccs.VisibleFrame();
         frame.setVisible(this._visible);
 
@@ -295,7 +294,7 @@ ccs.VisibleFrame = ccs.Frame.extend({
      * Set display state
      * @param {Boolean} visible
      */
-    setVisible: function(visible){
+    setVisible: function (visible) {
         this._visible = visible;
     },
 
@@ -303,7 +302,7 @@ ccs.VisibleFrame = ccs.Frame.extend({
      * Get the display state
      * @returns {Boolean}
      */
-    isVisible: function(){
+    isVisible: function () {
         return this._visible;
     }
 
@@ -315,7 +314,7 @@ ccs.VisibleFrame = ccs.Frame.extend({
  * @deprecated v3.0, please use new ccs.VisibleFrame() instead.
  * @returns {ccs.VisibleFrame}
  */
-ccs.VisibleFrame.create = function(){
+ccs.VisibleFrame.create = function () {
     return new ccs.VisibleFrame();
 };
 
@@ -329,7 +328,7 @@ ccs.TextureFrame = ccs.Frame.extend({
     _sprite: null,
     _textureName: null,
 
-    ctor: function(){
+    ctor: function () {
         ccs.Frame.prototype.ctor.call(this);
 
         this._textureName = "";
@@ -339,7 +338,7 @@ ccs.TextureFrame = ccs.Frame.extend({
      * Set the node element to draw texture
      * @param {cc.Node} node
      */
-    setNode: function(node){
+    setNode: function (node) {
         ccs.Frame.prototype.setNode.call(this, node);
         this._sprite = node;
     },
@@ -348,16 +347,16 @@ ccs.TextureFrame = ccs.Frame.extend({
      * the execution of the callback
      * @param {ccs.Frame} nextFrame
      */
-    onEnter: function(nextFrame){
-        if(this._sprite){
+    onEnter: function (nextFrame) {
+        if (this._sprite) {
             var spriteBlendFunc = this._sprite.getBlendFunc();
             var spriteFrame = cc.spriteFrameCache._spriteFrames[this._textureName];
-            if(spriteFrame != null)
+            if (spriteFrame != null)
                 this._sprite.setSpriteFrame(spriteFrame);
             else
                 this._sprite.setTexture(this._textureName);
 
-            if(this._sprite.getBlendFunc() !== spriteBlendFunc)
+            if (this._sprite.getBlendFunc() !== spriteBlendFunc)
                 this._sprite.setBlendFunc(spriteBlendFunc);
         }
 
@@ -368,7 +367,7 @@ ccs.TextureFrame = ccs.Frame.extend({
      * returns a clone of action.
      * @return {ccs.TextureFrame}
      */
-    clone: function(){
+    clone: function () {
         var frame = new ccs.TextureFrame();
         frame.setTextureName(this._textureName);
         frame._cloneProperty(this);
@@ -379,7 +378,7 @@ ccs.TextureFrame = ccs.Frame.extend({
      * Set the texture name
      * @param {string} textureName
      */
-    setTextureName: function(textureName){
+    setTextureName: function (textureName) {
         this._textureName = textureName;
     },
 
@@ -387,7 +386,7 @@ ccs.TextureFrame = ccs.Frame.extend({
      * Gets the Texture name
      * @returns {null}
      */
-    getTextureName: function(){
+    getTextureName: function () {
         return this._textureName;
     }
 
@@ -399,7 +398,7 @@ ccs.TextureFrame = ccs.Frame.extend({
  * @deprecated v3.0, please use new ccs.TextureFrame() instead.
  * @returns {ccs.TextureFrame}
  */
-ccs.TextureFrame.create = function(){
+ccs.TextureFrame.create = function () {
     return new ccs.TextureFrame();
 };
 
@@ -413,7 +412,7 @@ ccs.RotationFrame = ccs.Frame.extend({
     _rotation: null,
     _betwennRotation: null,
 
-    ctor: function(){
+    ctor: function () {
         ccs.Frame.prototype.ctor.call(this);
         this._rotation = 0;
     },
@@ -422,12 +421,12 @@ ccs.RotationFrame = ccs.Frame.extend({
      * the execution of the callback
      * @param {ccs.Frame} nextFrame
      */
-    onEnter: function(nextFrame){
-        if(!this._node)
+    onEnter: function (nextFrame) {
+        if (!this._node)
             return;
         this._node.setRotation(this._rotation);
 
-        if(this._tween){
+        if (this._tween) {
             this._betwennRotation = nextFrame._rotation - this._rotation;
         }
     },
@@ -436,8 +435,8 @@ ccs.RotationFrame = ccs.Frame.extend({
      * Each frame logic
      * @param {number} percent
      */
-    _onApply: function(percent){
-        if (this._betwennRotation !== 0){
+    _onApply: function (percent) {
+        if (this._betwennRotation !== 0) {
             var rotation = this._rotation + percent * this._betwennRotation;
             this._node.setRotation(rotation);
         }
@@ -448,7 +447,7 @@ ccs.RotationFrame = ccs.Frame.extend({
      * returns a clone of action.
      * @return {ccs.RotationFrame}
      */
-    clone: function(){
+    clone: function () {
         var frame = new ccs.RotationFrame();
         frame.setRotation(this._rotation);
 
@@ -461,7 +460,7 @@ ccs.RotationFrame = ccs.Frame.extend({
      * Set the rotation
      * @param {Number} rotation
      */
-    setRotation: function(rotation){
+    setRotation: function (rotation) {
         this._rotation = rotation;
     },
 
@@ -469,7 +468,7 @@ ccs.RotationFrame = ccs.Frame.extend({
      * Gets the rotation
      * @returns {Number}
      */
-    getRotation: function(){
+    getRotation: function () {
         return this._rotation;
     }
 
@@ -481,7 +480,7 @@ ccs.RotationFrame = ccs.Frame.extend({
  * @deprecated v3.0, please use new ccs.RotationFrame() instead.
  * @returns {ccs.RotationFrame}
  */
-ccs.RotationFrame.create = function(){
+ccs.RotationFrame.create = function () {
     return new ccs.RotationFrame();
 };
 
@@ -497,7 +496,7 @@ ccs.SkewFrame = ccs.Frame.extend({
     _betweenSkewX: null,
     _betweenSkewY: null,
 
-    ctor: function(){
+    ctor: function () {
         ccs.Frame.prototype.ctor.call(this);
         this._skewX = 0;
         this._skewY = 0;
@@ -507,13 +506,13 @@ ccs.SkewFrame = ccs.Frame.extend({
      * the execution of the callback
      * @param {ccs.Frame} nextFrame
      */
-    onEnter: function(nextFrame){
-        if(!this._node)
+    onEnter: function (nextFrame) {
+        if (!this._node)
             return;
         this._node.setSkewX(this._skewX);
         this._node.setSkewY(this._skewY);
 
-        if(this._tween){
+        if (this._tween) {
             this._betweenSkewX = nextFrame._skewX - this._skewX;
             this._betweenSkewY = nextFrame._skewY - this._skewY;
         }
@@ -524,9 +523,8 @@ ccs.SkewFrame = ccs.Frame.extend({
      * Each frame logic
      * @param {number} percent
      */
-    _onApply: function(percent){
-        if (this._betweenSkewX !== 0 || this._betweenSkewY !== 0)
-        {
+    _onApply: function (percent) {
+        if (this._betweenSkewX !== 0 || this._betweenSkewY !== 0) {
             var skewx = this._skewX + percent * this._betweenSkewX;
             var skewy = this._skewY + percent * this._betweenSkewY;
 
@@ -540,7 +538,7 @@ ccs.SkewFrame = ccs.Frame.extend({
      * returns a clone of action.
      * @return {ccs.SkewFrame}
      */
-    clone: function(){
+    clone: function () {
         var frame = new ccs.SkewFrame();
         frame.setSkewX(this._skewX);
         frame.setSkewY(this._skewY);
@@ -554,7 +552,7 @@ ccs.SkewFrame = ccs.Frame.extend({
      * Set the skew x
      * @param {Number} skewx
      */
-    setSkewX: function(skewx){
+    setSkewX: function (skewx) {
         this._skewX = skewx;
     },
 
@@ -562,7 +560,7 @@ ccs.SkewFrame = ccs.Frame.extend({
      * Gets the skew x
      * @returns {Number}
      */
-    getSkewX: function(){
+    getSkewX: function () {
         return this._skewX;
     },
 
@@ -570,7 +568,7 @@ ccs.SkewFrame = ccs.Frame.extend({
      * Set the skew y
      * @param {Number} skewy
      */
-    setSkewY: function(skewy){
+    setSkewY: function (skewy) {
         this._skewY = skewy;
     },
 
@@ -578,7 +576,7 @@ ccs.SkewFrame = ccs.Frame.extend({
      * Gets the skew y
      * @returns {Number}
      */
-    getSkewY: function(){
+    getSkewY: function () {
         return this._skewY;
     }
 
@@ -590,7 +588,7 @@ ccs.SkewFrame = ccs.Frame.extend({
  * @deprecated v3.0, please use new ccs.SkewFrame() instead.
  * @returns {ccs.SkewFrame}
  */
-ccs.SkewFrame.create = function(){
+ccs.SkewFrame.create = function () {
     return new ccs.SkewFrame();
 };
 
@@ -605,13 +603,13 @@ ccs.RotationSkewFrame = ccs.SkewFrame.extend({
      * the execution of the callback
      * @param {ccs.Frame} nextFrame
      */
-    onEnter: function(nextFrame){
-        if(!this._node)
+    onEnter: function (nextFrame) {
+        if (!this._node)
             return;
         this._node.setRotationX(this._skewX);
         this._node.setRotationY(this._skewY);
 
-        if (this._tween){
+        if (this._tween) {
             this._betweenSkewX = nextFrame._skewX - this._skewX;
             this._betweenSkewY = nextFrame._skewY - this._skewY;
         }
@@ -622,8 +620,8 @@ ccs.RotationSkewFrame = ccs.SkewFrame.extend({
      * Each frame logic
      * @param {number} percent
      */
-    _onApply: function(percent){
-        if (this._node && (this._betweenSkewX !== 0 || this._betweenSkewY !== 0)){
+    _onApply: function (percent) {
+        if (this._node && (this._betweenSkewX !== 0 || this._betweenSkewY !== 0)) {
             var skewx = this._skewX + percent * this._betweenSkewX;
             var skewy = this._skewY + percent * this._betweenSkewY;
 
@@ -638,7 +636,7 @@ ccs.RotationSkewFrame = ccs.SkewFrame.extend({
      * returns a clone of action.
      * @return {ccs.RotationSkewFrame}
      */
-    clone: function(){
+    clone: function () {
         var frame = new ccs.RotationSkewFrame();
         frame.setSkewX(this._skewX);
         frame.setSkewY(this._skewY);
@@ -657,7 +655,7 @@ ccs.RotationSkewFrame = ccs.SkewFrame.extend({
  * @deprecated v3.0, please use new ccs.RotationSkewFrame() instead.
  * @returns {ccs.RotationSkewFrame}
  */
-ccs.RotationSkewFrame.create = function(){
+ccs.RotationSkewFrame.create = function () {
     return new ccs.RotationSkewFrame();
 };
 
@@ -672,7 +670,7 @@ ccs.PositionFrame = ccs.Frame.extend({
     _betweenX: null,
     _betweenY: null,
 
-    ctor: function(){
+    ctor: function () {
         ccs.Frame.prototype.ctor.call(this);
         this._position = cc.p(0, 0);
     },
@@ -681,13 +679,13 @@ ccs.PositionFrame = ccs.Frame.extend({
      * the execution of the callback
      * @param {ccs.Frame} nextFrame
      */
-    onEnter: function(nextFrame){
-        if(!this._node)
+    onEnter: function (nextFrame) {
+        if (!this._node)
             return;
 
         this._node.setPosition(this._position);
 
-        if(this._tween){
+        if (this._tween) {
             this._betweenX = nextFrame._position.x - this._position.x;
             this._betweenY = nextFrame._position.y - this._position.y;
         }
@@ -697,8 +695,8 @@ ccs.PositionFrame = ccs.Frame.extend({
      * Each frame logic
      * @param {number} percent
      */
-    _onApply: function(percent){
-        if (this._node && (this._betweenX !== 0 || this._betweenY !== 0)){
+    _onApply: function (percent) {
+        if (this._node && (this._betweenX !== 0 || this._betweenY !== 0)) {
             var p = cc.p(0, 0);
             p.x = this._position.x + this._betweenX * percent;
             p.y = this._position.y + this._betweenY * percent;
@@ -712,7 +710,7 @@ ccs.PositionFrame = ccs.Frame.extend({
      * returns a clone of action.
      * @return {ccs.PositionFrame}
      */
-    clone: function(){
+    clone: function () {
         var frame = new ccs.PositionFrame();
         frame.setPosition(this._position);
 
@@ -725,7 +723,7 @@ ccs.PositionFrame = ccs.Frame.extend({
      * Set the position
      * @param {cc.p} position
      */
-    setPosition: function(position){
+    setPosition: function (position) {
         this._position = position;
     },
 
@@ -733,7 +731,7 @@ ccs.PositionFrame = ccs.Frame.extend({
      * gets the position
      * @returns {cc.p}
      */
-    getPosition: function(){
+    getPosition: function () {
         return this._position;
     },
 
@@ -741,7 +739,7 @@ ccs.PositionFrame = ccs.Frame.extend({
      * Set the position x
      * @param {Number} x
      */
-    setX: function(x){
+    setX: function (x) {
         this._position.x = x;
     },
 
@@ -749,7 +747,7 @@ ccs.PositionFrame = ccs.Frame.extend({
      * Gets the position x
      * @returns {Number}
      */
-    getX: function(){
+    getX: function () {
         return this._position.x;
     },
 
@@ -757,7 +755,7 @@ ccs.PositionFrame = ccs.Frame.extend({
      * Set the position y
      * @param {Number} y
      */
-    setY: function(y){
+    setY: function (y) {
         this._position.y = y;
     },
 
@@ -765,7 +763,7 @@ ccs.PositionFrame = ccs.Frame.extend({
      * Gets the position y
      * @returns {Number}
      */
-    getY: function(){
+    getY: function () {
         return this._position.y;
     }
 
@@ -777,7 +775,7 @@ ccs.PositionFrame = ccs.Frame.extend({
  * @deprecated v3.0, please use new ccs.PositionFrame() instead.
  * @returns {ccs.PositionFrame}
  */
-ccs.PositionFrame.create = function(){
+ccs.PositionFrame.create = function () {
     return new ccs.PositionFrame();
 };
 
@@ -793,7 +791,7 @@ ccs.ScaleFrame = ccs.Frame.extend({
     _betweenScaleX: null,
     _betweenScaleY: null,
 
-    ctor: function(){
+    ctor: function () {
         ccs.Frame.prototype.ctor.call(this);
         this._scaleX = 1;
         this._scaleY = 1;
@@ -803,13 +801,13 @@ ccs.ScaleFrame = ccs.Frame.extend({
      * the execution of the callback
      * @param {ccs.Frame} nextFrame
      */
-    onEnter: function(nextFrame){
-        if(!this._node)
+    onEnter: function (nextFrame) {
+        if (!this._node)
             return;
         this._node.setScaleX(this._scaleX);
         this._node.setScaleY(this._scaleY);
 
-        if(this._tween){
+        if (this._tween) {
             this._betweenScaleX = nextFrame._scaleX - this._scaleX;
             this._betweenScaleY = nextFrame._scaleY - this._scaleY;
         }
@@ -820,8 +818,8 @@ ccs.ScaleFrame = ccs.Frame.extend({
      * Each frame logic
      * @param {number} percent
      */
-    _onApply: function(percent){
-        if (this._node && (this._betweenScaleX !== 0 || this._betweenScaleY !== 0)){
+    _onApply: function (percent) {
+        if (this._node && (this._betweenScaleX !== 0 || this._betweenScaleY !== 0)) {
             var scaleX = this._scaleX + this._betweenScaleX * percent;
             var scaleY = this._scaleY + this._betweenScaleY * percent;
 
@@ -835,7 +833,7 @@ ccs.ScaleFrame = ccs.Frame.extend({
      * returns a clone of action.
      * @return {ccs.ScaleFrame}
      */
-    clone: function(){
+    clone: function () {
         var frame = new ccs.ScaleFrame();
         frame.setScaleX(this._scaleX);
         frame.setScaleY(this._scaleY);
@@ -850,7 +848,7 @@ ccs.ScaleFrame = ccs.Frame.extend({
      * Set the scale
      * @param {Number} scale
      */
-    setScale: function(scale){
+    setScale: function (scale) {
         this._scaleX = scale;
         this._scaleY = scale;
     },
@@ -859,7 +857,7 @@ ccs.ScaleFrame = ccs.Frame.extend({
      * Set the scale x
      * @param {Number} scaleX
      */
-    setScaleX: function(scaleX){
+    setScaleX: function (scaleX) {
         this._scaleX = scaleX;
     },
 
@@ -867,7 +865,7 @@ ccs.ScaleFrame = ccs.Frame.extend({
      * Gets the scale x
      * @returns {Number}
      */
-    getScaleX: function(){
+    getScaleX: function () {
         return this._scaleX;
     },
 
@@ -875,7 +873,7 @@ ccs.ScaleFrame = ccs.Frame.extend({
      * Set the scale y
      * @param {Number} scaleY
      */
-    setScaleY: function(scaleY){
+    setScaleY: function (scaleY) {
         this._scaleY = scaleY;
     },
 
@@ -883,7 +881,7 @@ ccs.ScaleFrame = ccs.Frame.extend({
      * Gets the scale y
      * @returns {Number}
      */
-    getScaleY: function(){
+    getScaleY: function () {
         return this._scaleY;
     }
 
@@ -895,7 +893,7 @@ ccs.ScaleFrame = ccs.Frame.extend({
  * @deprecated v3.0, please use new ccs.ScaleFrame() instead.
  * @returns {ccs.ScaleFrame}
  */
-ccs.ScaleFrame.create = function(){
+ccs.ScaleFrame.create = function () {
     return new ccs.ScaleFrame();
 };
 
@@ -908,7 +906,7 @@ ccs.AnchorPointFrame = ccs.Frame.extend({
 
     _anchorPoint: null,
 
-    ctor: function(){
+    ctor: function () {
         ccs.Frame.prototype.ctor.call(this);
         this._anchorPoint = cc.p(0, 0);
     },
@@ -917,8 +915,8 @@ ccs.AnchorPointFrame = ccs.Frame.extend({
      * the execution of the callback
      * @param {ccs.Frame} nextFrame
      */
-    onEnter: function(nextFrame){
-        if(this._node)
+    onEnter: function (nextFrame) {
+        if (this._node)
             this._node.setAnchorPoint(this._anchorPoint);
     },
 
@@ -927,7 +925,7 @@ ccs.AnchorPointFrame = ccs.Frame.extend({
      * returns a clone of action.
      * @return {ccs.AnchorPointFrame}
      */
-    clone: function(){
+    clone: function () {
         var frame = new ccs.AnchorPointFrame();
         frame.setAnchorPoint(this._anchorPoint);
 
@@ -940,7 +938,7 @@ ccs.AnchorPointFrame = ccs.Frame.extend({
      * Set the anchor point
      * @param {cc.p} point
      */
-    setAnchorPoint: function(point){
+    setAnchorPoint: function (point) {
         this._anchorPoint = point;
     },
 
@@ -948,7 +946,7 @@ ccs.AnchorPointFrame = ccs.Frame.extend({
      * Gets the anchor point
      * @returns {cc.p}
      */
-    getAnchorPoint: function(){
+    getAnchorPoint: function () {
         return this._anchorPoint;
     }
 
@@ -960,7 +958,7 @@ ccs.AnchorPointFrame = ccs.Frame.extend({
  * @deprecated v3.0, please use new ccs.AnchorPointFrame() instead.
  * @returns {ccs.AnchorPointFrame}
  */
-ccs.AnchorPointFrame.create = function(){
+ccs.AnchorPointFrame.create = function () {
     return new ccs.AnchorPointFrame();
 };
 
@@ -969,9 +967,9 @@ ccs.AnchorPointFrame.create = function(){
  * @namespace
  */
 ccs.InnerActionType = {
-    LoopAction : 0,
-    NoLoopAction : 1,
-    SingleFrame : 2
+    LoopAction: 0,
+    NoLoopAction: 1,
+    SingleFrame: 2
 };
 
 /**
@@ -984,12 +982,12 @@ ccs.InnerActionFrame = ccs.Frame.extend({
     _innerActionType: null,
     _startFrameIndex: null,
 
-    _endFrameIndex:0,
+    _endFrameIndex: 0,
     _singleFrameIndex: 0,
     _enterWithName: null,
     _animationName: "",
 
-    ctor: function(){
+    ctor: function () {
         ccs.Frame.prototype.ctor.call(this);
 
         this._enterWithName = false;
@@ -1001,60 +999,60 @@ ccs.InnerActionFrame = ccs.Frame.extend({
      * the execution of the callback
      * @param {ccs.Frame} nextFrame
      */
-    onEnter: function(nextFrame){
-        if(!this._node)  return;
+    onEnter: function (nextFrame) {
+        if (!this._node)  return;
         var innerActiontimeline = this._node.getActionByTag(this._node.getTag());
-        if(!innerActiontimeline) return;
-        if (ccs.InnerActionType.SingleFrame === this._innerActionType){
+        if (!innerActiontimeline) return;
+        if (ccs.InnerActionType.SingleFrame === this._innerActionType) {
             innerActiontimeline.gotoFrameAndPause(this._singleFrameIndex);
             return;
         }
 
         var innerStart = this._startFrameIndex;
         var innerEnd = this._endFrameIndex;
-        if (this._enterWithName){
-            if (this._animationName === "-- ALL --"){
+        if (this._enterWithName) {
+            if (this._animationName === "-- ALL --") {
                 innerStart = 0;
                 innerEnd = innerActiontimeline.getDuration();
-            } else if(innerActiontimeline.isAnimationInfoExists(this._animationName)) {
+            } else if (innerActiontimeline.isAnimationInfoExists(this._animationName)) {
                 var info = innerActiontimeline.getAnimationInfo(this._animationName);
                 innerStart = info.startIndex;
                 innerEnd = info.endIndex;
-            }else{
+            } else {
                 cc.log("Animation %s not exists!", this._animationName);
             }
         }
 
         var duration = this._timeline.getActionTimeline().getDuration();
         var odddiff = duration - this._frameIndex - innerEnd + innerStart;
-        if (odddiff < 0){
+        if (odddiff < 0) {
             innerEnd += odddiff;
         }
 
-        if (ccs.InnerActionType.NoLoopAction === this._innerActionType){
+        if (ccs.InnerActionType.NoLoopAction === this._innerActionType) {
             innerActiontimeline.gotoFrameAndPlay(innerStart, innerEnd, false);
-        }else if (ccs.InnerActionType.LoopAction === this._innerActionType){
+        } else if (ccs.InnerActionType.LoopAction === this._innerActionType) {
             innerActiontimeline.gotoFrameAndPlay(innerStart, innerEnd, true);
         }
     },
 
-    setAnimationName: function(animationName){
+    setAnimationName: function (animationName) {
         this._animationName = animationName;
     },
 
-    setSingleFrameIndex: function(frameIndex){
+    setSingleFrameIndex: function (frameIndex) {
         this._singleFrameIndex = frameIndex;
     },
 
-    getSingleFrameIndex: function(){
+    getSingleFrameIndex: function () {
         return this._startFrameIndex;
     },
 
-    setEnterWithName: function(isEnterWithName){
+    setEnterWithName: function (isEnterWithName) {
         this._enterWithName = isEnterWithName;
     },
 
-    getEnterWithName: function(){
+    getEnterWithName: function () {
         return this._enterWithName;
     },
 
@@ -1063,7 +1061,7 @@ ccs.InnerActionFrame = ccs.Frame.extend({
      * returns a clone of action.
      * @return {ccs.InnerActionFrame}
      */
-    clone: function(){
+    clone: function () {
         var frame = new ccs.InnerActionFrame();
         frame.setInnerActionType(this._innerActionType);
         frame.setStartFrameIndex(this._startFrameIndex);
@@ -1081,7 +1079,7 @@ ccs.InnerActionFrame = ccs.Frame.extend({
      * Set the inner action type
      * @param {ccs.InnerActionType} type
      */
-    setInnerActionType: function(type){
+    setInnerActionType: function (type) {
         this._innerActionType = type;
     },
 
@@ -1089,7 +1087,7 @@ ccs.InnerActionFrame = ccs.Frame.extend({
      * Gets the inner action type
      * @returns {ccs.InnerActionType}
      */
-    getInnerActionType: function(){
+    getInnerActionType: function () {
         return this._innerActionType;
     },
 
@@ -1097,7 +1095,7 @@ ccs.InnerActionFrame = ccs.Frame.extend({
      * Set the start frame index
      * @param {Number} frameIndex
      */
-    setStartFrameIndex: function(frameIndex){
+    setStartFrameIndex: function (frameIndex) {
         this._startFrameIndex = frameIndex;
     },
 
@@ -1105,7 +1103,7 @@ ccs.InnerActionFrame = ccs.Frame.extend({
      * Get the start frame index
      * @returns {Number}
      */
-    getStartFrameIndex: function(){
+    getStartFrameIndex: function () {
         return this._startFrameIndex;
     }
 
@@ -1117,7 +1115,7 @@ ccs.InnerActionFrame = ccs.Frame.extend({
  * @deprecated v3.0, please use new ccs.InnerActionFrame() instead.
  * @returns {ccs.InnerActionFrame}
  */
-ccs.InnerActionFrame.create = function(){
+ccs.InnerActionFrame.create = function () {
     return new ccs.InnerActionFrame();
 };
 
@@ -1136,7 +1134,7 @@ ccs.ColorFrame = ccs.Frame.extend({
     _betweenGreen: null,
     _betweenBlue: null,
 
-    ctor: function(){
+    ctor: function () {
         ccs.Frame.prototype.ctor.call(this);
         this._color = cc.color(255, 255, 255);
     },
@@ -1145,15 +1143,15 @@ ccs.ColorFrame = ccs.Frame.extend({
      * the execution of the callback
      * @param {ccs.ColorFrame} nextFrame
      */
-    onEnter: function(nextFrame){
-        if(!this._node)
+    onEnter: function (nextFrame) {
+        if (!this._node)
             return;
         this._node.setColor(this._color);
-        if(this._tween){
+        if (this._tween) {
             var color = nextFrame._color;
-            this._betweenRed   = color.r - this._color.r;
+            this._betweenRed = color.r - this._color.r;
             this._betweenGreen = color.g - this._color.g;
-            this._betweenBlue  = color.b - this._color.b;
+            this._betweenBlue = color.b - this._color.b;
         }
 
     },
@@ -1162,16 +1160,16 @@ ccs.ColorFrame = ccs.Frame.extend({
      * Each frame logic
      * @param {number} percent
      */
-    _onApply: function(percent){
-        if (this._node && this._tween && (this._betweenAlpha !== 0 || this._betweenRed !== 0 || this._betweenGreen !== 0 || this._betweenBlue !== 0)){
+    _onApply: function (percent) {
+        if (this._node && this._tween && (this._betweenAlpha !== 0 || this._betweenRed !== 0 || this._betweenGreen !== 0 || this._betweenBlue !== 0)) {
 
             var color = cc.color(255, 255, 255);
-            color.r = this._color.r + this._betweenRed   * percent;
+            color.r = this._color.r + this._betweenRed * percent;
             color.g = this._color.g + this._betweenGreen * percent;
-            color.b = this._color.b + this._betweenBlue  * percent;
+            color.b = this._color.b + this._betweenBlue * percent;
 
             this._node.setColor(color);
-            if(this._alpha !== null){
+            if (this._alpha !== null) {
                 var alpha = this._alpha + this._betweenAlpha * percent;
                 this._node.setOpacity(alpha);
             }
@@ -1184,7 +1182,7 @@ ccs.ColorFrame = ccs.Frame.extend({
      * returns a clone of action.
      * @return {ccs.ColorFrame}
      */
-    clone: function(){
+    clone: function () {
         var frame = new ccs.ColorFrame();
         frame.setColor(this._color);
         frame._cloneProperty(this);
@@ -1195,7 +1193,7 @@ ccs.ColorFrame = ccs.Frame.extend({
      * Set the color
      * @param {cc.color} color
      */
-    setColor: function(color){
+    setColor: function (color) {
         this._color = color;
     },
 
@@ -1203,7 +1201,7 @@ ccs.ColorFrame = ccs.Frame.extend({
      * Gets the color
      * @returns {cc.color}
      */
-    getColor: function(){
+    getColor: function () {
         return this._color;
     }
 
@@ -1215,7 +1213,7 @@ ccs.ColorFrame = ccs.Frame.extend({
  * @deprecated v3.0, please use new ccs.ColorFrame() instead.
  * @returns {ccs.ColorFrame}
  */
-ccs.ColorFrame.create = function(){
+ccs.ColorFrame.create = function () {
     return new ccs.ColorFrame();
 };
 
@@ -1229,22 +1227,22 @@ ccs.AlphaFrame = ccs.Frame.extend({
     _alpha: null,
     _betweenAlpha: null,
 
-    ctor: function(){
+    ctor: function () {
         ccs.Frame.prototype.ctor.call(this);
         this._alpha = 255;
     },
 
-    onEnter: function(nextFrame){
-        if(!this._node)
+    onEnter: function (nextFrame) {
+        if (!this._node)
             return;
         this._node.setOpacity(this._alpha);
-        if(this._tween){
+        if (this._tween) {
             this._betweenAlpha = nextFrame._alpha - this._alpha;
         }
     },
 
-    _onApply: function(percent){
-        if(!this._node)
+    _onApply: function (percent) {
+        if (!this._node)
             return;
         var alpha = this._alpha + this._betweenAlpha * percent;
         this._node.setOpacity(alpha);
@@ -1254,7 +1252,7 @@ ccs.AlphaFrame = ccs.Frame.extend({
      * Set the alpha
      * @param {Number} alpha
      */
-    setAlpha: function(alpha){
+    setAlpha: function (alpha) {
         this._alpha = alpha;
     },
 
@@ -1262,11 +1260,11 @@ ccs.AlphaFrame = ccs.Frame.extend({
      * Gets the alpha
      * @returns {Number}
      */
-    getAlpha: function(){
+    getAlpha: function () {
         return this._alpha;
     },
 
-    clone: function(){
+    clone: function () {
         var frame = new ccs.AlphaFrame();
         frame.setAlpha(this._alpha);
         frame._cloneProperty(this);
@@ -1283,7 +1281,7 @@ ccs.EventFrame = ccs.Frame.extend({
 
     _event: null,
 
-    ctor: function(){
+    ctor: function () {
         ccs.Frame.prototype.ctor.call(this);
         this._event = "";
         this._enterWhenPassed = true;
@@ -1293,7 +1291,7 @@ ccs.EventFrame = ccs.Frame.extend({
      * the execution of the callback
      * @param {ccs.Frame} nextFrame
      */
-    onEnter: function(nextFrame){
+    onEnter: function (nextFrame) {
         this._emitEvent();
     },
 
@@ -1302,7 +1300,7 @@ ccs.EventFrame = ccs.Frame.extend({
      * returns a clone of action.
      * @return {ccs.EventFrame}
      */
-    clone: function(){
+    clone: function () {
         var frame = new ccs.EventFrame();
         frame.setEvent(this._event);
 
@@ -1315,7 +1313,7 @@ ccs.EventFrame = ccs.Frame.extend({
      * Set the event
      * @param event
      */
-    setEvent: function(event){
+    setEvent: function (event) {
         this._event = event;
     },
 
@@ -1323,7 +1321,7 @@ ccs.EventFrame = ccs.Frame.extend({
      * Gets the event
      * @returns {null}
      */
-    getEvent: function(){
+    getEvent: function () {
         return this._event;
     }
 
@@ -1335,7 +1333,7 @@ ccs.EventFrame = ccs.Frame.extend({
  * @deprecated v3.0, please use new ccs.EventFrame() instead.
  * @returns {ccs.EventFrame}
  */
-ccs.EventFrame.create = function(){
+ccs.EventFrame.create = function () {
     return new ccs.EventFrame();
 };
 
@@ -1352,8 +1350,8 @@ ccs.ZOrderFrame = ccs.Frame.extend({
      * the execution of the callback
      * @param {ccs.Frame} nextFrame
      */
-    onEnter: function(nextFrame){
-        if(this._node)
+    onEnter: function (nextFrame) {
+        if (this._node)
             this._node.setLocalZOrder(this._zorder);
     },
 
@@ -1362,7 +1360,7 @@ ccs.ZOrderFrame = ccs.Frame.extend({
      * returns a clone of action.
      * @return {ccs.ZOrderFrame}
      */
-    clone: function(){
+    clone: function () {
         var frame = new ccs.ZOrderFrame();
         frame.setZOrder(this._zorder);
 
@@ -1375,7 +1373,7 @@ ccs.ZOrderFrame = ccs.Frame.extend({
      * Set the zOrder
      * @param {Number} zorder
      */
-    setZOrder: function(zorder){
+    setZOrder: function (zorder) {
         this._zorder = zorder;
     },
 
@@ -1383,7 +1381,7 @@ ccs.ZOrderFrame = ccs.Frame.extend({
      * Gets the zOrder
      * @returns {Number}
      */
-    getZOrder: function(){
+    getZOrder: function () {
         return this._zorder;
     }
 
@@ -1395,7 +1393,7 @@ ccs.ZOrderFrame = ccs.Frame.extend({
  * @deprecated v3.0, please use new ccs.ZOrderFrame() instead.
  * @returns {ccs.ZOrderFrame}
  */
-ccs.ZOrderFrame.create = function(){
+ccs.ZOrderFrame.create = function () {
     return new ccs.ZOrderFrame();
 };
 
@@ -1405,28 +1403,28 @@ ccs.BlendFuncFrame = ccs.Frame.extend({
         this._blendFunc = null;
     },
 
-    onEnter: function(nextFrame, currentFrameIndex){
-        if(this._node && this._blendFunc)
+    onEnter: function (nextFrame, currentFrameIndex) {
+        if (this._node && this._blendFunc)
             this._node.setBlendFunc(this._blendFunc);
     },
 
-    clone: function(){
+    clone: function () {
         var frame = new ccs.BlendFuncFrame();
         frame.setBlendFunc(this._blendFunc);
         frame._cloneProperty(this);
         return frame;
     },
 
-    setBlendFunc: function(blendFunc){
+    setBlendFunc: function (blendFunc) {
         if (blendFunc && blendFunc.src && blendFunc.dst)
             this._blendFunc = blendFunc;
     },
 
-    getBlendFunc: function(){
+    getBlendFunc: function () {
         return this._blendFunc;
     }
 });
 
-ccs.BlendFuncFrame.create = function(){
+ccs.BlendFuncFrame.create = function () {
     return new ccs.BlendFuncFrame();
 };

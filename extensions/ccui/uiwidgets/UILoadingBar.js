@@ -61,9 +61,9 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
         this._capInsets = cc.rect(0, 0, 0, 0);
         ccui.Widget.prototype.ctor.call(this);
 
-        if(textureName !== undefined)
+        if (textureName !== undefined)
             this.loadTexture(textureName);
-        if(percentage !== undefined)
+        if (percentage !== undefined)
             this.setPercent(percentage);
     },
 
@@ -86,16 +86,16 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
         switch (this._direction) {
             case ccui.LoadingBar.TYPE_LEFT:
                 this._barRenderer.setAnchorPoint(0, 0.5);
-                this._barRenderer.setPosition(0, this._contentSize.height*0.5);
-                if (!this._scale9Enabled)  
-                    this._barRenderer.setFlippedX(false);  
+                this._barRenderer.setPosition(0, this._contentSize.height * 0.5);
+                if (!this._scale9Enabled)
+                    this._barRenderer.setFlippedX(false);
 
                 break;
             case ccui.LoadingBar.TYPE_RIGHT:
                 this._barRenderer.setAnchorPoint(1, 0.5);
-                this._barRenderer.setPosition(this._totalLength,this._contentSize.height*0.5);
-                if (!this._scale9Enabled)  
-                    this._barRenderer.setFlippedX(true);  
+                this._barRenderer.setPosition(this._totalLength, this._contentSize.height * 0.5);
+                if (!this._scale9Enabled)
+                    this._barRenderer.setFlippedX(true);
 
                 break;
         }
@@ -124,8 +124,8 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
         var barRenderer = this._barRenderer;
 
         var self = this;
-        if(!barRenderer._textureLoaded){
-            barRenderer.addEventListener("load", function(){
+        if (!barRenderer._textureLoaded) {
+            barRenderer.addEventListener("load", function () {
                 self.loadTexture(self._textureFile, self._renderBarTexType);
                 self._setPercent(self._percent);
             });
@@ -148,12 +148,12 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
 
         switch (this._direction) {
             case ccui.LoadingBar.TYPE_LEFT:
-                barRenderer.setAnchorPoint(0,0.5);
+                barRenderer.setAnchorPoint(0, 0.5);
                 if (!this._scale9Enabled)
                     barRenderer.setFlippedX(false);
                 break;
             case ccui.LoadingBar.TYPE_RIGHT:
-                barRenderer.setAnchorPoint(1,0.5);
+                barRenderer.setAnchorPoint(1, 0.5);
                 if (!this._scale9Enabled)
                     barRenderer.setFlippedX(true);
                 break;
@@ -207,7 +207,7 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
      * @param {cc.Rect} capInsets
      */
     setCapInsets: function (capInsets) {
-        if(!capInsets)
+        if (!capInsets)
             return;
         var locInsets = this._capInsets;
         locInsets.x = capInsets.x;
@@ -232,9 +232,9 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
      * @param {number} percent   percent value from 1 to 100.
      */
     setPercent: function (percent) {
-        if(percent > 100)
+        if (percent > 100)
             percent = 100;
-        if(percent < 0)
+        if (percent < 0)
             percent = 0;
         if (percent === this._percent)
             return;
@@ -242,7 +242,7 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
         this._setPercent(percent);
     },
 
-    _setPercent: function(){
+    _setPercent: function () {
         var res, rect, spriteRenderer, spriteTextureRect;
 
         if (this._totalLength <= 0)
@@ -274,7 +274,7 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
      * @param {Number|cc.Size} contentSize
      * @param {Number} [height]
      */
-    setContentSize: function(contentSize, height){
+    setContentSize: function (contentSize, height) {
         ccui.Widget.prototype.setContentSize.call(this, contentSize, height);
         this._totalLength = (height === undefined) ? contentSize.width : contentSize;
     },
@@ -292,8 +292,8 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
         this._barRendererAdaptDirty = true;
     },
 
-    _adaptRenderers: function(){
-        if (this._barRendererAdaptDirty){
+    _adaptRenderers: function () {
+        if (this._barRendererAdaptDirty) {
             this._barRendererScaleChangedWithSize();
             this._barRendererAdaptDirty = false;
         }
@@ -315,7 +315,7 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
      * Returns the texture size of renderer.
      * @returns {cc.Size|*}
      */
-    getVirtualRendererSize:function(){
+    getVirtualRendererSize: function () {
         return cc.size(this._barRendererTextureSize);
     },
 
@@ -340,7 +340,7 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
             }
         } else {
             this._totalLength = locContentSize.width;
-            if (this._scale9Enabled){
+            if (this._scale9Enabled) {
                 this._setScale9Scale();
                 locBarRender.setScale(1.0);
             } else {
@@ -385,7 +385,7 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
     },
 
     _copySpecialProperties: function (loadingBar) {
-        if(loadingBar instanceof ccui.LoadingBar){
+        if (loadingBar instanceof ccui.LoadingBar) {
             this._prevIgnoreSize = loadingBar._prevIgnoreSize;
             this.setScale9Enabled(loadingBar._scale9Enabled);
             this.loadTexture(loadingBar._textureFile, loadingBar._renderBarTexType);

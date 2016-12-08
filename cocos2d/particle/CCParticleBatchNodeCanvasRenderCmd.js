@@ -22,7 +22,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-(function(){
+(function () {
     /**
      * cc.ParticleBatchNode's rendering objects of Canvas
      */
@@ -34,5 +34,6 @@
     var proto = cc.ParticleBatchNode.CanvasRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
     proto.constructor = cc.ParticleBatchNode.CanvasRenderCmd;
 
-    proto._initWithTexture = function(){};
+    proto._initWithTexture = function () {
+    };
 })();

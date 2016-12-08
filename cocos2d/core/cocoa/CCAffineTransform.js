@@ -49,7 +49,7 @@ cc.AffineTransform = function (a, b, c, d, tx, ty) {
 /**
  * Create a cc.AffineTransform object with all contents in the matrix
  * @function
- * 
+ *
  * @param {Number} a
  * @param {Number} b
  * @param {Number} c
@@ -65,7 +65,7 @@ cc.affineTransformMake = function (a, b, c, d, tx, ty) {
 /**
  * Apply the affine transformation on a point.
  * @function
- * 
+ *
  * @param {cc.Point|Number} point or x
  * @param {cc.AffineTransform|Number} transOrY transform matrix or y
  * @param {cc.AffineTransform} t transform matrix or y
@@ -91,7 +91,7 @@ cc._pointApplyAffineTransform = function (x, y, t) {   //it will remove.
 /**
  * Apply the affine transformation on a size.
  * @function
- * 
+ *
  * @param {cc.Size} size
  * @param {cc.AffineTransform} t
  * @return {cc.Size}
@@ -105,7 +105,7 @@ cc.sizeApplyAffineTransform = function (size, t) {
  * [ 1, 0, 0, <br/>
  *   0, 1, 0 ]</p>
  * @function
- * 
+ *
  * @return {cc.AffineTransform}
  */
 cc.affineTransformMakeIdentity = function () {
@@ -117,7 +117,7 @@ cc.affineTransformMakeIdentity = function () {
  * [ 1, 0, 0, <br/>
  *   0, 1, 0 ]</p>
  * @function
- * 
+ *
  * @return {cc.AffineTransform}
  * @deprecated since v3.0, please use cc.affineTransformMakeIdentity() instead
  * @see cc.affineTransformMakeIdentity
@@ -129,7 +129,7 @@ cc.affineTransformIdentity = function () {
 /**
  * Apply the affine transformation on a rect.
  * @function
- * 
+ *
  * @param {cc.Rect} rect
  * @param {cc.AffineTransform} anAffineTransform
  * @return {cc.Rect}
@@ -153,7 +153,7 @@ cc.rectApplyAffineTransform = function (rect, anAffineTransform) {
     return cc.rect(minX, minY, (maxX - minX), (maxY - minY));
 };
 
-cc._rectApplyAffineTransformIn = function(rect, anAffineTransform){
+cc._rectApplyAffineTransformIn = function (rect, anAffineTransform) {
     var top = cc.rectGetMinY(rect);
     var left = cc.rectGetMinX(rect);
     var right = cc.rectGetMaxX(rect);
@@ -179,7 +179,7 @@ cc._rectApplyAffineTransformIn = function(rect, anAffineTransform){
 /**
  * Create a new affine transformation with a base transformation matrix and a translation based on it.
  * @function
- * 
+ *
  * @param {cc.AffineTransform} t The base affine transform object
  * @param {Number} tx The translation on x axis
  * @param {Number} ty The translation on y axis
@@ -219,12 +219,14 @@ cc.affineTransformRotate = function (aTransform, anAngle) {
     var fSin = Math.sin(anAngle);
     var fCos = Math.cos(anAngle);
 
-    return {a: aTransform.a * fCos + aTransform.c * fSin,
+    return {
+        a: aTransform.a * fCos + aTransform.c * fSin,
         b: aTransform.b * fCos + aTransform.d * fSin,
         c: aTransform.c * fCos - aTransform.a * fSin,
         d: aTransform.d * fCos - aTransform.b * fSin,
         tx: aTransform.tx,
-        ty: aTransform.ty};
+        ty: aTransform.ty
+    };
 };
 
 /**
@@ -236,12 +238,14 @@ cc.affineTransformRotate = function (aTransform, anAngle) {
  * @return {cc.AffineTransform} The result of concatenation
  */
 cc.affineTransformConcat = function (t1, t2) {
-    return {a: t1.a * t2.a + t1.b * t2.c,                          //a
+    return {
+        a: t1.a * t2.a + t1.b * t2.c,                          //a
         b: t1.a * t2.b + t1.b * t2.d,                               //b
         c: t1.c * t2.a + t1.d * t2.c,                               //c
         d: t1.c * t2.b + t1.d * t2.d,                               //d
         tx: t1.tx * t2.a + t1.ty * t2.c + t2.tx,                    //tx
-        ty: t1.tx * t2.b + t1.ty * t2.d + t2.ty};				    //ty
+        ty: t1.tx * t2.b + t1.ty * t2.d + t2.ty
+    };				    //ty
 };
 
 /**
@@ -283,6 +287,8 @@ cc.affineTransformEqualToTransform = function (t1, t2) {
  */
 cc.affineTransformInvert = function (t) {
     var determinant = 1 / (t.a * t.d - t.b * t.c);
-    return {a: determinant * t.d, b: -determinant * t.b, c: -determinant * t.c, d: determinant * t.a,
-        tx: determinant * (t.c * t.ty - t.d * t.tx), ty: determinant * (t.b * t.tx - t.a * t.ty)};
+    return {
+        a: determinant * t.d, b: -determinant * t.b, c: -determinant * t.c, d: determinant * t.a,
+        tx: determinant * (t.c * t.ty - t.d * t.tx), ty: determinant * (t.b * t.tx - t.a * t.ty)
+    };
 };

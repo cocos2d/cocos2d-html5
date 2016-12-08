@@ -36,7 +36,7 @@
     var proto = cc.ScrollView.CanvasRenderCmd.prototype = Object.create(cc.Layer.CanvasRenderCmd.prototype);
     proto.constructor = cc.ScrollView.CanvasRenderCmd;
 
-    proto._startCmd = function(ctx, scaleX, scaleY){
+    proto._startCmd = function (ctx, scaleX, scaleY) {
         var node = this._node;
         var wrapper = ctx || cc._renderContext, context = wrapper.getContext();
         wrapper.save();
@@ -57,7 +57,7 @@
         }
     };
 
-    proto._endCmd = function(wrapper){
+    proto._endCmd = function (wrapper) {
         wrapper = wrapper || cc._renderContext;
         wrapper.restore();
     };

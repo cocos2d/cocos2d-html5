@@ -23,8 +23,8 @@
  ****************************************************************************/
 
 // ------------------------------- ClippingNode's WebGL render cmd ------------------------------
-(function(){
-    cc.ClippingNode.WebGLRenderCmd = function(renderable){
+(function () {
+    cc.ClippingNode.WebGLRenderCmd = function (renderable) {
         cc.Node.WebGLRenderCmd.call(this, renderable);
         this._needDraw = false;
 
@@ -43,7 +43,7 @@
     cc.ClippingNode.WebGLRenderCmd._visit_once = null;
     cc.ClippingNode.WebGLRenderCmd._layer = -1;
 
-    proto.initStencilBits = function(){
+    proto.initStencilBits = function () {
         // get (only once) the number of bits of the stencil buffer
         cc.ClippingNode.WebGLRenderCmd._init_once = true;
         if (cc.ClippingNode.WebGLRenderCmd._init_once) {
@@ -54,10 +54,10 @@
         }
     };
 
-    proto.transform = function(parentCmd, recursive){
+    proto.transform = function (parentCmd, recursive) {
         var node = this._node;
         this.originTransform(parentCmd, recursive);
-        if(node._stencil) {
+        if (node._stencil) {
             node._stencil._renderCmd.transform(this, recursive);
         }
     };
@@ -126,16 +126,16 @@
         currentStack.top = currentStack.stack.pop();
     };
 
-    proto.setStencil = function(stencil){
+    proto.setStencil = function (stencil) {
         var node = this._node;
-        if(node._stencil)
+        if (node._stencil)
             node._stencil._parent = null;
         node._stencil = stencil;
-        if(node._stencil)
+        if (node._stencil)
             node._stencil._parent = node;
     };
 
-    proto._onBeforeVisit = function(ctx){
+    proto._onBeforeVisit = function (ctx) {
         var gl = ctx || cc._renderContext, node = this._node;
         cc.ClippingNode.WebGLRenderCmd._layer++;
 
@@ -171,14 +171,14 @@
         }
     };
 
-    proto._onAfterDrawStencil = function(ctx){
+    proto._onAfterDrawStencil = function (ctx) {
         var gl = ctx || cc._renderContext;
         gl.depthMask(true);
         gl.stencilFunc(!this._node.inverted ? gl.EQUAL : gl.NOTEQUAL, this._mask_layer_le, this._mask_layer_le);
         gl.stencilOp(gl.KEEP, gl.KEEP, gl.KEEP);
     };
 
-    proto._onAfterVisit = function(ctx){
+    proto._onAfterVisit = function (ctx) {
         var gl = ctx || cc._renderContext;
 
         cc.ClippingNode.WebGLRenderCmd._layer--;

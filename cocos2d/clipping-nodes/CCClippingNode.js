@@ -191,13 +191,13 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
      * @param {cc.Node} stencil
      */
     setStencil: function (stencil) {
-        if(this._stencil === stencil)
+        if (this._stencil === stencil)
             return;
         this._renderCmd.setStencil(stencil);
     },
 
-    _createRenderCmd: function(){
-        if(cc._renderType === cc.game.RENDER_TYPE_CANVAS)
+    _createRenderCmd: function () {
+        if (cc._renderType === cc.game.RENDER_TYPE_CANVAS)
             return new cc.ClippingNode.CanvasRenderCmd(this);
         else
             return new cc.ClippingNode.WebGLRenderCmd(this);
@@ -207,9 +207,10 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
 var _p = cc.ClippingNode.prototype;
 
 // Extended properties
-cc.defineGetterSetter(_p, "stencil", _p.getStencil, _p.setStencil);
 /** @expose */
 _p.stencil;
+cc.defineGetterSetter(_p, "stencil", _p.getStencil, _p.setStencil);
+
 
 /**
  * Creates and initializes a clipping node with an other node as its stencil. <br/>

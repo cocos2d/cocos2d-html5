@@ -108,7 +108,7 @@ return {
 
     childrenOrderDirty: true,
     assignedZ: 0,
-    assignedZStep: 1/100,
+    assignedZStep: 1 / 100,
 
     _transformNodePool: [],                              //save nodes transform dirty
     _renderCmds: [],                                     //save renderer commands
@@ -236,20 +236,20 @@ return {
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     },
 
-    setDepthTest: function (enable){
+    setDepthTest: function (enable) {
         var gl = cc._renderContext;
-        if(enable){
+        if (enable) {
             gl.clearDepth(1.0);
             gl.enable(gl.DEPTH_TEST);
             gl.depthFunc(gl.LEQUAL);
         }
-        else{
+        else {
             gl.disable(gl.DEPTH_TEST);
         }
     },
     
     pushRenderCommand: function (cmd) {
-        if(!cmd.needDraw())
+        if (!cmd.needDraw())
             return;
         if (this._isCacheToBufferOn) {
             var currentId = this._currentID, locCmdBuffer = this._cacheToBufferCmds;

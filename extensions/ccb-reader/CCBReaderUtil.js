@@ -25,17 +25,22 @@
  ****************************************************************************/
 
 cc.NodeLoaderListener = cc.Class.extend({
-    onNodeLoaded:function(node,nodeLoader){}
+    onNodeLoaded: function (node, nodeLoader) {
+    }
 });
 
 cc.BuilderSelectorResolver = cc.Class.extend({
-    onResolveCCBCCMenuItemSelector:function(target, selectorName){},
-    onResolveCCBCCCallFuncSelector:function(target, selectorName){},
-    onResolveCCBCCControlSelector:function(target,selectorName){}
+    onResolveCCBCCMenuItemSelector: function (target, selectorName) {
+    },
+    onResolveCCBCCCallFuncSelector: function (target, selectorName) {
+    },
+    onResolveCCBCCControlSelector: function (target, selectorName) {
+    }
 });
 
 cc.BuilderScriptOwnerProtocol = cc.Class.extend({
-    createNew:function(){}
+    createNew: function () {
+    }
 });
 
 cc.BuilderMemberVariableAssigner = cc.Class.extend({
@@ -47,7 +52,9 @@ cc.BuilderMemberVariableAssigner = cc.Class.extend({
      * @param {cc.Node} node The member variable.
      * @return {Boolean} Whether the assignment was successful.
      */
-    onAssignCCBMemberVariable:function(target,memberVariableName, node){ return false;},
+    onAssignCCBMemberVariable: function (target, memberVariableName, node) {
+        return false;
+    },
 
     /**
      * The callback function of assigning custom properties.
@@ -57,5 +64,7 @@ cc.BuilderMemberVariableAssigner = cc.Class.extend({
      * @param {*} value The value of the property.
      * @return {Boolean} Whether the assignment was successful.
      */
-    onAssignCCBCustomProperty:function(target, memberVariableName, value){ return false; }
+    onAssignCCBCustomProperty: function (target, memberVariableName, value) {
+        return false;
+    }
 });

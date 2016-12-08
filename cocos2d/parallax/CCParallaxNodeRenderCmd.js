@@ -33,35 +33,35 @@
     var proto = cc.ParallaxNode.CanvasRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
     proto.constructor = cc.ParallaxNode.CanvasRenderCmd;
 
-    proto.updateStatus = function(){
+    proto.updateStatus = function () {
         this._node._updateParallaxPosition();
         cc.Node.CanvasRenderCmd.prototype.updateStatus.call(this);
     };
 
-    proto._syncStatus = function(parentCmd){
+    proto._syncStatus = function (parentCmd) {
         this._node._updateParallaxPosition();
         this._originSyncStatus(parentCmd);
     };
 })();
 
 cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
-    if(cc._renderType !== cc.game.RENDER_TYPE_WEBGL)
+    if (cc._renderType !== cc.game.RENDER_TYPE_WEBGL)
         return;
 
-    cc.ParallaxNode.WebGLRenderCmd = function(renderable){
-        cc.Node.WebGLRenderCmd.call(this, renderable);
+    cc.ParallaxNode.WebGLRenderCmd = function (renderable) {
+        this._rootCtor(renderable);
         this._needDraw = false;
     };
 
     var proto = cc.ParallaxNode.WebGLRenderCmd.prototype = Object.create(cc.Node.WebGLRenderCmd.prototype);
     proto.constructor = cc.ParallaxNode.WebGLRenderCmd;
 
-    proto.updateStatus = function(){
+    proto.updateStatus = function () {
         this._node._updateParallaxPosition();
         cc.Node.WebGLRenderCmd.prototype.updateStatus.call(this);
     };
 
-    proto._syncStatus = function(parentCmd){
+    proto._syncStatus = function (parentCmd) {
         this._node._updateParallaxPosition();
         this._originSyncStatus(parentCmd);
     };

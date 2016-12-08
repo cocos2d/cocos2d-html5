@@ -201,9 +201,9 @@
         }
     };
 
-    var getPath = function(res, type, path, cb){
-        if(path){
-            if(type === 0)
+    var getPath = function (res, type, path, cb) {
+        if (path) {
+            if (type === 0)
                 cb(res + path, type);
             else
                 cb(path, type);
@@ -213,14 +213,14 @@
     /**
      * Panel parser (UILayout)
      */
-    parser.LayoutAttributes = function(widget, options, resourcePath){
+    parser.LayoutAttributes = function (widget, options, resourcePath) {
         var w = 0, h = 0;
         var adaptScreen = options["adaptScreen"];
-        if (adaptScreen){
+        if (adaptScreen) {
             var screenSize = cc.director.getWinSize();
             w = screenSize.width;
             h = screenSize.height;
-        }else{
+        } else {
             w = options["width"];
             h = options["height"];
         }
@@ -555,7 +555,7 @@
     /**
      * Slider parser (UISlider)
      */
-    parser.SliderAttributes = function(widget, options, resourcePath){
+    parser.SliderAttributes = function (widget, options, resourcePath) {
 
         var slider = widget;
 
@@ -568,15 +568,15 @@
         var imageFileType = imageFileNameDic["resourceType"];
         var imageFileName = imageFileNameDic["path"];
 
-        if(bt != null){
-            if(barTextureScale9Enable){
-                getPath(resourcePath, imageFileType, imageFileName, function(path, type){
+        if (bt != null) {
+            if (barTextureScale9Enable) {
+                getPath(resourcePath, imageFileType, imageFileName, function (path, type) {
                     slider.loadBarTexture(path, type);
                 });
                 slider.setSize(cc.size(barLength, slider.getContentSize().height));
             }
-        }else{
-            getPath(resourcePath, imageFileType, imageFileName, function(path, type){
+        } else {
+            getPath(resourcePath, imageFileType, imageFileName, function (path, type) {
                 slider.loadBarTexture(path, type);
             });
         }
@@ -591,9 +591,9 @@
             resourcePath,
             pressedDic["resourceType"] || normalDic["resourceType"],
             pressedDic["path"] || normalDic["path"],
-            function(path, type){
+            function (path, type) {
                 slider.loadSlidBallTexturePressed(path, type);
-        });
+            });
 
         var disabledDic = options["ballDisabledData"];
         getPath(resourcePath, disabledDic["resourceType"], disabledDic["path"], function(path, type){
@@ -608,59 +608,59 @@
     /**
      * TextField parser (UITextField)
      */
-    parser.TextFieldAttributes = function(widget, options, resourcePath){
+    parser.TextFieldAttributes = function (widget, options, resourcePath){
         var ph = options["placeHolder"];
-        if(ph)
+        if (ph)
             widget.setPlaceHolder(ph);
         widget.setString(options["text"]||"");
         var fs = options["fontSize"];
-        if(fs)
+        if (fs)
             widget.setFontSize(fs);
         var fn = options["fontName"];
-        if (fn != null){
-            if(cc.sys.isNative){
-                if(regTTF.test(fn)){
+        if (fn != null) {
+            if (cc.sys.isNative) {
+                if (regTTF.test(fn)) {
                     widget.setFontName(cc.path.join(cc.loader.resPath, resourcePath, fn));
-                }else{
+                } else {
                     widget.setFontName(fn);
                 }
-            }else{
+            } else {
                 widget.setFontName(fn.replace(regTTF, ''));
             }
         }
         var tsw = options["touchSizeWidth"];
         var tsh = options["touchSizeHeight"];
-        if(tsw!=null && tsh!=null)
+        if (tsw!=null && tsh!=null)
             widget.setTouchSize(tsw, tsh);
 
         var dw = options["width"];
         var dh = options["height"];
-        if(dw > 0 || dh > 0){
+        if (dw > 0 || dh > 0) {
             //textField.setSize(cc.size(dw, dh));
         }
         var maxLengthEnable = options["maxLengthEnable"];
         widget.setMaxLengthEnabled(maxLengthEnable);
 
-        if(maxLengthEnable){
+        if (maxLengthEnable) {
             var maxLength = options["maxLength"];
             widget.setMaxLength(maxLength);
         }
         var passwordEnable = options["passwordEnable"];
         widget.setPasswordEnabled(passwordEnable);
-        if(passwordEnable)
+        if (passwordEnable)
             widget.setPasswordStyleText(options["passwordStyleText"]);
 
         var aw = options["areaWidth"];
         var ah = options["areaHeight"];
-        if(aw && ah){
+        if (aw && ah) {
             var size = cc.size(aw, ah);
             widget.setTextAreaSize(size);
         }
         var ha = options["hAlignment"];
-        if(ha)
+        if (ha)
             widget.setTextHorizontalAlignment(ha);
         var va = options["vAlignment"];
-        if(va)
+        if (va)
             widget.setTextVerticalAlignment(va);
 
         var r = options["colorR"];

@@ -23,8 +23,8 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-(function(){
-    if(!ccui.ProtectedNode.WebGLRenderCmd)
+(function () {
+    if (!ccui.ProtectedNode.WebGLRenderCmd)
         return;
     ccui.Layout.WebGLRenderCmd = function(renderable){
         ccui.ProtectedNode.WebGLRenderCmd.call(this, renderable);
@@ -75,7 +75,7 @@
 
     proto.layoutVisit = proto.visit;
 
-    proto._onBeforeVisitStencil = function(ctx){
+    proto._onBeforeVisitStencil = function (ctx) {
         var gl = ctx || cc._renderContext;
 
         ccui.Layout.WebGLRenderCmd._layer++;
@@ -101,20 +101,19 @@
 
     };
 
-    proto._onAfterDrawStencil = function(ctx){
+    proto._onAfterDrawStencil = function (ctx) {
         var gl = ctx || cc._renderContext;
         gl.depthMask(true);
         gl.stencilFunc(gl.EQUAL, this._mask_layer_le, this._mask_layer_le);
         gl.stencilOp(gl.KEEP, gl.KEEP, gl.KEEP);
     };
 
-    proto._onAfterVisitStencil = function(ctx){
+    proto._onAfterVisitStencil = function (ctx) {
         var gl = ctx || cc._renderContext;
 
         ccui.Layout.WebGLRenderCmd._layer--;
 
-        if (this._currentStencilEnabled)
-        {
+        if (this._currentStencilEnabled) {
             var mask_layer = 0x1 << ccui.Layout.WebGLRenderCmd._layer;
             var mask_layer_l = mask_layer - 1;
             var mask_layer_le = mask_layer | mask_layer_l;
@@ -122,13 +121,12 @@
             gl.stencilMask(mask_layer);
             gl.stencilFunc(gl.EQUAL, mask_layer_le, mask_layer_le);
         }
-        else
-        {
+        else {
             gl.disable(gl.STENCIL_TEST);
         }
     };
 
-    proto._onBeforeVisitScissor = function(ctx){
+    proto._onBeforeVisitScissor = function (ctx) {
         this._node._clippingRectDirty = true;
         var clippingRect = this._node._getClippingRect();
         var gl = ctx || cc._renderContext;
@@ -146,11 +144,11 @@
         }
     };
 
-    proto._onAfterVisitScissor = function(ctx){
+    proto._onAfterVisitScissor = function (ctx) {
         var gl = ctx || cc._renderContext;
         if (this._scissorOldState) {
             if (!cc.rectEqualToRect(this._clippingOldRect, this._node._clippingRect)) {
-                cc.view.setScissorInPoints( this._clippingOldRect.x,
+                cc.view.setScissorInPoints(this._clippingOldRect.x,
                     this._clippingOldRect.y,
                     this._clippingOldRect.width,
                     this._clippingOldRect.height);
@@ -160,13 +158,14 @@
             gl.disable(gl.SCISSOR_TEST);
         }
     };
-    
-    proto.rebindStencilRendering = function(stencil){};
 
-    proto.transform = function(parentCmd, recursive){
+    proto.rebindStencilRendering = function (stencil) {
+    };
+
+    proto.transform = function (parentCmd, recursive) {
         var node = this._node;
         this.pNodeTransform(parentCmd, recursive);
-        if(node._clippingStencil)
+        if (node._clippingStencil)
             node._clippingStencil._renderCmd.transform(this, recursive);
     };
 
@@ -235,7 +234,7 @@
         currentStack.top = currentStack.stack.pop();
     };
 
-    proto.scissorClippingVisit = function(parentCmd){
+    proto.scissorClippingVisit = function (parentCmd) {
         cc.renderer.pushRenderCommand(this._beforeVisitCmdScissor);
         this.pNodeVisit(parentCmd);
         cc.renderer.pushRenderCommand(this._afterVisitCmdScissor);

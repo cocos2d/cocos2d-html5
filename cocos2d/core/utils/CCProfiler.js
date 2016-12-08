@@ -2,9 +2,9 @@ cc.profiler = (function () {
     var _showFPS = false;
     var _inited = false;
     var _frames = 0, _frameRate = 0, _lastSPF = 0, _accumDt = 0;
-    var _afterVisitListener = null, 
-        _FPSLabel = document.createElement('div'), 
-        _SPFLabel = document.createElement('div'), 
+    var _afterVisitListener = null,
+        _FPSLabel = document.createElement('div'),
+        _SPFLabel = document.createElement('div'),
         _drawsLabel = document.createElement('div'),
         _fps = document.createElement('div');
 
@@ -47,7 +47,7 @@ cc.profiler = (function () {
 
         if (_analyseCount >= _levelDetCycle) {
             average = _totalFPS / _levelDetCycle;
-            for (i = lastId; i >0; i--) {
+            for (i = lastId; i > 0; i--) {
                 ratio = _fpsCount[i] / _levelDetCycle;
                 // Determined level
                 if (ratio >= LEVEL_DET_FACTOR && average >= LEVELS[i]) {

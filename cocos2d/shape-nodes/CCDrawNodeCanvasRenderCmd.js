@@ -22,7 +22,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-(function(){
+(function () {
 
     cc.DrawNode.CanvasRenderCmd = function(renderableObject){
         cc.Node.CanvasRenderCmd.call(this, renderableObject);
@@ -41,7 +41,7 @@
         return node._localBB;
     };
 
-    cc.extend( cc.DrawNode.CanvasRenderCmd.prototype, {
+    cc.extend(cc.DrawNode.CanvasRenderCmd.prototype, {
         rendering: function (ctx, scaleX, scaleY) {
             var wrapper = ctx || cc._renderContext, context = wrapper.getContext(), node = this._node;
             var alpha = node._displayedOpacity / 255;
@@ -79,7 +79,7 @@
             wrapper.setFillStyle("rgba(" + (0 | locColor.r) + "," + (0 | locColor.g) + "," + (0 | locColor.b) + "," + locColor.a / 255 + ")");
 
             ctx.beginPath();
-            ctx.arc(locPos.x , -locPos.y , locRadius , 0, Math.PI * 2, false);
+            ctx.arc(locPos.x, -locPos.y, locRadius, 0, Math.PI * 2, false);
             ctx.closePath();
             ctx.fill();
         },
@@ -95,8 +95,8 @@
             ctx.lineWidth = locLineWidth * scaleX;
             ctx.beginPath();
             ctx.lineCap = locLineCap;
-            ctx.moveTo(locFrom.x , -locFrom.y );
-            ctx.lineTo(locTo.x , -locTo.y );
+            ctx.moveTo(locFrom.x, -locFrom.y);
+            ctx.lineTo(locTo.x, -locTo.y);
             ctx.stroke();
         },
 
@@ -122,9 +122,9 @@
                     + (0 | locLineColor.b) + "," + locLineColor.a / 255 + ")");
 
             ctx.beginPath();
-            ctx.moveTo(firstPoint.x , -firstPoint.y );
+            ctx.moveTo(firstPoint.x, -firstPoint.y);
             for (var i = 1, len = locVertices.length; i < len; i++)
-                ctx.lineTo(locVertices[i].x , -locVertices[i].y );
+                ctx.lineTo(locVertices[i].x, -locVertices[i].y);
 
             if (locIsClosePolygon)
                 ctx.closePath();
