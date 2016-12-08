@@ -27,7 +27,7 @@
  */
 (function () {
     cc.AtlasNode.CanvasRenderCmd = function (renderableObject) {
-        cc.Node.CanvasRenderCmd.call(this, renderableObject);
+        this._rootCtor(renderableObject);
         this._needDraw = false;
         this._colorUnmodified = cc.color.WHITE;
         this._textureToRender = null;

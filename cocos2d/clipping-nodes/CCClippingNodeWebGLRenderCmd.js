@@ -25,7 +25,7 @@
 // ------------------------------- ClippingNode's WebGL render cmd ------------------------------
 (function () {
     cc.ClippingNode.WebGLRenderCmd = function (renderable) {
-        cc.Node.WebGLRenderCmd.call(this, renderable);
+        this._rootCtor(renderable);
         this._needDraw = false;
 
         this._beforeVisitCmd = new cc.CustomRenderCmd(this, this._onBeforeVisit);

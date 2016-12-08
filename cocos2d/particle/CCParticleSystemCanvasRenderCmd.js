@@ -34,7 +34,7 @@
         this._shapeType = cc.ParticleSystem.BALL_SHAPE;
 
         this._pointRect = cc.rect(0, 0, 0, 0);
-        this._tintCache = document.createElement("canvas");
+        this._tintCache = null;
     };
     var proto = cc.ParticleSystem.CanvasRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
     proto.constructor = cc.ParticleSystem.CanvasRenderCmd;
@@ -144,6 +144,9 @@
     };
 
     proto._changeTextureColor = function (texture, color, rect) {
+        if (!this._tintCache) {
+            this._tintCache = document.createElement("canvas");
+        }
         var tintCache = this._tintCache;
         var textureContentSize = texture.getContentSize();
         tintCache.width = textureContentSize.width;

@@ -98,7 +98,7 @@ cc.PVRHaveAlphaPremultiplied_ = false;
 
 cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
 
-    if(cc._renderType === cc.game.RENDER_TYPE_CANVAS) {
+    if (cc._renderType === cc.game.RENDER_TYPE_CANVAS) {
 
         var proto = {
             _contentSize: null,

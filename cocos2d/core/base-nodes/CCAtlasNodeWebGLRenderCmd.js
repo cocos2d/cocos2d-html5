@@ -27,7 +27,7 @@
  */
 (function () {
     cc.AtlasNode.WebGLRenderCmd = function (renderableObject) {
-        cc.Node.WebGLRenderCmd.call(this, renderableObject);
+        this._rootCtor(renderableObject);
         this._needDraw = true;
         this._textureAtlas = null;
         this._colorUnmodified = cc.color.WHITE;

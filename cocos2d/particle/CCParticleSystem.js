@@ -490,8 +490,9 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * sourcePosition of the emitter setter
      * @param sourcePosition
      */
-    setSourcePosition:function (sourcePosition) {
-        this._sourcePosition = sourcePosition;
+    setSourcePosition: function (sourcePosition) {
+        this._sourcePosition.x = sourcePosition.x;
+        this._sourcePosition.y = sourcePosition.y;
     },
 
     /**
@@ -507,7 +508,8 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * @param {cc.Point} posVar
      */
     setPosVar: function (posVar) {
-        this._posVar = posVar;
+        this._posVar.x = posVar.x;
+        this._posVar.y = posVar.y;
     },
 
     /**
@@ -956,7 +958,10 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * @param {cc.Color} startColor
      */
     setStartColor: function (startColor) {
-        this._startColor = cc.color(startColor);
+        this._startColor.r = startColor.r;
+        this._startColor.g = startColor.g;
+        this._startColor.b = startColor.b;
+        this._startColor.a = startColor.a;
     },
 
     /**
@@ -972,7 +977,10 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * @param {cc.Color} startColorVar
      */
     setStartColorVar: function (startColorVar) {
-        this._startColorVar = cc.color(startColorVar);
+        this._startColorVar.r = startColorVar.r;
+        this._startColorVar.g = startColorVar.g;
+        this._startColorVar.b = startColorVar.b;
+        this._startColorVar.a = startColorVar.a;
     },
 
     /**
@@ -988,7 +996,10 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * @param {cc.Color} endColor
      */
     setEndColor: function (endColor) {
-        this._endColor = cc.color(endColor);
+        this._endColor.r = endColor.r;
+        this._endColor.g = endColor.g;
+        this._endColor.b = endColor.b;
+        this._endColor.a = endColor.a;
     },
 
     /**
@@ -1004,7 +1015,10 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * @param {cc.Color} endColorVar
      */
     setEndColorVar: function (endColorVar) {
-        this._endColorVar = cc.color(endColorVar);
+        this._endColorVar.r = endColorVar.r;
+        this._endColorVar.g = endColorVar.g;
+        this._endColorVar.b = endColorVar.b;
+        this._endColorVar.a = endColorVar.a;
     },
 
     /**
@@ -1391,13 +1405,8 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                 locModeA.tangentialAccelVar = (pszTmp) ? parseFloat(pszTmp) : 0;
 
                 // rotation is dir
-                var locRotationIsDir = locValueForKey("rotationIsDir", dictionary);
-                if (locRotationIsDir !== null) {
-                    locRotationIsDir = locRotationIsDir.toString().toLowerCase();
-                    locModeA.rotationIsDir = (locRotationIsDir === "true" || locRotationIsDir === "1");
-                }
-                else
-                    locModeA.rotationIsDir = false;
+                var locRotationIsDir = locValueForKey("rotationIsDir", dictionary).toLowerCase();
+                locModeA.rotationIsDir = (locRotationIsDir != null && (locRotationIsDir === "true" || locRotationIsDir === "1"));
             } else if (this.emitterMode === cc.ParticleSystem.MODE_RADIUS) {
                 // or Mode B: radius movement
                 var locModeB = this.modeB;

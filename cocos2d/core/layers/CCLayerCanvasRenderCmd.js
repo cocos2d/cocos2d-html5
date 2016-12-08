@@ -80,6 +80,9 @@
     };
 
     proto.transform = function (parentCmd, recursive) {
+        if (!this._worldTransform) {
+            this._worldTransform = {a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0};
+        }
         var wt = this._worldTransform;
         var a = wt.a, b = wt.b, c = wt.c, d = wt.d, tx = wt.tx, ty = wt.ty;
         this.originTransform(parentCmd, recursive);

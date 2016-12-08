@@ -36,11 +36,11 @@
 
         this._mask_layer_le = 0;
 
-        this._beforeVisitCmdStencil = new cc.CustomRenderCmd(this, this._onBeforeVisitStencil);
-        this._afterDrawStencilCmd = new cc.CustomRenderCmd(this, this._onAfterDrawStencil);
-        this._afterVisitCmdStencil = new cc.CustomRenderCmd(this, this._onAfterVisitStencil);
-        this._beforeVisitCmdScissor = new cc.CustomRenderCmd(this, this._onBeforeVisitScissor);
-        this._afterVisitCmdScissor = new cc.CustomRenderCmd(this, this._onAfterVisitScissor);
+        this._beforeVisitCmdStencil = null;
+        this._afterDrawStencilCmd = null;
+        this._afterVisitCmdStencil = null;
+        this._beforeVisitCmdScissor = null;
+        this._afterVisitCmdScissor = null;
     };
 
     var proto = ccui.Layout.WebGLRenderCmd.prototype = Object.create(ccui.ProtectedNode.WebGLRenderCmd.prototype);
@@ -188,6 +188,12 @@
             return;
         }
 
+        if (!this._beforeVisitCmdStencil) {
+            this._beforeVisitCmdStencil = new cc.CustomRenderCmd(this, this._onBeforeVisitStencil);
+            this._afterDrawStencilCmd = new cc.CustomRenderCmd(this, this._onAfterDrawStencil);
+            this._afterVisitCmdStencil = new cc.CustomRenderCmd(this, this._onAfterVisitStencil);
+        }
+
         cc.renderer.pushRenderCommand(this._beforeVisitCmdStencil);
 
         //optimize performance for javascript
@@ -236,6 +242,10 @@
     };
 
     proto.scissorClippingVisit = function (parentCmd) {
+        if (!this._beforeVisitCmdScissor) {
+            this._beforeVisitCmdScissor = new cc.CustomRenderCmd(this, this._onBeforeVisitScissor);
+            this._afterVisitCmdScissor = new cc.CustomRenderCmd(this, this._onAfterVisitScissor);
+        }
         cc.renderer.pushRenderCommand(this._beforeVisitCmdScissor);
         this.pNodeVisit(parentCmd);
         cc.renderer.pushRenderCommand(this._afterVisitCmdScissor);

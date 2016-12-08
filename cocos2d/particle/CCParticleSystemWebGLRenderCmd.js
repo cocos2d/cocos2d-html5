@@ -30,8 +30,7 @@
         this._rootCtor(renderable);
         this._needDraw = true;
 
-        this._matrix = new cc.math.Matrix4();
-        this._matrix.identity();
+        this._matrix = null;
 
         this._buffersVBO = [0, 0];
         this._quads = [];
@@ -193,6 +192,10 @@
 
         var gl = ctx || cc._renderContext;
 
+        if (!this._matrix) {
+            this._matrix = new cc.math.Matrix4();
+            this._matrix.identity();
+        }
         var wt = this._worldTransform;
         this._matrix.mat[0] = wt.a;
         this._matrix.mat[4] = wt.c;

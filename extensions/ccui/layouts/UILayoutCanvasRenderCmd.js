@@ -28,12 +28,9 @@
         this._pNodeCmdCtor(renderable);
         this._needDraw = false;
 
-        this._rendererSaveCmd = new cc.CustomRenderCmd(this, this._onRenderSaveCmd);
-        this._rendererClipCmd = new cc.CustomRenderCmd(this, this._onRenderClipCmd);
-        this._rendererRestoreCmd = new cc.CustomRenderCmd(this, this._onRenderRestoreCmd);
-        this._rendererSaveCmd._canUseDirtyRegion = true;
-        this._rendererClipCmd._canUseDirtyRegion = true;
-        this._rendererRestoreCmd._canUseDirtyRegion = true;
+        this._rendererSaveCmd = null;
+        this._rendererClipCmd = null;
+        this._rendererRestoreCmd = null;
     };
 
     var proto = ccui.Layout.CanvasRenderCmd.prototype = Object.create(ccui.ProtectedNode.CanvasRenderCmd.prototype);
@@ -115,7 +112,11 @@
         if (!node._clippingStencil || !node._clippingStencil.isVisible())
             return;
 
-        this._syncStatus(parentCmd);
+        if (!this._rendererSaveCmd) {
+            this._rendererSaveCmd = new cc.CustomRenderCmd(this, this._onRenderSaveCmd);
+            this._rendererClipCmd = new cc.CustomRenderCmd(this, this._onRenderClipCmd);
+            this._rendererRestoreCmd = new cc.CustomRenderCmd(this, this._onRenderRestoreCmd);
+        }
 
         cc.renderer.pushRenderCommand(this._rendererSaveCmd);
         node._clippingStencil.visit(this);

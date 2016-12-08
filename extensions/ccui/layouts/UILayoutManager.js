@@ -197,7 +197,7 @@ ccui.relativeLayoutManager = /** @lends ccui.relativeLayoutManager# */{
                 var child = locChildren[i];
                 if (child){
                     var rlayoutParameter = child.getLayoutParameter();
-                    if (rlayoutParameter &&  rlayoutParameter.getRelativeName() === relativeName) {
+                    if (rlayoutParameter && rlayoutParameter.getRelativeName() === relativeName) {
                         relativeWidget = child;
                         this._relativeWidgetLP = rlayoutParameter;
                         break;

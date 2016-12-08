@@ -25,7 +25,7 @@
 //-------------------------- ClippingNode's canvas render cmd --------------------------------
 (function () {
     cc.ClippingNode.CanvasRenderCmd = function (renderable) {
-        cc.Node.CanvasRenderCmd.call(this, renderable);
+        this._rootCtor(renderable);
         this._needDraw = false;
 
         this._godhelpme = false;

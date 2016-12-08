@@ -83,27 +83,25 @@ function transformChildTree(root) {
 
 //-------------------------Base -------------------------
 cc.Node.RenderCmd = function (renderable) {
-    this._dirtyFlag = 1;                           //need update the transform at first.
-    this._savedDirtyFlag = true;
-
     this._node = renderable;
-    this._needDraw = false;
-    this._anchorPointInPoints = new cc.Point(0, 0);
-
-    this._transform = {a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0};
-    this._worldTransform = {a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0};
-    this._inverse = {a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0};
-
-    this._displayedOpacity = 255;
+    this._anchorPointInPoints = {x: 0, y: 0};
     this._displayedColor = cc.color(255, 255, 255, 255);
-    this._cascadeColorEnabledDirty = false;
-    this._cascadeOpacityEnabledDirty = false;
-
-    this._curLevel = -1;
 };
 
 cc.Node.RenderCmd.prototype = {
     constructor: cc.Node.RenderCmd,
+
+    _needDraw: false,
+    _dirtyFlag: 1,
+    _curLevel: -1,
+
+    _displayedOpacity: 255,
+    _cascadeColorEnabledDirty: false,
+    _cascadeOpacityEnabledDirty: false,
+
+    _transform: null,
+    _worldTransform: null,
+    _inverse: null,
 
     needDraw: function () {
         return this._needDraw;
@@ -133,8 +131,12 @@ cc.Node.RenderCmd.prototype = {
     },
 
     getParentToNodeTransform: function () {
-        if (this._dirtyFlag & cc.Node._dirtyFlags.transformDirty)
-            this._inverse = cc.affineTransformInvert(this.getNodeToParentTransform());
+        if (!this._inverse) {
+            this._inverse = {a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0};
+        }
+        if (this._dirtyFlag & cc.Node._dirtyFlags.transformDirty) {
+            cc.affineTransformInvertOut(this.getNodeToParentTransform(), this._inverse);
+        }
         return this._inverse;
     },
 
@@ -161,6 +163,11 @@ cc.Node.RenderCmd.prototype = {
     },
 
     transform: function (parentCmd, recursive) {
+        if (!this._transform) {
+            this._transform = {a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0};
+            this._worldTransform = {a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0};
+        }
+
         var node = this._node,
             pt = parentCmd ? parentCmd._worldTransform : null,
             t = this._transform,
@@ -302,7 +309,7 @@ cc.Node.RenderCmd.prototype = {
     },
 
     getNodeToParentTransform: function () {
-        if (this._dirtyFlag & cc.Node._dirtyFlags.transformDirty) {
+        if (!this._transform || this._dirtyFlag & cc.Node._dirtyFlags.transformDirty) {
             this.transform();
         }
         return this._transform;

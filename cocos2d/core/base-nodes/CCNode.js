@@ -163,12 +163,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     //since 2.0 api
     _reorderChildDirty: false,
-    _shaderProgram: null,
     arrivalOrder: 0,
 
     _actionManager: null,
     _scheduler: null,
-    _eventDispatcher: null,
 
     _additionalTransformDirty: false,
     _additionalTransform: null,
@@ -190,32 +188,23 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
      * @function
      */
-    ctor: function(){
-        this._initNode();
-        this._initRendererCmd();
-    },
-
-    _initNode: function () {
+    ctor: function () {
         var _t = this;
         _t._anchorPoint = cc.p(0, 0);
         _t._contentSize = cc.size(0, 0);
         _t._position = cc.p(0, 0);
-        _t._normalizedPosition = cc.p(0,0);
+        _t._normalizedPosition = cc.p(0, 0);
         _t._children = [];
 
         var director = cc.director;
-        _t._actionManager = director.getActionManager();
-        _t._scheduler = director.getScheduler();
 
         _t._additionalTransform = cc.affineTransformMakeIdentity();
         if (cc.ComponentContainer) {
             _t._componentContainer = new cc.ComponentContainer(_t);
         }
-
-        this._realOpacity = 255;
         this._realColor = cc.color(255, 255, 255, 255);
-        this._cascadeColorEnabled = false;
-        this._cascadeOpacityEnabled = false;
+
+        this._renderCmd = this._createRenderCmd();
     },
 
     /**
@@ -224,7 +213,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @returns {boolean} Whether the initialization was successful.
      */
     init: function () {
-        //this._initNode();   //this has been called in ctor.
         return true;
     },
 
@@ -649,12 +637,12 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     setPosition: function (newPosOrxValue, yValue) {
         var locPosition = this._position;
         if (yValue === undefined) {
-            if(locPosition.x === newPosOrxValue.x && locPosition.y === newPosOrxValue.y)
+            if (locPosition.x === newPosOrxValue.x && locPosition.y === newPosOrxValue.y)
                 return;
             locPosition.x = newPosOrxValue.x;
             locPosition.y = newPosOrxValue.y;
         } else {
-            if(locPosition.x === newPosOrxValue && locPosition.y === yValue)
+            if (locPosition.x === newPosOrxValue && locPosition.y === yValue)
                 return;
             locPosition.x = newPosOrxValue;
             locPosition.y = yValue;
@@ -1114,9 +1102,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.ActionManager} A CCActionManager object.
      */
     getActionManager: function () {
-        if (!this._actionManager)
-            this._actionManager = cc.director.getActionManager();
-        return this._actionManager;
+        return this._actionManager || cc.director.getActionManager();
     },
 
     /**
@@ -1140,9 +1126,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Scheduler} A CCScheduler object.
      */
     getScheduler: function () {
-        if (!this._scheduler)
-            this._scheduler = cc.director.getScheduler();
-        return this._scheduler;
+        return this._scheduler || cc.director.getScheduler();
     },
 
     /**
@@ -2423,10 +2407,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     isOpacityModifyRGB: function () {
         return false;
-    },
-
-    _initRendererCmd: function(){
-        this._renderCmd = cc.renderer.getRenderCmd(this);
     },
 
     _createRenderCmd: function () {
