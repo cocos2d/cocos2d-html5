@@ -22,49 +22,120 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-(function(load, baseParser){
+(function (load, baseParser) {
+
+    var _stack = new Array(50);
 
     var Parser = baseParser.extend({
 
-        addSpriteFrame: function(textures, resourcePath){
-            if(!textures) return;
+        addSpriteFrame: function (textures, resourcePath) {
+            if (!textures) return;
             for (var i = 0; i < textures.length; i++) {
                 cc.spriteFrameCache.addSpriteFrames(resourcePath + textures[i]);
             }
         },
 
-        pretreatment: function(json, resourcePath){
+        pretreatment: function (json, resourcePath) {
             this.addSpriteFrame(json["textures"], resourcePath);
         },
 
-        deferred: function(json, resourcePath, node, file){
-            if(node){
+        parseRecursive: function (json, resourcePath) {
+            var index = 1;
+            var rootNode = null;
+            var parser, curr, className, options, position, anchor, anchorPP,
+                node, parent, child, children;
+            _stack[0] = json;
+            while (index > 0) {
+                index--;
+                curr = _stack[index];
+                // Avoid memory leak
+                _stack[index] = null;
+                if (!curr) continue;
+
+                // Parse node
+                className = curr["classname"];
+                parser = this.parsers[className];
+                if (!parser) {
+                    cc.log("Can't find the parser : %s", className);
+                    continue;
+                }
+                node = new parser.object();
+                if (!node) continue;
+                if (!rootNode) {
+                    rootNode = node;
+                }
+
+                // Parse attributes
+                options = curr["options"];
+                this.generalAttributes(node, options);
+                parser.handle(node, options, resourcePath);
+                this.colorAttributes(node, options);
+                
+                parent = curr.parent;
+                curr.parent = null;
+                if (parent instanceof ccui.PageView) {
+                    parent.addPage(node);
+                }
+                else if (parent instanceof ccui.ListView) {
+                    parent.pushBackCustomItem(node);
+                } 
+                else if (parent) {
+                    if (!(parent instanceof ccui.Layout)) {
+                        if (node.getPositionType() === ccui.Widget.POSITION_PERCENT) {
+                            position = node._positionPercent;
+                            anchor = parent._anchorPoint;
+                            node._positionPercent.x = position.x + anchor.x;
+                            node._positionPercent.y = position.y + anchor.y;
+                        }
+                        anchorPP = parent._renderCmd._anchorPointInPoints;
+                        node._position.x += anchorPP.x;
+                        node._position.y += anchorPP.y;
+                        node.setNodeDirty();
+                    }
+                    parent.addChild(node);
+                }
+
+                children = curr["children"];
+                if (children && children.length > 0) {
+                    for (var i = children.length - 1; i >= 0; i--) {
+                        _stack[index] = children[i];
+                        _stack[index].parent = node;
+                        index++;
+                    }
+                }
+            }
+            return rootNode;
+        },
+
+        parse: function (file, json, resourcePath) {
+            resourcePath = resourcePath || this._dirname(file);
+            this.pretreatment(json, resourcePath);
+
+            var node = this.parseRecursive(json["widgetTree"], resourcePath);
+
+            node && this.deferred(json, resourcePath, node, file);
+            return node;
+        },
+
+        deferred: function (json, resourcePath, node, file) {
+            if (node) {
                 ccs.actionManager.initWithDictionary(file, json["animation"], node);
-                node.setContentSize(cc.size(json["designWidth"], json["designHeight"]));
+                node.setContentSize(json["designWidth"], json["designHeight"]);
             }
         }
 
     });
     var parser = new Parser();
 
+    parser.generalAttributes = function (widget, options) {
+        widget._ignoreSize = options["ignoreSize"] || false;
+        widget._sizeType = options["sizeType"] || 0;
+        widget._positionType = options["positionType"] || 0;
 
-    parser.generalAttributes = function(widget, options){
-        var ignoreSizeExsit = options["ignoreSize"];
-        if(ignoreSizeExsit != null)
-            widget.ignoreContentAdaptWithSize(ignoreSizeExsit);
-
-        if (options["sizeType"])
-        {
-            widget.setSizeType(options["sizeType"]);
-        }
-
-        if (options["positionType"])
-        {
-            widget.setPositionType(options["positionType"]);
-        }
-
-        widget.setSizePercent(cc.p(options["sizePercentX"], options["sizePercentY"]));
-        widget.setPositionPercent(cc.p(options["positionPercentX"], options["positionPercentY"]));
+        widget._sizePercent.x = options["sizePercentX"] || 0;
+        widget._sizePercent.y = options["sizePercentY"] || 0;
+        widget._positionPercent.x = options["positionPercentX"] || 0;
+        widget._positionPercent.y = options["positionPercentY"] || 0;
 
         /* adapt screen */
         var w = 0, h = 0;
@@ -74,77 +145,69 @@
             w = screenSize.width;
             h = screenSize.height;
         } else {
-            w = options["width"];
-            h = options["height"];
+            w = options["width"] || 0;
+            h = options["height"] || 0;
         }
+
+        var anchorPointX = options["anchorPointX"];
+        var anchorPointY = options["anchorPointY"];
+
+        widget._anchorPoint.x = isNaN(anchorPointX) ? 0.5 : anchorPointX;
+        widget._anchorPoint.y = isNaN(anchorPointY) ? 0.5 : anchorPointY;
+
         widget.setContentSize(w, h);
 
         widget.setTag(options["tag"]);
         widget.setActionTag(options["actiontag"]);
         widget.setTouchEnabled(options["touchAble"]);
-        var name = options["name"];
-        var widgetName = name ? name : "default";
-        widget.setName(widgetName);
 
-        var x = options["x"];
-        var y = options["y"];
-        widget.setPosition(x, y);
+        widget._name = options["name"] || "default";
 
-        var sx = options["scaleX"]!=null ? options["scaleX"] : 1;
-        widget.setScaleX(sx);
+        widget._position.x = options["x"] || 0;
+        widget._position.y = options["y"] || 0;
+        widget._scaleX = options["scaleX"] || 1;
+        widget._scaleY = options["scaleY"] || 1;
+        widget._rotationX = widget._rotationY = options["rotation"] || 0;
 
-        var sy = options["scaleY"]!=null ? options["scaleY"] : 1;
-        widget.setScaleY(sy);
-
-        var rt = options["rotation"] || 0;
-        widget.setRotation(rt);
-
-        var vb = options["visible"] || false;
-        if(vb != null)
-            widget.setVisible(vb);
-        widget.setLocalZOrder(options["ZOrder"]);
+        widget._visible = options["visible"] || false;
+        widget._localZOrder = options["ZOrder"] || 0;
 
         var layout = options["layoutParameter"];
-        if(layout != null){
+        if (layout != null) {
             var layoutParameterDic = options["layoutParameter"];
-            var paramType = layoutParameterDic["type"];
+            var paramType = isNaN(layoutParameterDic["type"]) ? 2 : layoutParameterDic["type"];
             var parameter = null;
 
-            switch(paramType){
+            switch (paramType) {
                 case 0:
                     break;
                 case 1:
                     parameter = new ccui.LinearLayoutParameter();
-                    var gravity = layoutParameterDic["gravity"];
-                    parameter.setGravity(gravity);
+                    parameter._linearGravity = layoutParameterDic["gravity"] || 0;
                     break;
                 case 2:
                     parameter = new ccui.RelativeLayoutParameter();
-                    var rParameter = parameter;
-                    var relativeName = layoutParameterDic["relativeName"];
-                    rParameter.setRelativeName(relativeName);
-                    var relativeToName = layoutParameterDic["relativeToName"];
-                    rParameter.setRelativeToWidgetName(relativeToName);
-                    var align = layoutParameterDic["align"];
-                    rParameter.setAlign(align);
+                    parameter._relativeLayoutName = layoutParameterDic["relativeName"];
+                    parameter._relativeWidgetName = layoutParameterDic["relativeToName"];
+                    parameter._relativeAlign = layoutParameterDic["align"] || 0;
                     break;
                 default:
                     break;
             }
-            if(parameter != null){
-                var mgl = layoutParameterDic["marginLeft"]||0;
-                var mgt = layoutParameterDic["marginTop"]||0;
-                var mgr = layoutParameterDic["marginRight"]||0;
-                var mgb = layoutParameterDic["marginDown"]||0;
-                parameter.setMargin(mgl, mgt, mgr, mgb);
+            if (parameter != null) {
+                var margin = parameter._margin;
+                margin.left = layoutParameterDic["marginLeft"] || 0;
+                margin.top = layoutParameterDic["marginTop"] || 0;
+                margin.right = layoutParameterDic["marginRight"] || 0;
+                margin.bottom = layoutParameterDic["marginDown"] || 0;
                 widget.setLayoutParameter(parameter);
             }
         }
     };
 
-    parser.colorAttributes = function(widget, options){
-        var op = options["opacity"];
-        if(op != null)
+    parser.colorAttributes = function (widget, options) {
+        var op = options["opacity"] !== null ? options["opacity"] : 255;
+        if (op != null)
             widget.setOpacity(op);
         var colorR = options["colorR"];
         var colorG = options["colorG"];
@@ -153,52 +216,6 @@
 
         widget.setFlippedX(options["flipX"]);
         widget.setFlippedY(options["flipY"]);
-    };
-
-    parser.anchorPointAttributes = function(widget, options){
-        var isAnchorPointXExists = options["anchorPointX"];
-        var anchorPointXInFile;
-        if (isAnchorPointXExists != null)
-            anchorPointXInFile = options["anchorPointX"];
-        else
-            anchorPointXInFile = widget.getAnchorPoint().x;
-
-        var isAnchorPointYExists = options["anchorPointY"];
-        var anchorPointYInFile;
-        if (isAnchorPointYExists != null)
-            anchorPointYInFile = options["anchorPointY"];
-        else
-            anchorPointYInFile = widget.getAnchorPoint().y;
-
-        if (isAnchorPointXExists != null || isAnchorPointYExists != null)
-            widget.setAnchorPoint(cc.p(anchorPointXInFile, anchorPointYInFile));
-    };
-
-    parser.parseChild = function(widget, options, resourcePath){
-        var children = options["children"];
-        for (var i = 0; i < children.length; i++) {
-            var child = this.parseNode(children[i], resourcePath);
-            if(child){
-                if(widget instanceof ccui.PageView)
-                    widget.addPage(child);
-                else {
-                    if(widget instanceof ccui.ListView){
-                        widget.pushBackCustomItem(child);
-                    } else {
-                        if(!(widget instanceof ccui.Layout)) {
-                            if(child.getPositionType() === ccui.Widget.POSITION_PERCENT) {
-                                var position = child.getPositionPercent();
-                                var anchor = widget.getAnchorPoint();
-                                child.setPositionPercent(cc.p(position.x + anchor.x, position.y + anchor.y));
-                            }
-                            var AnchorPointIn = widget.getAnchorPointInPoints();
-                            child.setPosition(cc.p(child.getPositionX() + AnchorPointIn.x, child.getPositionY() + AnchorPointIn.y));
-                        }
-                        widget.addChild(child);
-                    }
-                }
-            }
-        }
     };
 
     var getPath = function (res, type, path, cb) {
@@ -221,8 +238,8 @@
             w = screenSize.width;
             h = screenSize.height;
         } else {
-            w = options["width"];
-            h = options["height"];
+            w = options["width"] || 0;
+            h = options["height"] || 0;
         }
         widget.setSize(cc.size(w, h));
 
@@ -230,25 +247,25 @@
 
         var backGroundScale9Enable = options["backGroundScale9Enable"];
         widget.setBackGroundImageScale9Enabled(backGroundScale9Enable);
-        var cr = options["bgColorR"];
-        var cg = options["bgColorG"];
-        var cb = options["bgColorB"];
+        var cr = options["bgColorR"] || 0;
+        var cg = options["bgColorG"] || 0;
+        var cb = options["bgColorB"] || 0;
 
-        var scr = options["bgStartColorR"];
-        var scg = options["bgStartColorG"];
-        var scb = options["bgStartColorB"];
+        var scr = isNaN(options["bgStartColorR"]) ? 255 : options["bgStartColorR"];
+        var scg = isNaN(options["bgStartColorG"]) ? 255 : options["bgStartColorG"];
+        var scb = isNaN(options["bgStartColorB"]) ? 255 : options["bgStartColorB"];
 
-        var ecr = options["bgEndColorR"];
-        var ecg = options["bgEndColorG"];
-        var ecb = options["bgEndColorB"];
+        var ecr = isNaN(options["bgEndColorR"]) ? 255 : options["bgEndColorR"];
+        var ecg = isNaN(options["bgEndColorG"]) ? 255 : options["bgEndColorG"];
+        var ecb = isNaN(options["bgEndColorB"]) ? 255 : options["bgEndColorB"];
 
-        var bgcv1 = options["vectorX"];
-        var bgcv2 = options["vectorY"];
+        var bgcv1 = options["vectorX"] || 0;
+        var bgcv2 = options["vectorY"] || 0;
         widget.setBackGroundColorVector(cc.p(bgcv1, bgcv2));
 
-        var co = options["bgColorOpacity"];
+        var co = options["bgColorOpacity"] || 0;
 
-        var colorType = options["colorType"];
+        var colorType = options["colorType"] || 0;
         widget.setBackGroundColorType(colorType/*ui.LayoutBackGroundColorType(colorType)*/);
         widget.setBackGroundColor(cc.color(scr, scg, scb), cc.color(ecr, ecg, ecb));
         widget.setBackGroundColor(cc.color(cr, cg, cb));
@@ -256,82 +273,82 @@
 
 
         var imageFileNameDic = options["backGroundImageData"];
-        if(imageFileNameDic){
-            getPath(resourcePath, imageFileNameDic["resourceType"], imageFileNameDic["path"], function(path, type){
+        if (imageFileNameDic) {
+            getPath(resourcePath, imageFileNameDic["resourceType"] || 0, imageFileNameDic["path"], function (path, type) {
                 widget.setBackGroundImage(path, type);
             });
         }
 
-        if (backGroundScale9Enable){
-            var cx = options["capInsetsX"];
-            var cy = options["capInsetsY"];
-            var cw = options["capInsetsWidth"];
-            var ch = options["capInsetsHeight"];
+        if (backGroundScale9Enable) {
+            var cx = options["capInsetsX"] || 0;
+            var cy = options["capInsetsY"] || 0;
+            var cw = isNaN(options["capInsetsWidth"]) ? 1 : options["capInsetsWidth"];
+            var ch = isNaN(options["capInsetsHeight"]) ? 1 : options["capInsetsHeight"];
             widget.setBackGroundImageCapInsets(cc.rect(cx, cy, cw, ch));
         }
-        if (options["layoutType"])
-        {
+        if (options["layoutType"]) {
             widget.setLayoutType(options["layoutType"]);
         }
     };
     /**
      * Button parser (UIButton)
      */
-    parser.ButtonAttributes = function(widget, options, resourcePath){
+    parser.ButtonAttributes = function (widget, options, resourcePath) {
         var button = widget;
         var scale9Enable = options["scale9Enable"];
         button.setScale9Enabled(scale9Enable);
 
         var normalDic = options["normalData"];
-        getPath(resourcePath, normalDic["resourceType"], normalDic["path"], function(path, type){
+        getPath(resourcePath, normalDic["resourceType"] || 0, normalDic["path"], function (path, type) {
             button.loadTextureNormal(path, type);
         });
         var pressedDic = options["pressedData"];
-        getPath(resourcePath, pressedDic["resourceType"], pressedDic["path"], function(path, type){
+        getPath(resourcePath, pressedDic["resourceType"] || 0, pressedDic["path"], function (path, type) {
             button.loadTexturePressed(path, type);
         });
         var disabledDic = options["disabledData"];
-        getPath(resourcePath, disabledDic["resourceType"], disabledDic["path"], function(path, type){
+        getPath(resourcePath, disabledDic["resourceType"] || 0, disabledDic["path"], function (path, type) {
             button.loadTextureDisabled(path, type);
         });
         if (scale9Enable) {
-            var cx = options["capInsetsX"];
-            var cy = options["capInsetsY"];
-            var cw = options["capInsetsWidth"];
-            var ch = options["capInsetsHeight"];
+            var cx = options["capInsetsX"] || 0;
+            var cy = options["capInsetsY"] || 0;
+            var cw = isNaN(options["capInsetsWidth"]) ? 1 : options["capInsetsWidth"];
+            var ch = isNaN(options["capInsetsHeight"]) ? 1 : options["capInsetsHeight"];
 
             button.setCapInsets(cc.rect(cx, cy, cw, ch));
-            var sw = options["scale9Width"];
-            var sh = options["scale9Height"];
+            var sw = options["scale9Width"] || 0;
+            var sh = options["scale9Height"] || 0;
             if (sw != null && sh != null)
                 button.setSize(cc.size(sw, sh));
         }
-        var text = options["text"];
-        if (text != null)
+        var text = options["text"] || "";
+        if (text) {
             button.setTitleText(text);
 
-        var cr = options["textColorR"];
-        var cg = options["textColorG"];
-        var cb = options["textColorB"];
-        var cri = cr!==null?options["textColorR"]:255;
-        var cgi = cg!==null?options["textColorG"]:255;
-        var cbi = cb!==null?options["textColorB"]:255;
+            var cr = options["textColorR"];
+            var cg = options["textColorG"];
+            var cb = options["textColorB"];
+            var cri = (cr !== null) ? options["textColorR"] : 255;
+            var cgi = (cg !== null) ? options["textColorG"] : 255;
+            var cbi = (cb !== null) ? options["textColorB"] : 255;
 
-        button.setTitleColor(cc.color(cri,cgi,cbi));
-        var fs = options["fontSize"];
-        if (fs != null)
-            button.setTitleFontSize(options["fontSize"]);
-        var fn = options["fontName"];
-        if (fn)
-            button.setTitleFontName(options["fontName"]);
+            button.setTitleColor(cc.color(cri, cgi, cbi));
+            var fs = options["fontSize"];
+            if (fs != null)
+                button.setTitleFontSize(options["fontSize"]);
+            var fn = options["fontName"];
+            if (fn)
+                button.setTitleFontName(options["fontName"]);
+        }
     };
     /**
      * CheckBox parser (UICheckBox)
      */
-    parser.CheckBoxAttributes = function(widget, options, resourcePath){
+    parser.CheckBoxAttributes = function (widget, options, resourcePath) {
         //load background image
         var backGroundDic = options["backGroundBoxData"];
-        getPath(resourcePath, backGroundDic["resourceType"], backGroundDic["path"], function(path, type){
+        getPath(resourcePath, backGroundDic["resourceType"] || 0, backGroundDic["path"], function (path, type) {
             widget.loadTextureBackGround(path, type);
         });
 
@@ -341,13 +358,13 @@
             resourcePath,
             backGroundSelectedDic["resourceType"] || backGroundDic["resourceType"],
             backGroundSelectedDic["path"] || backGroundDic["path"],
-            function(path, type){
-            widget.loadTextureBackGroundSelected(path, type);
-        });
+            function (path, type) {
+                widget.loadTextureBackGroundSelected(path, type);
+            });
 
         //load frontCross image
         var frontCrossDic = options["frontCrossData"];
-        getPath(resourcePath, frontCrossDic["resourceType"], frontCrossDic["path"], function(path, type){
+        getPath(resourcePath, frontCrossDic["resourceType"] || 0, frontCrossDic["path"], function (path, type) {
             widget.loadTextureFrontCross(path, type);
         });
 
@@ -357,13 +374,13 @@
             resourcePath,
             backGroundDisabledDic["resourceType"] || frontCrossDic["resourceType"],
             backGroundDisabledDic["path"] || frontCrossDic["path"],
-            function(path, type){
-            widget.loadTextureBackGroundDisabled(path, type);
-        });
+            function (path, type) {
+                widget.loadTextureBackGroundDisabled(path, type);
+            });
 
         ///load frontCrossDisabledData
         var frontCrossDisabledDic = options["frontCrossDisabledData"];
-        getPath(resourcePath, frontCrossDisabledDic["resourceType"], frontCrossDisabledDic["path"], function(path, type){
+        getPath(resourcePath, frontCrossDisabledDic["resourceType"] || 0, frontCrossDisabledDic["path"], function (path, type) {
             widget.loadTextureFrontCrossDisabled(path, type);
         });
 
@@ -373,33 +390,32 @@
     /**
      * ImageView parser (UIImageView)
      */
-    parser.ImageViewAttributes = function(widget, options, resourcePath){
+    parser.ImageViewAttributes = function (widget, options, resourcePath) {
         var imageFileNameDic = options["fileNameData"]
-        getPath(resourcePath, imageFileNameDic["resourceType"], imageFileNameDic["path"], function(path, type){
+        getPath(resourcePath, imageFileNameDic["resourceType"] || 0, imageFileNameDic["path"], function (path, type) {
             widget.loadTexture(path, type);
         });
 
         var scale9EnableExist = options["scale9Enable"];
         var scale9Enable = false;
-        if (scale9EnableExist){
+        if (scale9EnableExist) {
             scale9Enable = options["scale9Enable"];
         }
         widget.setScale9Enabled(scale9Enable);
 
-        if (scale9Enable){
-            var sw = options["scale9Width"];
-            var sh = options["scale9Height"];
-            if (sw && sh)
-            {
-                var swf = options["scale9Width"];
-                var shf = options["scale9Height"];
+        if (scale9Enable) {
+            var sw = options["scale9Width"] || 0;
+            var sh = options["scale9Height"] || 0;
+            if (sw && sh) {
+                var swf = options["scale9Width"] || 0;
+                var shf = options["scale9Height"] || 0;
                 widget.setSize(cc.size(swf, shf));
             }
 
-            var cx = options["capInsetsX"];
-            var cy = options["capInsetsY"];
-            var cw = options["capInsetsWidth"];
-            var ch = options["capInsetsHeight"];
+            var cx = options["capInsetsX"] || 0;
+            var cy = options["capInsetsY"] || 0;
+            var cw = isNaN(options["capInsetsWidth"]) ? 1 : options["capInsetsWidth"];
+            var ch = isNaN(options["capInsetsHeight"]) ? 1 : options["capInsetsHeight"];
 
             widget.setCapInsets(cc.rect(cx, cy, cw, ch));
 
@@ -408,16 +424,16 @@
     /**
      * TextAtlas parser (UITextAtlas)
      */
-    parser.TextAtlasAttributes = function(widget, options, resourcePath){
+    parser.TextAtlasAttributes = function (widget, options, resourcePath) {
         var sv = options["stringValue"];
         var cmf = options["charMapFileData"];   // || options["charMapFile"];
         var iw = options["itemWidth"];
         var ih = options["itemHeight"];
         var scm = options["startCharMap"];
-        if (sv != null && cmf && iw != null && ih != null && scm != null){
+        if (sv != null && cmf && iw != null && ih != null && scm != null) {
             var cmftDic = options["charMapFileData"];
-            var cmfType = cmftDic["resourceType"];
-            switch (cmfType){
+            var cmfType = cmftDic["resourceType"] || 0;
+            switch (cmfType) {
                 case 0:
                     var tp_c = resourcePath;
                     var cmfPath = cmftDic["path"];
@@ -435,9 +451,9 @@
     /**
      * TextBMFont parser (UITextBMFont)
      */
-    parser.TextBMFontAttributes = function(widget, options, resourcePath){
+    parser.TextBMFontAttributes = function (widget, options, resourcePath) {
         var cmftDic = options["fileNameData"];
-        var cmfType = cmftDic["resourceType"];
+        var cmfType = cmftDic["resourceType"] || 0;
         switch (cmfType) {
             case 0:
                 var tp_c = resourcePath;
@@ -452,88 +468,92 @@
                 break;
         }
 
-        var text = options["text"];
+        var text = options["text"] || "";
         widget.setString(text);
     };
     /**
      * Text parser (UIText)
      */
     var regTTF = /\.ttf$/;
-    parser.TextAttributes = function(widget, options, resourcePath){
+    parser.TextAttributes = function (widget, options, resourcePath) {
         var touchScaleChangeAble = options["touchScaleEnable"];
         widget.setTouchScaleChangeEnabled(touchScaleChangeAble);
-        var text = options["text"];
-        widget.setString(text);
+        var text = options["text"] || "";
+        if(text) {
+            widget._setString(text);
+        }
+
         var fs = options["fontSize"];
-        if (fs != null){
-            widget.setFontSize(options["fontSize"]);
+        if (fs != null) {
+            widget._setFontSize(options["fontSize"]);
         }
         var fn = options["fontName"];
-        if (fn != null){
-            if(cc.sys.isNative){
-                if(regTTF.test(fn)){
+        if (fn != null) {
+            if (cc.sys.isNative) {
+                if (regTTF.test(fn)) {
                     widget.setFontName(cc.path.join(cc.loader.resPath, resourcePath, fn));
-                }else{
+                } else {
                     widget.setFontName(fn);
                 }
-            }else{
-                widget.setFontName(fn.replace(regTTF, ''));
+            } else {
+                widget._setFontName(fn.replace(regTTF, ''));
             }
         }
-        var aw = options["areaWidth"];
-        var ah = options["areaHeight"];
-        if (aw != null && ah != null){
+        var aw = options["areaWidth"] || 0;
+        var ah = options["areaHeight"] || 0;
+        if (aw && ah) {
             var size = cc.size(options["areaWidth"], options["areaHeight"]);
-            widget.setTextAreaSize(size);
+            widget._setTextAreaSize(size);
         }
-        var ha = options["hAlignment"];
-        if (ha != null){
-            widget.setTextHorizontalAlignment(options["hAlignment"]);
+        var ha = options["hAlignment"] || 0;
+        if (ha != null) {
+            widget._setTextHorizontalAlignment(ha);
         }
-        var va = options["vAlignment"];
-        if (va != null){
-            widget.setTextVerticalAlignment(options["vAlignment"]);
+        var va = options["vAlignment"] || 0;
+        if (va != null) {
+            widget._setTextVerticalAlignment(va);
         }
+        widget._updateUITextContentSize();
     };
     /**
      * ListView parser (UIListView)
      */
-    parser.ListViewAttributes = function(widget, options, resoutcePath){
-        parser.ScrollViewAttributes(widget, options,resoutcePath);
-        var direction = options["direction"];
+    parser.ListViewAttributes = function (widget, options, resoutcePath) {
+        parser.ScrollViewAttributes(widget, options, resoutcePath);
+        var direction = options["direction"] || 1;
         widget.setDirection(direction);
-        var gravity = options["gravity"];
+        var gravity = options["gravity"] || 0;
         widget.setGravity(gravity);
-        var itemMargin = options["itemMargin"];
+        var itemMargin = options["itemMargin"] || 0;
         widget.setItemsMargin(itemMargin);
     };
     /**
      * LoadingBar parser (UILoadingBar)
      */
-    parser.LoadingBarAttributes = function(widget, options, resourcePath){
+    parser.LoadingBarAttributes = function (widget, options, resourcePath) {
         var imageFileNameDic = options["textureData"];
-        getPath(resourcePath, imageFileNameDic["resourceType"], imageFileNameDic["path"], function(path, type){
+        getPath(resourcePath, imageFileNameDic["resourceType"] || 0, imageFileNameDic["path"], function (path, type) {
             widget.loadTexture(path, type);
         });
 
         var scale9Enable = options["scale9Enable"];
         widget.setScale9Enabled(scale9Enable);
 
-        if (scale9Enable){
-            var cx = options["capInsetsX"];
-            var cy = options["capInsetsY"];
-            var cw = options["capInsetsWidth"];
-            var ch = options["capInsetsHeight"];
+        if (scale9Enable) {
+            var cx = options["capInsetsX"] || 0;
+            var cy = options["capInsetsY"] || 0;
+            var cw = isNaN(options["capInsetsWidth"]) ? 1 : options["capInsetsWidth"];
+            var ch = isNaN(options["capInsetsHeight"]) ? 1 : options["capInsetsHeight"];
 
             widget.setCapInsets(cc.rect(cx, cy, cw, ch));
 
-            var width = options["width"];
-            var height = options["height"];
+            var width = options["width"] || 0;
+            var height = options["height"] || 0;
             widget.setSize(cc.size(width, height));
         }
 
-        widget.setDirection(options["direction"]);
-        widget.setPercent(options["percent"]);
+        widget.setDirection(options["direction"] || 0);
+        widget.setPercent(options["percent"] || 0);
     };
     /**
      * PageView parser (UIPageView)
@@ -542,13 +562,13 @@
     /**
      * ScrollView parser (UIScrollView)
      */
-    parser.ScrollViewAttributes = function(widget, options, resoutcePath){
-        parser.LayoutAttributes(widget, options,resoutcePath);
-        var innerWidth = options["innerWidth"]!=null ? options["innerWidth"] : 200;
-        var innerHeight = options["innerHeight"]!=null ? options["innerHeight"] : 200;
+    parser.ScrollViewAttributes = function (widget, options, resoutcePath) {
+        parser.LayoutAttributes(widget, options, resoutcePath);
+        var innerWidth = options["innerWidth"] != null ? options["innerWidth"] : 200;
+        var innerHeight = options["innerHeight"] != null ? options["innerHeight"] : 200;
         widget.setInnerContainerSize(cc.size(innerWidth, innerHeight));
 
-        var direction = options["direction"]!=null ? options["direction"] : 1;
+        var direction = options["direction"] != null ? options["direction"] : 1;
         widget.setDirection(direction);
         widget.setBounceEnabled(options["bounceEnable"]);
     };
@@ -565,7 +585,7 @@
         var barLength = options["length"];
 
         var imageFileNameDic = options["barFileNameData"];
-        var imageFileType = imageFileNameDic["resourceType"];
+        var imageFileType = imageFileNameDic["resourceType"] || 0;
         var imageFileName = imageFileNameDic["path"];
 
         if (bt != null) {
@@ -582,7 +602,7 @@
         }
 
         var normalDic = options["ballNormalData"];
-        getPath(resourcePath, normalDic["resourceType"], normalDic["path"], function(path, type){
+        getPath(resourcePath, normalDic["resourceType"] || 0, normalDic["path"], function (path, type) {
             slider.loadSlidBallTextureNormal(path, type);
         });
 
@@ -596,23 +616,23 @@
             });
 
         var disabledDic = options["ballDisabledData"];
-        getPath(resourcePath, disabledDic["resourceType"], disabledDic["path"], function(path, type){
+        getPath(resourcePath, disabledDic["resourceType"] || 0, disabledDic["path"], function (path, type) {
             slider.loadSlidBallTextureDisabled(path, type);
         });
 
         var progressBarDic = options["progressBarData"];
-        getPath(resourcePath, progressBarDic["resourceType"], progressBarDic["path"], function(path, type){
+        getPath(resourcePath, progressBarDic["resourceType"] || 0, progressBarDic["path"], function (path, type) {
             slider.loadProgressBarTexture(path, type);
         });
     };
     /**
      * TextField parser (UITextField)
      */
-    parser.TextFieldAttributes = function (widget, options, resourcePath){
-        var ph = options["placeHolder"];
+    parser.TextFieldAttributes = function (widget, options, resourcePath) {
+        var ph = options["placeHolder"] || "";
         if (ph)
             widget.setPlaceHolder(ph);
-        widget.setString(options["text"]||"");
+        widget.setString(options["text"] || "");
         var fs = options["fontSize"];
         if (fs)
             widget.setFontSize(fs);
@@ -628,13 +648,13 @@
                 widget.setFontName(fn.replace(regTTF, ''));
             }
         }
-        var tsw = options["touchSizeWidth"];
-        var tsh = options["touchSizeHeight"];
-        if (tsw!=null && tsh!=null)
+        var tsw = options["touchSizeWidth"] || 0;
+        var tsh = options["touchSizeHeight"] || 0;
+        if (tsw != null && tsh != null)
             widget.setTouchSize(tsw, tsh);
 
-        var dw = options["width"];
-        var dh = options["height"];
+        var dw = options["width"] || 0;
+        var dh = options["height"] || 0;
         if (dw > 0 || dh > 0) {
             //textField.setSize(cc.size(dw, dh));
         }
@@ -650,55 +670,40 @@
         if (passwordEnable)
             widget.setPasswordStyleText(options["passwordStyleText"]);
 
-        var aw = options["areaWidth"];
-        var ah = options["areaHeight"];
+        var aw = options["areaWidth"] || 0;
+        var ah = options["areaHeight"] || 0;
         if (aw && ah) {
             var size = cc.size(aw, ah);
             widget.setTextAreaSize(size);
         }
-        var ha = options["hAlignment"];
+        var ha = options["hAlignment"] || 0;
         if (ha)
             widget.setTextHorizontalAlignment(ha);
-        var va = options["vAlignment"];
+        var va = options["vAlignment"] || 0;
         if (va)
             widget.setTextVerticalAlignment(va);
 
-        var r = options["colorR"];
-        var g = options["colorG"];
-        var b = options["colorB"];
-        if (r !== undefined && g !== undefined && b !== undefined) {
-            widget.setTextColor(cc.color(r, g, b));
-        }
+        var r = isNaN(options["colorR"]) ? 255 : options["colorR"];
+        var g = isNaN(options["colorG"]) ? 255 : options["colorG"];
+        var b = isNaN(options["colorB"]) ? 255 : options["colorB"];
+        widget.setTextColor(cc.color(r, g, b));
     };
 
-    var register = [
-        {name: "Panel", object: ccui.Layout, handle: parser.LayoutAttributes},
-        {name: "Button", object: ccui.Button, handle: parser.ButtonAttributes},
-        {name: "CheckBox", object: ccui.CheckBox, handle: parser.CheckBoxAttributes},
-        {name: "ImageView", object: ccui.ImageView, handle: parser.ImageViewAttributes},
-        {name: "LabelAtlas", object: ccui.TextAtlas, handle: parser.TextAtlasAttributes},
-        {name: "LabelBMFont", object: ccui.TextBMFont, handle: parser.TextBMFontAttributes},
-        {name: "Label", object: ccui.Text, handle: parser.TextAttributes},
-        {name: "ListView", object: ccui.ListView, handle: parser.ListViewAttributes},
-        {name: "LoadingBar", object: ccui.LoadingBar, handle: parser.LoadingBarAttributes},
-        {name: "PageView", object: ccui.PageView, handle: parser.PageViewAttributes},
-        {name: "ScrollView", object: ccui.ScrollView, handle: parser.ScrollViewAttributes},
-        {name: "Slider", object: ccui.Slider, handle: parser.SliderAttributes},
-        {name: "TextField", object: ccui.TextField, handle: parser.TextFieldAttributes}
-    ];
-
-    register.forEach(function(item){
-        parser.registerParser(item.name, function(options, resourcePath){
-            var widget = new item.object;
-            var uiOptions = options["options"];
-            parser.generalAttributes(widget, uiOptions);
-            item.handle(widget, uiOptions, resourcePath);
-            parser.colorAttributes(widget, uiOptions);
-            parser.anchorPointAttributes(widget, uiOptions);
-            parser.parseChild.call(this, widget, options, resourcePath);
-            return widget;
-        });
-    });
+    parser.parsers = {
+        "Panel": {object: ccui.Layout, handle: parser.LayoutAttributes},
+        "Button": {object: ccui.Button, handle: parser.ButtonAttributes},
+        "CheckBox": {object: ccui.CheckBox, handle: parser.CheckBoxAttributes},
+        "ImageView": {object: ccui.ImageView, handle: parser.ImageViewAttributes},
+        "LabelAtlas": {object: ccui.TextAtlas, handle: parser.TextAtlasAttributes},
+        "LabelBMFont": {object: ccui.TextBMFont, handle: parser.TextBMFontAttributes},
+        "Label": {object: ccui.Text, handle: parser.TextAttributes},
+        "ListView": {object: ccui.ListView, handle: parser.ListViewAttributes},
+        "LoadingBar": {object: ccui.LoadingBar, handle: parser.LoadingBarAttributes},
+        "PageView": {object: ccui.PageView, handle: parser.PageViewAttributes},
+        "ScrollView": {object: ccui.ScrollView, handle: parser.ScrollViewAttributes},
+        "Slider": {object: ccui.Slider, handle: parser.SliderAttributes},
+        "TextField": {object: ccui.TextField, handle: parser.TextFieldAttributes}
+    };
 
     load.registerParser("ccui", "*", parser);
 
