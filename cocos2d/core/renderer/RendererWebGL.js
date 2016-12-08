@@ -274,7 +274,10 @@ return {
 
         // Check batching
         var node = cmd._node;
-        var texture = node._texture;
+        var texture = node._texture || (node._spriteFrame ? node._spriteFrame._texture : null);
+        if (!texture) {
+            return;
+        }
         var blendSrc = node._blendFunc.src;
         var blendDst = node._blendFunc.dst;
         var shader = cmd._shaderProgram;

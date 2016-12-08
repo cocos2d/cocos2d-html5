@@ -1,5 +1,5 @@
 /****************************************************************************
- Copyright (c) 2013-2014 Chukong Technologies Inc.
+ Copyright (c) 2013-2016 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -25,170 +25,130 @@
 (function() {
     ccui.Scale9Sprite.CanvasRenderCmd = function (renderable) {
         cc.Node.CanvasRenderCmd.call(this, renderable);
-        this._cachedParent = null;
-        this._cacheDirty = false;
-        this._state = ccui.Scale9Sprite.state.NORMAL;
+        this._needDraw = true;
 
-        var node = this._node;
-        var locCacheCanvas = this._cacheCanvas = document.createElement('canvas');
-        locCacheCanvas.width = 1;
-        locCacheCanvas.height = 1;
-        this._cacheContext = new cc.CanvasContextWrapper(locCacheCanvas.getContext("2d"));
-        var locTexture = this._cacheTexture = new cc.Texture2D();
-        locTexture.initWithElement(locCacheCanvas);
-        locTexture.handleLoadedTexture();
-        this._cacheSprite = new cc.Sprite(locTexture);
-        this._cacheSprite.setAnchorPoint(0,0);
-        node.addChild(this._cacheSprite);
+        this._state = ccui.Scale9Sprite.state.NORMAL;
+        this._originalTexture = this._textureToRender = null;
     };
 
     var proto = ccui.Scale9Sprite.CanvasRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
     proto.constructor = ccui.Scale9Sprite.CanvasRenderCmd;
 
-    proto.visit = function(parentCmd){
-        var node = this._node;
-        if(!node._visible)
-            return;
-
-        if (node._positionsAreDirty) {
-            node._updatePositions();
-            node._positionsAreDirty = false;
-        }
-
-        this.originVisit(parentCmd);
+    proto.transform = function(parentCmd, recursive){
+        this.originTransform(parentCmd, recursive);
+        this._node._rebuildQuads();
     };
 
-    proto.transform = function(parentCmd, recursive) {
-        var node = this._node;
-        this.originTransform(parentCmd, recursive);
-        if (node._positionsAreDirty) {
-            node._updatePositions();
-            node._positionsAreDirty = false;
-        }
-
-        var children = node._children;
-        for(var i=0; i<children.length; i++){
-            children[i].transform(this);
-        }
+    proto.needDraw = function () {
+        return this._needDraw && this._node.loaded();
     };
 
     proto._updateDisplayColor = function(parentColor){
-        cc.Node.CanvasRenderCmd.prototype._updateDisplayColor.call(this, parentColor);
-        var node = this._node;
-        if(!node)   return;
-        var locRenderers = node._renderers;
-
-        if(node._scale9Enabled) {
-            var protectChildLen = locRenderers.length;
-            for(var j=0 ; j < protectChildLen; j++) {
-                var renderer = locRenderers[j];
-                if(renderer) {
-                    renderer._renderCmd._updateDisplayColor(parentColor);
-                    renderer._renderCmd._updateColor();
-                }
-                else
-                    break;
-            }
-        }
-        else {
-            if (node._scale9Image) {
-                node._scale9Image._renderCmd._updateDisplayColor(parentColor);
-                node._scale9Image._renderCmd._updateColor();
-            }
-        }
-    };
-
-    proto.updateStatus = function () {
-        var flags = cc.Node._dirtyFlags, 
-            locFlag = this._dirtyFlag;
-
-        cc.Node.RenderCmd.prototype.updateStatus.call(this);
-
-        if (locFlag & flags.cacheDirty) {
-            this._cacheScale9Sprite();
-            this._dirtyFlag = this._dirtyFlag & flags.cacheDirty ^ this._dirtyFlag;
-        }
-    };
-
-    proto._syncStatus = function (parentCmd) {
-        var flags = cc.Node._dirtyFlags, 
-            locFlag = this._dirtyFlag;
-
-        this._originSyncStatus(parentCmd);
-        
-        if (locFlag & flags.cacheDirty) {
-            this._cacheScale9Sprite();
-            this._dirtyFlag = this._dirtyFlag & flags.cacheDirty ^ this._dirtyFlag;
-        }
-    };
-
-    proto._cacheScale9Sprite = function() {
-        var node = this._node;
-        if(!node._scale9Image)
-            return;
-
-        var locScaleFactor = cc.contentScaleFactor();
-        var size = node._contentSize;
-        var sizeInPixels = cc.size(size.width * locScaleFactor, size.height * locScaleFactor);
-
-        var locCanvas = this._cacheCanvas, wrapper = this._cacheContext, locContext = wrapper.getContext();
-
-        var contentSizeChanged = false;
-        if(locCanvas.width !== sizeInPixels.width || locCanvas.height !== sizeInPixels.height){
-            locCanvas.width = sizeInPixels.width;
-            locCanvas.height = sizeInPixels.height;
-            contentSizeChanged = true;
-        }
-
-        //begin cache
-        cc.renderer._turnToCacheMode(node.__instanceId);
-
-        if(node._scale9Enabled) {
-            var locRenderers = node._renderers;
-            node._setRenderersPosition();
-            var protectChildLen = locRenderers.length;
-            for(var j=0; j < protectChildLen; j++) {
-                var renderer = locRenderers[j];
-                if(renderer) {
-                    var tempCmd = renderer._renderCmd;
-                    tempCmd.updateStatus();
-                    cc.renderer.pushRenderCommand(tempCmd);
-                }
-                else
-                    break;
-            }
-        }
-        else {
-            var tempCmd = node._scale9Image._renderCmd;
-            node._adjustScale9ImagePosition();
-            node._adjustScale9ImageScale();
-            tempCmd.updateStatus();
-            cc.renderer.pushRenderCommand(node._scale9Image._renderCmd);
-        }
-        //draw to cache canvas
-        var selTexture = node._scale9Image.getTexture();
-        if(selTexture && this._state === ccui.Scale9Sprite.state.GRAY)
-            selTexture._switchToGray(true);
-        locContext.setTransform(1, 0, 0, 1, 0, 0);
-        locContext.clearRect(0, 0, sizeInPixels.width, sizeInPixels.height);
-        cc.renderer._renderingToCacheCanvas(wrapper, node.__instanceId, locScaleFactor, locScaleFactor);
-        cc.renderer._turnToNormalMode();
-        if(selTexture && this._state === ccui.Scale9Sprite.state.GRAY)
-            selTexture._switchToGray(false);
-
-        if(contentSizeChanged)
-            this._cacheSprite.setTextureRect(cc.rect(0,0, size.width, size.height));
-
-        if(!this._cacheSprite.getParent())
-            node.addChild(this._cacheSprite, -1);
-        this._cacheSprite._renderCmd._updateColor();
+        cc.Node.RenderCmd.prototype._updateDisplayColor.call(this, parentColor);
+        this._originalTexture = this._textureToRender = null;
     };
 
     proto.setState = function(state){
-        var locScale9Image = this._node._scale9Image;
-        if(!locScale9Image)
-            return;
+        if(this._state === state) return;
+
         this._state = state;
-        this.setDirtyFlag(cc.Node._dirtyFlags.cacheDirty);
+        this._originalTexture = this._textureToRender = null;
     };
+
+    proto._setColorDirty = function () {
+        this.setDirtyFlag(cc.Node._dirtyFlags.colorDirty | cc.Node._dirtyFlags.opacityDirty);
+    };
+
+    proto.rendering = function (ctx, scaleX, scaleY) {
+        var node = this._node;
+        var locDisplayOpacity = this._displayedOpacity;
+        var alpha =  locDisplayOpacity/ 255;
+        var locTexture = null;
+        if (node._spriteFrame) locTexture = node._spriteFrame._texture;
+        if (!node.loaded() || locDisplayOpacity === 0)
+            return;
+        if (this._textureToRender === null || this._originalTexture !== locTexture) {
+            this._textureToRender = this._originalTexture = locTexture;
+            if (cc.Scale9Sprite.state.GRAY === this._state) {
+                this._textureToRender = this._textureToRender._generateGrayTexture();
+            }
+            var color = node.getDisplayedColor();
+            if (locTexture && (color.r !== 255 || color.g !==255 || color.b !== 255))
+                this._textureToRender = this._textureToRender._generateColorTexture(color.r,color.g,color.b);
+        }
+
+        var wrapper = ctx || cc._renderContext, context = wrapper.getContext();
+        wrapper.setTransform(this._worldTransform, scaleX, scaleY);
+        wrapper.setCompositeOperation(cc.Node.CanvasRenderCmd._getCompositeOperationByBlendFunc(node._blendFunc));
+        wrapper.setGlobalAlpha(alpha);
+
+        if (this._textureToRender) {
+            if (node._quadsDirty) {
+                node._rebuildQuads();
+            }
+            var sx,sy,sw,sh;
+            var x, y, w,h;
+            var textureWidth = this._textureToRender._pixelsWide;
+            var textureHeight = this._textureToRender._pixelsHigh;
+            var image = this._textureToRender._htmlElementObj;
+            var vertices = node._vertices;
+            var uvs = node._uvs;
+            var i = 0, off = 0;
+
+            if (node._renderingType === cc.Scale9Sprite.RenderingType.SLICED) {
+                // Sliced use a special vertices layout 16 vertices for 9 quads
+                for (var r = 0; r < 3; ++r) {
+                    for (var c = 0; c < 3; ++c) {
+                        off = r*8 + c*2;
+                        x = vertices[off];
+                        y = vertices[off+1];
+                        w = vertices[off+10] - x;
+                        h = vertices[off+11] - y;
+                        y = - y - h;
+
+                        sx = uvs[off] * textureWidth;
+                        sy = uvs[off+11] * textureHeight;
+                        sw = (uvs[off+10] - uvs[off]) * textureWidth;
+                        sh = (uvs[off+1] - uvs[off+11]) * textureHeight;
+
+                        if (sw > 0 && sh > 0 && w > 0 && h > 0) {
+                            context.drawImage(image,
+                                              sx, sy, sw, sh,
+                                              x, y, w, h);
+                        }
+                    }
+                }
+                cc.g_NumberOfDraws += 9;
+            } else {
+                var quadCount = Math.floor(node._vertCount / 4);
+                for (i = 0, off = 0; i < quadCount; i++) {
+                    x = vertices[off];
+                    y = vertices[off+1];
+                    w = vertices[off+6] - x;
+                    h = vertices[off+7] - y;
+                    y = - y - h;
+
+                    sx = uvs[off] * textureWidth;
+                    sy = uvs[off+7] * textureHeight;
+                    sw = (uvs[off+6] - uvs[off]) * textureWidth;
+                    sh = (uvs[off+1] - uvs[off+7]) * textureHeight;
+
+
+                    if (this._textureToRender._pattern !== '') {
+                        wrapper.setFillStyle(context.createPattern(image, this._textureToRender._pattern));
+                        context.fillRect(x, y, w, h);
+                    } else {
+                        if (sw > 0 && sh > 0 && w > 0 && h > 0) {
+                            context.drawImage(image,
+                                              sx, sy, sw, sh,
+                                              x, y, w, h);
+                        }
+                    }
+                    off += 8;
+                }
+                cc.g_NumberOfDraws += quadCount;
+            }
+        }
+    };
+
 })();
