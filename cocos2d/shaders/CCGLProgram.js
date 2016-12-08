@@ -39,6 +39,7 @@ cc.GLProgram = cc.Class.extend(/** @lends cc.GLProgram# */{
     _uniforms: null,
     _hashForUniforms: null,
     _usesTime: false,
+    _projectionUpdated: -1,
 
     // Uniform cache
     _updateUniformLocation: function (location) {
@@ -684,8 +685,12 @@ cc.GLProgram = cc.Class.extend(/** @lends cc.GLProgram# */{
         this._glContext.uniformMatrix4fv(this._uniforms[cc.UNIFORM_PMATRIX_S], false, cc.projection_matrix_stack.top.mat);
     },
 
-    _updateProjectionUniform: function(){
-        this._glContext.uniformMatrix4fv(this._uniforms[cc.UNIFORM_PMATRIX_S], false, cc.projection_matrix_stack.top.mat);  
+    _updateProjectionUniform: function () {
+        var stack = cc.projection_matrix_stack;
+        if (stack.lastUpdated !== this._projectionUpdated) {
+            this._glContext.uniformMatrix4fv(this._uniforms[cc.UNIFORM_PMATRIX_S], false, stack.top.mat);
+            this._projectionUpdated = stack.lastUpdated;
+        }
     },
 
     /**

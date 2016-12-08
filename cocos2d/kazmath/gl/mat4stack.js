@@ -36,6 +36,7 @@
     cc.math.Matrix4Stack = function (top, stack) {
         this.top = top;
         this.stack = stack || [];
+        this.lastUpdated = 0;
         //this._matrixPool = [];            // use pool in next version
     };
     cc.km_mat4_stack = cc.math.Matrix4Stack;
