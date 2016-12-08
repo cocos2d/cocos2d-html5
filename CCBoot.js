@@ -2238,14 +2238,15 @@ cc.game = /** @lends cc.game# */{
      * @constant
      * @type {Object}
      *
-     * @prop {String} engineDir     - In debug mode, if you use the whole engine to develop your game, you should specify its relative path with "engineDir".
-     * @prop {String} modules       - Defines which modules you will need in your game, it's useful only on web
-     * @prop {String} debugMode     - Debug mode, see DEBUG_MODE_XXX constant definitions.
-     * @prop {String} showFPS       - Left bottom corner fps information will show when "showFPS" equals true, otherwise it will be hide.
-     * @prop {String} frameRate     - Sets the wanted frame rate for your game, but the real fps depends on your game implementation and the running environment.
-     * @prop {String} id            - Sets the id of your canvas element on the web page, it's useful only on web.
-     * @prop {String} renderMode    - Sets the renderer type, only useful on web, 0: Automatic, 1: Canvas, 2: WebGL
-     * @prop {String} jsList        - Sets the list of js files in your game.
+     * @prop {String} engineDir         - In debug mode, if you use the whole engine to develop your game, you should specify its relative path with "engineDir".
+     * @prop {String} modules           - Defines which modules you will need in your game, it's useful only on web
+     * @prop {String} debugMode         - Debug mode, see DEBUG_MODE_XXX constant definitions.
+     * @prop {String} exposeClassName   - Expose class name to chrome debug tools
+     * @prop {String} showFPS           - Left bottom corner fps information will show when "showFPS" equals true, otherwise it will be hide.
+     * @prop {String} frameRate         - Sets the wanted frame rate for your game, but the real fps depends on your game implementation and the running environment.
+     * @prop {String} id                - Sets the id of your canvas element on the web page, it's useful only on web.
+     * @prop {String} renderMode        - Sets the renderer type, only useful on web, 0: Automatic, 1: Canvas, 2: WebGL
+     * @prop {String} jsList            - Sets the list of js files in your game.
      */
     CONFIG_KEY: {
         width: "width",
@@ -2253,6 +2254,7 @@ cc.game = /** @lends cc.game# */{
         engineDir: "engineDir",
         modules: "modules",
         debugMode: "debugMode",
+        exposeClassName: "exposeClassName",
         showFPS: "showFPS",
         frameRate: "frameRate",
         id: "id",
