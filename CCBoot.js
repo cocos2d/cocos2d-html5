@@ -2262,6 +2262,7 @@ cc.game = /** @lends cc.game# */{
 
     // states
     _paused: true,//whether the game is paused
+    _configLoaded: false,//whether config loaded
     _prepareCalled: false,//whether the prepare function has been called
     _prepared: false,//whether the engine has prepared
     _rendererInitialized: false,
@@ -2397,7 +2398,13 @@ cc.game = /** @lends cc.game# */{
             config = self.config,
             CONFIG_KEY = self.CONFIG_KEY;
 
-        this._loadConfig();
+        // Config loaded
+        if (!this._configLoaded) {
+            this._loadConfig(function () {
+                self.prepare(cb);
+            });
+            return;
+        }
 
         // Already prepared
         if (this._prepared) {
@@ -2553,46 +2560,42 @@ cc.game = /** @lends cc.game# */{
     },
 
 //  @Game loading section
-    _loadConfig: function () {
+    _loadConfig: function (cb) {
         // Load config
-        // Already loaded
-        if (this.config) {
-            this._initConfig(this.config);
-            return;
-        }
-        // Load from document.ccConfig
-        if (document["ccConfig"]) {
-            this._initConfig(document["ccConfig"]);
+        var config = this.config || document["ccConfig"];
+        // Already loaded or Load from document.ccConfig
+        if (config) {
+            this._initConfig(config);
+            cb && cb();
         }
         // Load from project.json
         else {
-            var data = {};
-            try {
-                var cocos_script = document.getElementsByTagName('script');
-                for(var i = 0; i < cocos_script.length; i++){
-                    var _t = cocos_script[i].getAttribute('cocos');
-                    if(_t === '' || _t) {
-                        break;
-                    }
+            var cocos_script = document.getElementsByTagName('script');
+            for (var i = 0; i < cocos_script.length; i++) {
+                var _t = cocos_script[i].getAttribute('cocos');
+                if (_t === '' || _t) {
+                    break;
                 }
-                var _src, txt, _resPath;
-                if(i < cocos_script.length){
-                    _src = cocos_script[i].src;
-                    if(_src){
-                        _resPath = /(.*)\//.exec(_src)[0];
-                        cc.loader.resPath = _resPath;
-                        _src = cc.path.join(_resPath, 'project.json');
-                    }
-                    txt = cc.loader._loadTxtSync(_src);
-                }
-                if(!txt){
-                    txt = cc.loader._loadTxtSync("project.json");
-                }
-                data = JSON.parse(txt);
-            } catch (e) {
-                cc.log("Failed to read or parse project.json");
             }
-            this._initConfig(data);
+            var self = this;
+            var loaded = function (err, txt) {
+                var data = JSON.parse(txt);
+                self._initConfig(data);
+                cb && cb();
+            };
+            var _src, txt, _resPath;
+            if (i < cocos_script.length) {
+                _src = cocos_script[i].src;
+                if (_src) {
+                    _resPath = /(.*)\//.exec(_src)[0];
+                    cc.loader.resPath = _resPath;
+                    _src = cc.path.join(_resPath, 'project.json');
+                }
+                cc.loader.loadTxt(_src, loaded);
+            }
+            if (!txt) {
+                cc.loader.loadTxt("project.json", loaded);
+            }
         }
     },
 
@@ -2605,6 +2608,7 @@ cc.game = /** @lends cc.game# */{
         config[CONFIG_KEY.engineDir] = config[CONFIG_KEY.engineDir] || "frameworks/cocos2d-html5";
         if (config[CONFIG_KEY.debugMode] == null)
             config[CONFIG_KEY.debugMode] = 0;
+        config[CONFIG_KEY.exposeClassName] = !!config[CONFIG_KEY.exposeClassName];
         config[CONFIG_KEY.frameRate] = config[CONFIG_KEY.frameRate] || 60;
         if (config[CONFIG_KEY.renderMode] == null)
             config[CONFIG_KEY.renderMode] = 0;
@@ -2615,6 +2619,7 @@ cc.game = /** @lends cc.game# */{
         if (modules && modules.indexOf("core") < 0) modules.splice(0, 0, "core");
         modules && (config[CONFIG_KEY.modules] = modules);
         this.config = config;
+        this._configLoaded = true;
     },
 
     _initRenderer: function (width, height) {
