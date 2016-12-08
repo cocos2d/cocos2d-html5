@@ -25,11 +25,11 @@
 /**
  * cc.ProgressTimer's rendering objects of WebGL
  */
-(function(){
+(function () {
     var MAX_VERTEX_COUNT = 8;
 
-    cc.ProgressTimer.WebGLRenderCmd = function(renderableObject){
-        cc.Node.WebGLRenderCmd.call(this, renderableObject);
+    cc.ProgressTimer.WebGLRenderCmd = function (renderableObject) {
+        this._rootCtor(renderableObject);
         this._needDraw = true;
         this._progressDirty = true;
 

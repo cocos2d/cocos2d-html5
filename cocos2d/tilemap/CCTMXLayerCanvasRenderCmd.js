@@ -22,9 +22,9 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-(function(){
-    cc.TMXLayer.CanvasRenderCmd = function(renderable){
-        cc.Node.CanvasRenderCmd.call(this, renderable);
+(function () {
+    cc.TMXLayer.CanvasRenderCmd = function (renderable) {
+        this._rootCtor(renderable);
         this._needDraw = true;
     };
 

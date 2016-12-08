@@ -25,8 +25,8 @@
 // ----------------------------------- LabelTTF WebGL render cmd ----------------------------
 (function () {
     cc.LabelTTF.WebGLRenderCmd = function (renderable) {
-        cc.Sprite.WebGLRenderCmd.call(this, renderable);
-        cc.LabelTTF.CacheRenderCmd.call(this);
+        this._spriteCmdCtor(renderable);
+        this._cacheCmdCtor();
     };
     var proto = cc.LabelTTF.WebGLRenderCmd.prototype = Object.create(cc.Sprite.WebGLRenderCmd.prototype);
 

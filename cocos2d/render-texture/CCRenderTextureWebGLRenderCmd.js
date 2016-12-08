@@ -22,9 +22,9 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-(function(){
-    cc.RenderTexture.WebGLRenderCmd = function(renderableObject){
-        cc.Node.WebGLRenderCmd.call(this, renderableObject);
+(function () {
+    cc.RenderTexture.WebGLRenderCmd = function (renderableObject) {
+        this._rootCtor(renderableObject);
         this._needDraw = true;
 
         this._fBO = null;

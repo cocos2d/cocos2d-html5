@@ -26,7 +26,7 @@
 (function () {
 
     cc.Sprite.WebGLRenderCmd = function (renderable) {
-        cc.Node.WebGLRenderCmd.call(this, renderable);
+        this._rootCtor(renderable);
         this._needDraw = true;
 
         this._vertices = [
@@ -44,6 +44,7 @@
 
     var proto = cc.Sprite.WebGLRenderCmd.prototype = Object.create(cc.Node.WebGLRenderCmd.prototype);
     proto.constructor = cc.Sprite.WebGLRenderCmd;
+    proto._spriteCmdCtor = cc.Sprite.WebGLRenderCmd;
 
     proto.updateBlendFunc = function (blendFunc) {
     };

@@ -26,12 +26,13 @@
     if (!cc.Node.WebGLRenderCmd)
         return;
     cc.ProtectedNode.WebGLRenderCmd = function (renderable) {
-        cc.Node.WebGLRenderCmd.call(this, renderable);
+        this._rootCtor(renderable);
     };
 
     var proto = cc.ProtectedNode.WebGLRenderCmd.prototype = Object.create(cc.Node.WebGLRenderCmd.prototype);
     cc.inject(cc.ProtectedNode.RenderCmd, proto);
     proto.constructor = cc.ProtectedNode.WebGLRenderCmd;
+    proto._pNodeCmdCtor = cc.ProtectedNode.WebGLRenderCmd;
 
     proto.visit = function(parentCmd){
         var node = this._node;

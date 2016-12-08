@@ -26,8 +26,8 @@
     /**
      * ParticleSystem's WebGL render command
      */
-    cc.ParticleSystem.WebGLRenderCmd = function(renderable){
-        cc.Node.WebGLRenderCmd.call(this, renderable);
+    cc.ParticleSystem.WebGLRenderCmd = function (renderable) {
+        this._rootCtor(renderable);
         this._needDraw = true;
 
         this._matrix = new cc.math.Matrix4();

@@ -1,8 +1,8 @@
 (function () {
     if (!ccui.ProtectedNode.WebGLRenderCmd)
         return;
-    ccui.ScrollView.WebGLRenderCmd = function(renderable){
-        ccui.Layout.WebGLRenderCmd.call(this, renderable);
+    ccui.ScrollView.WebGLRenderCmd = function (renderable) {
+        this._layoutCmdCtor(renderable);
         this._needDraw = true;
         this._dirty = false;
     };

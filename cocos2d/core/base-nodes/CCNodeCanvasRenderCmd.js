@@ -542,7 +542,9 @@ cc.Node.RenderCmd.prototype._originSyncStatus = cc.Node.RenderCmd.prototype._syn
 (function () {
 //The cc.Node's render command for Canvas
     cc.Node.CanvasRenderCmd = function (renderable) {
-        cc.Node.RenderCmd.call(this, renderable);
+        this._node = renderable;
+        this._anchorPointInPoints = {x: 0, y: 0};
+        this._displayedColor = cc.color(255, 255, 255, 255);
         this._cachedParent = null;
         this._cacheDirty = false;
         this._currentRegion = new cc.Region();
@@ -559,6 +561,7 @@ cc.Node.RenderCmd.prototype._originSyncStatus = cc.Node.RenderCmd.prototype._syn
 
     var proto = cc.Node.CanvasRenderCmd.prototype = Object.create(cc.Node.RenderCmd.prototype);
     proto.constructor = cc.Node.CanvasRenderCmd;
+    proto._rootCtor = cc.Node.CanvasRenderCmd;
 
     proto._notifyRegionStatus = function (status) {
         if (this._needDraw && this._regionFlag < status) {

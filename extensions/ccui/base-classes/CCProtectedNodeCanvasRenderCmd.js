@@ -139,7 +139,7 @@
     };
 
     cc.ProtectedNode.CanvasRenderCmd = function (renderable) {
-        cc.Node.CanvasRenderCmd.call(this, renderable);
+        this._rootCtor(renderable);
         this._cachedParent = null;
         this._cacheDirty = false;
     };
@@ -147,6 +147,7 @@
     var proto = cc.ProtectedNode.CanvasRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
     cc.inject(cc.ProtectedNode.RenderCmd, proto);
     proto.constructor = cc.ProtectedNode.CanvasRenderCmd;
+    proto._pNodeCmdCtor = cc.ProtectedNode.CanvasRenderCmd;
 
     proto.visit = function(parentCmd){
         var node = this._node;

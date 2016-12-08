@@ -23,9 +23,9 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-(function(){
-    ccui.Layout.CanvasRenderCmd = function(renderable){
-        ccui.ProtectedNode.CanvasRenderCmd.call(this, renderable);
+(function () {
+    ccui.Layout.CanvasRenderCmd = function (renderable) {
+        this._pNodeCmdCtor(renderable);
         this._needDraw = false;
 
         this._rendererSaveCmd = new cc.CustomRenderCmd(this, this._onRenderSaveCmd);
@@ -38,6 +38,7 @@
 
     var proto = ccui.Layout.CanvasRenderCmd.prototype = Object.create(ccui.ProtectedNode.CanvasRenderCmd.prototype);
     proto.constructor = ccui.Layout.CanvasRenderCmd;
+    proto._layoutCmdCtor = ccui.Layout.CanvasRenderCmd;
 
     cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
         if (ccui.Widget.CanvasRenderCmd) {

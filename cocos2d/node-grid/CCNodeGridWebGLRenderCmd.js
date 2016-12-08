@@ -22,9 +22,9 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-(function(){
-    cc.NodeGrid.WebGLRenderCmd = function(renderable){
-        cc.Node.WebGLRenderCmd.call(this, renderable);
+(function () {
+    cc.NodeGrid.WebGLRenderCmd = function (renderable) {
+        this._rootCtor(renderable);
         this._needDraw = false;
         this._gridBeginCommand = new cc.CustomRenderCmd(this, this.onGridBeginDraw);
         this._gridEndCommand = new cc.CustomRenderCmd(this, this.onGridEndDraw);

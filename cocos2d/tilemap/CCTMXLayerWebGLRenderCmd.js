@@ -22,9 +22,9 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-(function(){
-    cc.TMXLayer.WebGLRenderCmd = function(renderableObject){
-        cc.Node.WebGLRenderCmd.call(this, renderableObject);
+(function () {
+    cc.TMXLayer.WebGLRenderCmd = function (renderableObject) {
+        this._rootCtor(renderableObject);
         this._needDraw = true;
         this._vertices = [
             {x: 0, y: 0},

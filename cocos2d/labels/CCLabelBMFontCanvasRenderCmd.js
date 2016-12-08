@@ -30,9 +30,9 @@
  http://www.angelcode.com/products/bmfont/ (Free, Windows only)
  ****************************************************************************/
 
-(function(){
-    cc.LabelBMFont.CanvasRenderCmd = function(renderableObject){
-        cc.Node.CanvasRenderCmd.call(this, renderableObject);
+(function () {
+    cc.LabelBMFont.CanvasRenderCmd = function (renderableObject) {
+        this._rootCtor(renderableObject);
     };
 
     var proto = cc.LabelBMFont.CanvasRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);

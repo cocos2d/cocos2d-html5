@@ -90,8 +90,8 @@
         }
     };
 
-    ccs.Skin.CanvasRenderCmd = function(renderable){
-        cc.Sprite.CanvasRenderCmd.call(this, renderable);
+    ccs.Skin.CanvasRenderCmd = function (renderable) {
+        this._spriteCmdCtor(renderable);
         this._realWorldTM = {a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0};
     };
 
@@ -111,8 +111,8 @@
         this._currentRegion.updateRegion(this.getLocalBB(), this._realWorldTM);
     };
 
-    ccs.Skin.WebGLRenderCmd = function(renderable){
-        cc.Sprite.WebGLRenderCmd.call(this, renderable);
+    ccs.Skin.WebGLRenderCmd = function (renderable) {
+        this._spriteCmdCtor(renderable);
     };
 
     proto = ccs.Skin.WebGLRenderCmd.prototype = Object.create(cc.Sprite.WebGLRenderCmd.prototype);

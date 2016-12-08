@@ -25,9 +25,9 @@
 /**
  * ParticleSystem's canvas render command
  */
-(function(){
-    cc.ParticleSystem.CanvasRenderCmd = function(renderable){
-        cc.Node.CanvasRenderCmd.call(this, renderable);
+(function () {
+    cc.ParticleSystem.CanvasRenderCmd = function (renderable) {
+        this._rootCtor(renderable);
         this._needDraw = true;
 
         this._drawMode = cc.ParticleSystem.TEXTURE_MODE;

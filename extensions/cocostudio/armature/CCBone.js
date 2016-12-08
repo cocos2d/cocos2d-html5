@@ -717,9 +717,9 @@ ccs.Bone.RenderCmd = {
     }
 };
 
-(function(){
-    ccs.Bone.CanvasRenderCmd  = function(renderable){
-        cc.Node.CanvasRenderCmd.call(this, renderable);
+(function () {
+    ccs.Bone.CanvasRenderCmd = function (renderable) {
+        this._rootCtor(renderable);
         this._needDraw = false;
     };
 
@@ -731,8 +731,8 @@ ccs.Bone.RenderCmd = {
 (function () {
     if (!cc.Node.WebGLRenderCmd)
         return;
-    ccs.Bone.WebGLRenderCmd = function(renderable){
-        cc.Node.WebGLRenderCmd.call(this, renderable);
+    ccs.Bone.WebGLRenderCmd = function (renderable) {
+        this._rootCtor(renderable);
         this._needDraw = false;
     };
 

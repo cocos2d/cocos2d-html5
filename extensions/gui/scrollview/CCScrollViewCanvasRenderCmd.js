@@ -22,9 +22,9 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-(function() {
-    cc.ScrollView.CanvasRenderCmd = function(renderable){
-        cc.Layer.CanvasRenderCmd.call(this, renderable);
+(function () {
+    cc.ScrollView.CanvasRenderCmd = function (renderable) {
+        this._layerCmdCtor(renderable);
         this._needDraw = false;
 
         this.startCmd = new cc.CustomRenderCmd(this, this._startCmd);

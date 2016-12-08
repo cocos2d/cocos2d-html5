@@ -24,7 +24,7 @@
 
 (function () {
     cc.Sprite.CanvasRenderCmd = function (renderable) {
-        cc.Node.CanvasRenderCmd.call(this, renderable);
+        this._rootCtor(renderable);
         this._needDraw = true;
         this._textureCoord = {
             renderX: 0,                             //the x of texture coordinate for render, when texture tinted, its value doesn't equal x.
@@ -43,6 +43,7 @@
 
     var proto = cc.Sprite.CanvasRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
     proto.constructor = cc.Sprite.CanvasRenderCmd;
+    proto._spriteCmdCtor = cc.Sprite.CanvasRenderCmd;
 
     proto.setDirtyRecursively = function (value) {
     };

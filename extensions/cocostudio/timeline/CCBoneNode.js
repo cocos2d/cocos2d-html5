@@ -522,7 +522,7 @@ ccs.BoneNode = (function () {
     var BoneNodeCanvasCmd = (function () {
 
         var BoneNodeCanvasCmd = function (node) {
-            Node.CanvasRenderCmd.call(this, node);
+            this._rootCtor(node);
             this._debug = false;
             this._color = cc.color.WHITE;
             this._drawNode = new cc.DrawNode();
@@ -555,7 +555,7 @@ ccs.BoneNode = (function () {
     var BoneNodeWebGLCmd = (function () {
 
         var BoneNodeWebGLCmd = function (node) {
-            Node.WebGLRenderCmd.call(this, node);
+            this._rootCtor(node);
             this._debug = false;
             this._color = cc.color.WHITE;
             this._drawNode = new cc.DrawNode();

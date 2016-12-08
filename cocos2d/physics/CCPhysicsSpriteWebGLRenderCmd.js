@@ -25,9 +25,9 @@
 /**
  * cc.PhysicsSprite's rendering objects of WebGL
  */
-(function(){
-    cc.PhysicsSprite.WebGLRenderCmd = function(renderableObject){
-        cc.Sprite.WebGLRenderCmd.call(this, renderableObject);
+(function () {
+    cc.PhysicsSprite.WebGLRenderCmd = function (renderableObject) {
+        this._spriteCmdCtor(renderableObject);
         this._needDraw = true;
     };
 

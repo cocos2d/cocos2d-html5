@@ -33,8 +33,8 @@
  */
 (function () {
     //Layer's canvas render command
-    cc.Layer.CanvasRenderCmd = function(renderable){
-        cc.Node.CanvasRenderCmd.call(this, renderable);
+    cc.Layer.CanvasRenderCmd = function (renderable) {
+        this._rootCtor(renderable);
         this._isBaked = false;
         this._bakeSprite = null;
         this._canUseDirtyRegion = true;
@@ -43,6 +43,7 @@
 
     var proto = cc.Layer.CanvasRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
     proto.constructor = cc.Layer.CanvasRenderCmd;
+    proto._layerCmdCtor = cc.Layer.CanvasRenderCmd;
 
     proto._setCacheDirty = function (child) {
         if (child && this._updateCache === 0)
@@ -215,8 +216,8 @@
  */
 (function () {
     //LayerColor's canvas render command
-    cc.LayerColor.CanvasRenderCmd = function(renderable){
-        cc.Layer.CanvasRenderCmd.call(this, renderable);
+    cc.LayerColor.CanvasRenderCmd = function (renderable) {
+        this._layerCmdCtor(renderable);
         this._needDraw = true;
         this._blendFuncStr = "source-over";
         this._bakeRenderCmd = new cc.CustomRenderCmd(this, this._bakeRendering);

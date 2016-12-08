@@ -22,9 +22,9 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-(function() {
-    cc.ScrollView.WebGLRenderCmd = function(renderable){
-        cc.Layer.WebGLRenderCmd.call(this, renderable);
+(function () {
+    cc.ScrollView.WebGLRenderCmd = function (renderable) {
+        this._layerCmdCtor(renderable);
         this._needDraw = false;
 
         this.startCmd = new cc.CustomRenderCmd(this, this._startCmd);

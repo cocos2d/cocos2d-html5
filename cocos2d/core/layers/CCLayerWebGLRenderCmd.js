@@ -31,13 +31,15 @@
 /**
  * cc.Layer's rendering objects of WebGL
  */
-(function(){
-    cc.Layer.WebGLRenderCmd = function(renderable){
-        cc.Node.WebGLRenderCmd.call(this, renderable);
+(function () {
+    cc.Layer.WebGLRenderCmd = function (renderable) {
+        this._rootCtor(renderable);
+        this._isBaked = false;
     };
 
     var proto = cc.Layer.WebGLRenderCmd.prototype = Object.create(cc.Node.WebGLRenderCmd.prototype);
     proto.constructor = cc.Layer.WebGLRenderCmd;
+    proto._layerCmdCtor = cc.Layer.WebGLRenderCmd;
 
     proto.bake = function () {
     };
@@ -52,9 +54,9 @@
 /**
  * cc.LayerColor's rendering objects of WebGL
  */
-(function(){
-    cc.LayerColor.WebGLRenderCmd = function(renderable){
-        cc.Layer.WebGLRenderCmd.call(this, renderable);
+(function () {
+    cc.LayerColor.WebGLRenderCmd = function (renderable) {
+        this._layerCmdCtor(renderable);
         this._needDraw = true;
 
         this._matrix = new cc.math.Matrix4();

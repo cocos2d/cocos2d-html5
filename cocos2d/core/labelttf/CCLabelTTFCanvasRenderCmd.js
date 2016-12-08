@@ -52,6 +52,7 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
     };
     var proto = cc.LabelTTF.RenderCmd.prototype;
     proto.constructor = cc.LabelTTF.RenderCmd;
+    proto._labelCmdCtor = cc.LabelTTF.RenderCmd;
 
     proto._setFontStyle = function (fontNameOrFontDef, fontSize, fontStyle, fontWeight) {
         if (fontNameOrFontDef instanceof cc.FontDefinition) {
@@ -371,9 +372,9 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
     };
 })();
 
-(function(){
-    cc.LabelTTF.CacheRenderCmd = function (renderable) {
-        cc.LabelTTF.RenderCmd.call(this,renderable);
+(function () {
+    cc.LabelTTF.CacheRenderCmd = function () {
+        this._labelCmdCtor();
         var locCanvas = this._labelCanvas = document.createElement("canvas");
         locCanvas.width = 1;
         locCanvas.height = 1;
@@ -385,6 +386,7 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
 
     var proto = cc.LabelTTF.CacheRenderCmd.prototype;
     proto.constructor = cc.LabelTTF.CacheRenderCmd;
+    proto._cacheCmdCtor = cc.LabelTTF.CacheRenderCmd;
 
     proto._updateTexture = function () {
         this._dirtyFlag = this._dirtyFlag & cc.Node._dirtyFlags.textDirty ^ this._dirtyFlag;
@@ -433,10 +435,10 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
 
 })();
 
-(function(){
+(function () {
     cc.LabelTTF.CacheCanvasRenderCmd = function (renderable) {
-        cc.Sprite.CanvasRenderCmd.call(this, renderable);
-        cc.LabelTTF.CacheRenderCmd.call(this);
+        this._spriteCmdCtor(renderable);
+        this._cacheCmdCtor();
     };
 
     var proto = cc.LabelTTF.CacheCanvasRenderCmd.prototype = Object.create(cc.Sprite.CanvasRenderCmd.prototype);
@@ -444,10 +446,10 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
     proto.constructor = cc.LabelTTF.CacheCanvasRenderCmd;
 })();
 
-(function(){
+(function () {
     cc.LabelTTF.CanvasRenderCmd = function (renderable) {
-        cc.Sprite.CanvasRenderCmd.call(this, renderable);
-        cc.LabelTTF.RenderCmd.call(this);
+        this._spriteCmdCtor(renderable);
+        this._labelCmdCtor();
     };
 
     cc.LabelTTF.CanvasRenderCmd.prototype = Object.create(cc.Sprite.CanvasRenderCmd.prototype);

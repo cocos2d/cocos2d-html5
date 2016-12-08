@@ -22,9 +22,9 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-(function(){
-    sp.Skeleton.CanvasRenderCmd = function(renderableObject){
-        cc.Node.CanvasRenderCmd.call(this, renderableObject);
+(function () {
+    sp.Skeleton.CanvasRenderCmd = function (renderableObject) {
+        this._rootCtor(renderableObject);
         this._needDraw = true;
     };
 

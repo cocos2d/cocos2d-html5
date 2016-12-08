@@ -24,8 +24,8 @@
 
 (function () {
 
-    cc.DrawNode.CanvasRenderCmd = function(renderableObject){
-        cc.Node.CanvasRenderCmd.call(this, renderableObject);
+    cc.DrawNode.CanvasRenderCmd = function (renderableObject) {
+        this._rootCtor(renderableObject);
         this._needDraw = true;
         this._buffer = null;
         this._drawColor = null;

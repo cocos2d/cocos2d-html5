@@ -25,9 +25,9 @@
 /**
  * cc.ProgressTimer's rendering objects of Canvas
  */
-(function(){
-    cc.ProgressTimer.CanvasRenderCmd = function(renderableObject){
-        cc.Node.CanvasRenderCmd.call(this, renderableObject);
+(function () {
+    cc.ProgressTimer.CanvasRenderCmd = function (renderableObject) {
+        this._rootCtor(renderableObject);
         this._needDraw = true;
 
         this._PI180 = Math.PI / 180;

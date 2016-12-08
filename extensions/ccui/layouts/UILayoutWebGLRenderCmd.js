@@ -26,8 +26,8 @@
 (function () {
     if (!ccui.ProtectedNode.WebGLRenderCmd)
         return;
-    ccui.Layout.WebGLRenderCmd = function(renderable){
-        ccui.ProtectedNode.WebGLRenderCmd.call(this, renderable);
+    ccui.Layout.WebGLRenderCmd = function (renderable) {
+        this._pNodeCmdCtor(renderable);
         this._needDraw = false;
 
         this._currentStencilEnabled = 0;
@@ -45,6 +45,7 @@
 
     var proto = ccui.Layout.WebGLRenderCmd.prototype = Object.create(ccui.ProtectedNode.WebGLRenderCmd.prototype);
     proto.constructor = ccui.Layout.WebGLRenderCmd;
+    proto._layoutCmdCtor = ccui.Layout.CanvasRenderCmd;
 
     proto.visit = function(parentCmd){
         var node = this._node;

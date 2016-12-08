@@ -24,7 +24,7 @@
 
 (function () {
     sp.Skeleton.WebGLRenderCmd = function (renderableObject) {
-        cc.Node.WebGLRenderCmd.call(this, renderableObject);
+        this._rootCtor(renderableObject);
         this._needDraw = true;
         this._matrix = new cc.math.Matrix4();
         this._matrix.identity();

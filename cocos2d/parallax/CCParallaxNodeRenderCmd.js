@@ -24,9 +24,9 @@
 
 //TODO find a way to simple these code.
 
-(function(){
-    cc.ParallaxNode.CanvasRenderCmd = function(renderable){
-        cc.Node.CanvasRenderCmd.call(this, renderable);
+(function () {
+    cc.ParallaxNode.CanvasRenderCmd = function (renderable) {
+        this._rootCtor(renderable);
         this._needDraw = false;
     };
 

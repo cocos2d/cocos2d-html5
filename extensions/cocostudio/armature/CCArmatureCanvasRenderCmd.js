@@ -41,9 +41,9 @@
     };
 })();
 
-(function(){
-    ccs.Armature.CanvasRenderCmd = function(renderableObject){
-        cc.Node.CanvasRenderCmd.call(this, renderableObject);
+(function () {
+    ccs.Armature.CanvasRenderCmd = function (renderableObject) {
+        this._rootCtor(renderableObject);
         this._needDraw = true;
 
         this._realAnchorPointInPoints = new cc.Point(0,0);
