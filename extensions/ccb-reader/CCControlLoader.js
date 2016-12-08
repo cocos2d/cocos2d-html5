@@ -27,12 +27,14 @@
 var PROPERTY_CCBFILE = "ccbFile";
 
 cc.BuilderFileLoader = cc.NodeLoader.extend({
-    _createCCNode:function (parent, ccbReader) {
-        return cc.BuilderFile.create();
+    _createCCNode: function (parent, ccbReader) {
+        var node = new cc.Node();
+        node.ccbFileNode = null;
+        return node;
     },
     onHandlePropTypeCCBFile: function (node, parent, propertyName, ccbFileNode, ccbReader) {
         if (propertyName === PROPERTY_CCBFILE) {
-            node.setCCBFileNode(ccbFileNode);
+            node.ccbFileNode = ccbFileNode;
         } else {
             cc.NodeLoader.prototype.onHandlePropTypeCCBFile.call(this, node, parent, propertyName, ccbFileNode, ccbReader);
         }
@@ -94,7 +96,7 @@ cc.ControlButtonLoader = cc.ControlLoader.extend({
 
     onHandlePropTypeCheck: function (node, parent, propertyName, check, ccbReader) {
         if (propertyName === PROPERTY_ZOOMONTOUCHDOWN) {
-            node.setZoomOnTouchDown(check);
+            node.zoomOnTouchDown = check;
         } else {
             cc.ControlLoader.prototype.onHandlePropTypeCheck.call(this, node, parent, propertyName, check, ccbReader);
         }

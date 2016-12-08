@@ -24,6 +24,10 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+(function () {
+
+var _pos = cc.p();
+
 cc.BuilderAnimationManagerDelegate = cc.Class.extend({
     completedAnimationSequenceNamed: function (name) {
     }
@@ -445,7 +449,7 @@ cc.BuilderAnimationManager = cc.Class.extend({
         } else if (propName === "opacity") {
             return cc.fadeTo(duration, keyframe1.getValue());
         } else if (propName === "color") {
-            var selColor = keyframe1.getValue().getColor();
+            var selColor = keyframe1.getValue();
             return cc.tintTo(duration, selColor.r, selColor.g, selColor.b);
         } else if (propName === "visible") {
             var isVisible = keyframe1.getValue();
@@ -519,7 +523,9 @@ cc.BuilderAnimationManager = cc.Class.extend({
 
                 x = value[0];
                 y = value[1];
-                node.setPosition(cc._getAbsolutePosition(x, y, nType, this.getContainerSize(node.getParent()), propName));
+                cc._getAbsolutePosition(x, y, nType, this.getContainerSize(node.getParent()), propName, _pos);
+                node._position.x = _pos.x;
+                node._position.y = _pos.y;
             } else if (propName === "scale") {
                 getArr = this._getBaseValue(node, propName);
                 nType = getArr[2];
@@ -531,33 +537,34 @@ cc.BuilderAnimationManager = cc.Class.extend({
             } else if (propName === "skew") {
                 x = value[0];
                 y = value[1];
-                node.setSkewX(x);
-                node.setSkewY(y);
+                node._skewX = x;
+                node._skewY = y;
             } else {
                 // [node setValue:value forKey:name];
                 // TODO only handle rotation, opacity, displayFrame, color
                 if (propName === "rotation") {
                     node.setRotation(value);
-                } else if(propName === "rotationX") {
-                    node.setRotationSkewX(value);
-                } else if(propName === "rotationY") {
-                    node.setRotationSkewY(value);
-                } else if(propName === "opacity") {
-                    node.setOpacity(value);
-                } else if(propName === "displayFrame") {
+                } else if (propName === "rotationX") {
+                    node._rotationX = value;
+                } else if (propName === "rotationY") {
+                    node._rotationY = value;
+                } else if (propName === "opacity") {
+                    node._realOpacity = value;
+                } else if (propName === "displayFrame") {
                     node.setSpriteFrame(value);
-                } else if(propName === "color") {
-                    var ccColor3B = value.getColor();
-                    if(ccColor3B.r !== 255 || ccColor3B.g !== 255 || ccColor3B.b !== 255){
-                        node.setColor(ccColor3B);
+                } else if (propName === "color") {
+                    if (value.r !== 255 || value.g !== 255 || value.b !== 255) {
+                        node.setColor(value);
                     }
                 } else if (propName === "visible") {
                     value = value || false;
                     node.setVisible(value);
                 } else {
                     cc.log("unsupported property name is " + propName);
+                    return;
                 }
             }
+            node.setNodeDirty();
         }
     },
 
@@ -764,4 +771,4 @@ cc.BuilderSoundEffect.create = function (file, pitch, pan, gain) {
     }
     return null;
 };
-
+})();

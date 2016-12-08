@@ -24,40 +24,41 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-cc.getAbsolutePosition = function(pt, type, containerSize, propName){
-    var absPt = cc.p(0,0);
-    if(type === CCB_POSITIONTYPE_RELATIVE_BOTTOM_LEFT)
-        absPt = pt;
-    else if(type === CCB_POSITIONTYPE_RELATIVE_TOP_LEFT){
-        absPt.x = pt.x;
-        absPt.y = containerSize.height - pt.y;
-    } else if(type === CCB_POSITIONTYPE_RELATIVE_TOP_RIGHT){
-        absPt.x = containerSize.width - pt.x;
-        absPt.y = containerSize.height - pt.y;
-    } else if (type === CCB_POSITIONTYPE_RELATIVE_BOTTOM_RIGHT) {
-        absPt.x = containerSize.width - pt.x;
-        absPt.y = pt.y;
-    } else if (type === CCB_POSITIONTYPE_PERCENT) {
-        absPt.x = (containerSize.width * pt.x / 100.0);
-        absPt.y = (containerSize.height * pt.y / 100.0);
-    } else if (type === CCB_POSITIONTYPE_MULTIPLY_RESOLUTION) {
-        var resolutionScale = cc.BuilderReader.getResolutionScale();
-        absPt.x = pt.x * resolutionScale;
-        absPt.y = pt.y * resolutionScale;
+cc.getAbsolutePosition = function (pt, type, containerSize, propName) {
+    if (type === CCB_POSITIONTYPE_RELATIVE_BOTTOM_LEFT) {
+        ;
     }
-
-    return absPt;
+    else if (type === CCB_POSITIONTYPE_RELATIVE_TOP_LEFT) {
+        pt.y = containerSize.height - pt.y;
+    } 
+    else if (type === CCB_POSITIONTYPE_RELATIVE_TOP_RIGHT) {
+        pt.x = containerSize.width - pt.x;
+        pt.y = containerSize.height - pt.y;
+    } 
+    else if (type === CCB_POSITIONTYPE_RELATIVE_BOTTOM_RIGHT) {
+        pt.x = containerSize.width - pt.x;
+    } 
+    else if (type === CCB_POSITIONTYPE_PERCENT) {
+        pt.x = (containerSize.width * pt.x / 100.0);
+        pt.y = (containerSize.height * pt.y / 100.0);
+    } 
+    else if (type === CCB_POSITIONTYPE_MULTIPLY_RESOLUTION) {
+        var resolutionScale = cc.BuilderReader.getResolutionScale();
+        pt.x = pt.x * resolutionScale;
+        pt.y = pt.y * resolutionScale;
+    }
+    return pt;
 };
 
-cc._getAbsolutePosition = function(x, y, type, containerSize, propName){
-    var absPt = cc.p(0,0);
-    if(type === CCB_POSITIONTYPE_RELATIVE_BOTTOM_LEFT){
+cc._getAbsolutePosition = function (x, y, type, containerSize, propName, out) {
+    var absPt = out || cc.p(0, 0);
+    if (type === CCB_POSITIONTYPE_RELATIVE_BOTTOM_LEFT) {
         absPt.x = x;
         absPt.y = y;
-    } else if(type === CCB_POSITIONTYPE_RELATIVE_TOP_LEFT){
+    } else if (type === CCB_POSITIONTYPE_RELATIVE_TOP_LEFT) {
         absPt.x = x;
         absPt.y = containerSize.height - y;
-    } else if(type === CCB_POSITIONTYPE_RELATIVE_TOP_RIGHT){
+    } else if (type === CCB_POSITIONTYPE_RELATIVE_TOP_RIGHT) {
         absPt.x = containerSize.width - x;
         absPt.y = containerSize.height - y;
     } else if (type === CCB_POSITIONTYPE_RELATIVE_BOTTOM_RIGHT) {
@@ -74,8 +75,8 @@ cc._getAbsolutePosition = function(x, y, type, containerSize, propName){
     return absPt;
 };
 
-cc.setRelativeScale = function(node,scaleX, scaleY, type, propName){
-    if(!node)
+cc.setRelativeScale = function (node, scaleX, scaleY, type, propName) {
+    if (!node)
         throw new Error("cc.setRelativeScale(): node should be non-null");
 
     if (type === CCB_POSITIONTYPE_MULTIPLY_RESOLUTION) {
@@ -85,6 +86,6 @@ cc.setRelativeScale = function(node,scaleX, scaleY, type, propName){
         scaleY *= resolutionScale;
     }
 
-    node.setScaleX(scaleX);
-    node.setScaleY(scaleY);
+    node._scaleX = scaleX;
+    node._scaleY = scaleY;
 };
