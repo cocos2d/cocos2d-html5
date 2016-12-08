@@ -66,15 +66,15 @@
         _t._squareColorsAB = new ArrayBuffer(16);
 
         var locSquareVerticesAB = _t._squareVerticesAB, locSquareColorsAB = _t._squareColorsAB;
-        var locVertex3FLen = cc.Vertex3F.BYTES_PER_ELEMENT, locColorLen = cc.Color.BYTES_PER_ELEMENT;
+        var locVertex3FLen = cc.Vertex3F.BYTES_PER_ELEMENT, locColorLen = cc._WebGLColor.BYTES_PER_ELEMENT;
         _t._squareVertices = [new cc.Vertex3F(0, 0, 0, locSquareVerticesAB, 0),
             new cc.Vertex3F(0, 0, 0, locSquareVerticesAB, locVertex3FLen),
             new cc.Vertex3F(0, 0, 0, locSquareVerticesAB, locVertex3FLen * 2),
             new cc.Vertex3F(0, 0, 0, locSquareVerticesAB, locVertex3FLen * 3)];
-        _t._squareColors = [cc.color(0, 0, 0, 255, locSquareColorsAB, 0),
-            cc.color(0, 0, 0, 255, locSquareColorsAB, locColorLen),
-            cc.color(0, 0, 0, 255, locSquareColorsAB, locColorLen * 2),
-            cc.color(0, 0, 0, 255, locSquareColorsAB, locColorLen * 3)];
+        _t._squareColors = [new cc._WebGLColor(0, 0, 0, 255, locSquareColorsAB, 0),
+            new cc._WebGLColor(0, 0, 0, 255, locSquareColorsAB, locColorLen),
+            new cc._WebGLColor(0, 0, 0, 255, locSquareColorsAB, locColorLen * 2),
+            new cc._WebGLColor(0, 0, 0, 255, locSquareColorsAB, locColorLen * 3)];
         _t._verticesFloat32Buffer = cc._renderContext.createBuffer();
         _t._colorsUint8Buffer = cc._renderContext.createBuffer();
 
@@ -269,9 +269,9 @@
             this._squareColorsAB = new ArrayBuffer(verticesLen * 4);
             locColors.length = 0;
             var locSquareColorsAB = this._squareColorsAB;
-            var locColorLen = cc.Color.BYTES_PER_ELEMENT;
-            for(i = 0; i < verticesLen; i++){
-                locColors.push(cc.color(0, 0, 0, 255, locSquareColorsAB, locColorLen * i));
+            var locColorLen = cc._WebGLColor.BYTES_PER_ELEMENT;
+            for (i = 0; i < verticesLen; i++) {
+                locColors.push(new cc._WebGLColor(0, 0, 0, 255, locSquareColorsAB, locColorLen * i));
             }
         }
 

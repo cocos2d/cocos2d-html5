@@ -34,9 +34,7 @@
             "core",
 
             "cocos2d/compression/ZipUtils.js",
-            "cocos2d/compression/base64.js",
-            "cocos2d/compression/gzip.js",
-            "cocos2d/compression/zlib.min.js"
+            "cocos2d/compression/base64.js"
         ],
         "core" : [
             "cocos2d/core/event-manager/CCEventHelper.js",
@@ -51,8 +49,6 @@
             "cocos2d/core/platform/CCConfig.js",
             "cocos2d/core/platform/miniFramework.js",
             "cocos2d/core/platform/CCMacro.js",
-            "cocos2d/core/platform/CCTypesWebGL.js",
-            "cocos2d/core/platform/CCTypesPropertyDefine.js",
             "cocos2d/core/platform/CCTypes.js",
             "cocos2d/core/platform/CCEGLView.js",
             "cocos2d/core/platform/CCScreen.js",
