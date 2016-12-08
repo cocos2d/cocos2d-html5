@@ -109,11 +109,11 @@ cc.TransitionPageTurn = cc.TransitionScene.extend(/** @lends cc.TransitionPageTu
 
         if (!this._back) {
             gridProxy.setTarget(this._outScene);
-            gridProxy.onEnter();
-            gridProxy.runAction( cc.sequence(action,cc.callFunc(this.finish, this),cc.stopGrid()));
+            gridProxy._performRecursive(cc.Node._stateCallbackType.onEnter);
+            gridProxy.runAction(cc.sequence(action, cc.callFunc(this.finish, this), cc.stopGrid()));
         } else {
             gridProxy.setTarget(this._inScene);
-            gridProxy.onEnter();
+            gridProxy._performRecursive(cc.Node._stateCallbackType.onEnter);
             // to prevent initial flicker
             this._inScene.visible = false;
             gridProxy.runAction(

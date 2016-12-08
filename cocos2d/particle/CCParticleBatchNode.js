@@ -477,8 +477,8 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
         child._setLocalZOrder(z);
         child.parent = this;
         if (this._running) {
-            child.onEnter();
-            child.onEnterTransitionDidFinish();
+            child._performRecursive(cc.Node._stateCallbackType.onEnter);
+            child._performRecursive(cc.Node._stateCallbackType.onEnterTransitionDidFinish);
         }
         return pos;
     },

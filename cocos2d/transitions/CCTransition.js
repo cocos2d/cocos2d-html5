@@ -133,9 +133,9 @@ cc.TransitionScene = cc.Scene.extend(/** @lends cc.TransitionScene# */{
 
         // outScene should not receive the onEnter callback
         // only the onExitTransitionDidStart
-        this._outScene.onExitTransitionDidStart();
+        this._outScene._performRecursive(cc.Node._stateCallbackType.onExitTransitionDidStart);
 
-        this._inScene.onEnter();
+        this._inScene._performRecursive(cc.Node._stateCallbackType.onEnter);
     },
 
     /**
@@ -152,11 +152,11 @@ cc.TransitionScene = cc.Scene.extend(/** @lends cc.TransitionScene# */{
         // enable events while transitions
         cc.eventManager.setEnabled(true);
 
-        this._outScene.onExit();
+        this._outScene._performRecursive(cc.Node._stateCallbackType.onExit);
 
         // _inScene should not receive the onEnter callback
         // only the onEnterTransitionDidFinish
-        this._inScene.onEnterTransitionDidFinish();
+        this._inScene._performRecursive(cc.Node._stateCallbackType.onEnterTransitionDidFinish);
     },
 
     /**
@@ -166,7 +166,7 @@ cc.TransitionScene = cc.Scene.extend(/** @lends cc.TransitionScene# */{
         cc.Node.prototype.cleanup.call(this);
 
         if (this._isSendCleanupToScene)
-            this._outScene.cleanup();
+            this._outScene._performRecursive(cc.Node._stateCallbackType.cleanup);
     },
 
     /**
@@ -1120,7 +1120,7 @@ cc.TransitionTurnOffTiles = cc.TransitionScene.extend(/** @lends cc.TransitionTu
     onEnter: function () {
         cc.TransitionScene.prototype.onEnter.call(this);
         this._gridProxy.setTarget(this._outScene);
-        this._gridProxy.onEnter();
+        this._gridProxy._performRecursive(cc.Node._stateCallbackType.onEnter);
 
         var winSize = cc.director.getWinSize();
         var aspect = winSize.width / winSize.height;
@@ -1189,7 +1189,7 @@ cc.TransitionSplitCols = cc.TransitionScene.extend(/** @lends cc.TransitionSplit
         cc.TransitionScene.prototype.onEnter.call(this);
         //this._inScene.visible = false;
         this._gridProxy.setTarget(this._outScene);
-        this._gridProxy.onEnter();
+        this._gridProxy._performRecursive(cc.Node._stateCallbackType.onEnter);
 
         var split = this.action();
         var seq = cc.sequence(
@@ -1202,7 +1202,7 @@ cc.TransitionSplitCols = cc.TransitionScene.extend(/** @lends cc.TransitionSplit
 
     onExit: function () {
         this._gridProxy.setTarget(null);
-        this._gridProxy.onExit();
+        this._gridProxy._performRecursive(cc.Node._stateCallbackType.onExit);
         cc.TransitionScene.prototype.onExit.call(this);
     },
 
@@ -1308,7 +1308,7 @@ cc.TransitionFadeTR = cc.TransitionScene.extend(/** @lends cc.TransitionFadeTR# 
         cc.TransitionScene.prototype.onEnter.call(this);
 
         this._gridProxy.setTarget(this._outScene);
-        this._gridProxy.onEnter();
+        this._gridProxy._performRecursive(cc.Node._stateCallbackType.onEnter);
 
         var winSize = cc.director.getWinSize();
         var aspect = winSize.width / winSize.height;

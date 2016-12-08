@@ -400,9 +400,9 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         // They are needed in case the director is run again
 
         if (this._runningScene) {
-            this._runningScene.onExitTransitionDidStart();
-            this._runningScene.onExit();
-            this._runningScene.cleanup();
+            this._runningScene._performRecursive(cc.Node._stateCallbackType.onExitTransitionDidStart);
+            this._runningScene._performRecursive(cc.Node._stateCallbackType.onExit);
+            this._runningScene._performRecursive(cc.Node._stateCallbackType.cleanup);
         }
 
         this._runningScene = null;
@@ -537,14 +537,14 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         if (!newIsTransition) {
             var locRunningScene = this._runningScene;
             if (locRunningScene) {
-                locRunningScene.onExitTransitionDidStart();
-                locRunningScene.onExit();
+                locRunningScene._performRecursive(cc.Node._stateCallbackType.onExitTransitionDidStart);
+                locRunningScene._performRecursive(cc.Node._stateCallbackType.onExit);
             }
 
             // issue #709. the root node (scene) should receive the cleanup message too
             // otherwise it might be leaked.
             if (this._sendCleanupToScene && locRunningScene)
-                locRunningScene.cleanup();
+                locRunningScene._performRecursive(cc.Node._stateCallbackType.cleanup);
         }
 
         this._runningScene = this._nextScene;
@@ -552,8 +552,8 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
 
         this._nextScene = null;
         if ((!runningIsTransition) && (this._runningScene !== null)) {
-            this._runningScene.onEnter();
-            this._runningScene.onEnterTransitionDidFinish();
+            this._runningScene._performRecursive(cc.Node._stateCallbackType.onEnter);
+            this._runningScene._performRecursive(cc.Node._stateCallbackType.onEnterTransitionDidFinish);
         }
     },
 
@@ -563,16 +563,16 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      */
     setNotificationNode: function (node) {
         cc.renderer.childrenOrderDirty = true;
-        if(this._notificationNode){
-            this._notificationNode.onExitTransitionDidStart();
-            this._notificationNode.onExit();
-            this._notificationNode.cleanup();
+        if (this._notificationNode) {
+            this._notificationNode._performRecursive(cc.Node._stateCallbackType.onExitTransitionDidStart);
+            this._notificationNode._performRecursive(cc.Node._stateCallbackType.onExit);
+            this._notificationNode._performRecursive(cc.Node._stateCallbackType.cleanup);
         }
         this._notificationNode = node;
-        if(!node)
+        if (!node)
             return;
-        this._notificationNode.onEnter();
-        this._notificationNode.onEnterTransitionDidFinish();
+        this._notificationNode._performRecursive(cc.Node._stateCallbackType.onEnter);
+        this._notificationNode._performRecursive(cc.Node._stateCallbackType.onEnterTransitionDidFinish);
     },
 
     /**
@@ -748,10 +748,10 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         while (c > level) {
             var current = locScenesStack.pop();
             if (current.running) {
-                current.onExitTransitionDidStart();
-                current.onExit();
+                current._performRecursive(cc.Node._stateCallbackType.onExitTransitionDidStart);
+                current._performRecursive(cc.Node._stateCallbackType.onExit);
             }
-            current.cleanup();
+            current._performRecursive(cc.Node._stateCallbackType.cleanup);
             c--;
         }
         this._nextScene = locScenesStack[locScenesStack.length - 1];

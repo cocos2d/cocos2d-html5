@@ -120,7 +120,7 @@ ccs.DisplayManager = ccs.Class.extend(/** @lends ccs.DisplayManager */{
         } else if (display instanceof cc.ParticleSystem) {
             displayData = new ccs.ParticleDisplayData();
             display.removeFromParent();
-            display.cleanup();
+            display._performRecursive(cc.Node._stateCallbackType.cleanup);
             var armature = this._bone.getArmature();
             if (armature)
                 display.setParent(armature);

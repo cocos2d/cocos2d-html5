@@ -68,10 +68,10 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
         child.setOrderOfArrival(cc.s_globalOrderOfArrival);
 
         if (this._running) {
-            child.onEnter();
+            child._performRecursive(cc.Node._stateCallbackType.onEnter);
             // prevent onEnterTransitionDidFinish to be called twice when a node is added in onEnter
             if (this._isTransitionFinished)
-                child.onEnterTransitionDidFinish();
+                child._performRecursive(cc.Node._stateCallbackType.onEnterTransitionDidFinish);
         }
         if (this._cascadeColorEnabled)
             this._renderCmd.setCascadeColorEnabledDirty();
@@ -107,14 +107,14 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
         var idx = locChildren.indexOf(child);
         if (idx > -1) {
             if (this._running) {
-                child.onExitTransitionDidStart();
-                child.onExit();
+                child._performRecursive(cc.Node._stateCallbackType.onExitTransitionDidStart);
+                child._performRecursive(cc.Node._stateCallbackType.onExit);
             }
 
             // If you don't do cleanup, the child's actions will not get removed and the
             // its scheduledSelectors_ dict will not get released!
             if (cleanup)
-                child.cleanup();
+                child._performRecursive(cc.Node._stateCallbackType.cleanup);
 
             // set parent nil at the end
             child.setParent(null);
@@ -165,12 +165,12 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
             //  -1st do onExit
             //  -2nd cleanup
             if (this._running) {
-                child.onExitTransitionDidStart();
-                child.onExit();
+                child._performRecursive(cc.Node._stateCallbackType.onExitTransitionDidStart);
+                child._performRecursive(cc.Node._stateCallbackType.onExit);
             }
 
             if (cleanup)
-                child.cleanup();
+                child._performRecursive(cc.Node._stateCallbackType.cleanup);
             // set parent nil at the end
             child.setParent(null);
         }
@@ -224,67 +224,7 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
         }
     },
 
-    _changePosition: function () {},
-
-    /**
-     * Stops itself and its children and protected children's all running actions and schedulers
-     * @override
-     */
-    cleanup: function(){
-        cc.Node.prototype.cleanup.call(this);
-        var locChildren = this._protectedChildren;
-        for(var i = 0 , len = locChildren.length; i  < len; i++)
-            locChildren[i].cleanup();
-    },
-
-    /**
-     * Calls its parent's onEnter and calls its protected children's onEnter
-     * @override
-     */
-    onEnter: function(){
-        cc.Node.prototype.onEnter.call(this);
-        var locChildren = this._protectedChildren;
-        for(var i = 0, len = locChildren.length;i< len;i++)
-            locChildren[i].onEnter();
-    },
-
-    /**
-     *  <p>
-     *     Event callback that is invoked when the Node enters in the 'stage'.                                          <br/>
-     *     If the Node enters the 'stage' with a transition, this event is called when the transition finishes.         <br/>
-     *     If you override onEnterTransitionDidFinish, you shall call its parent's one, e.g. Node::onEnterTransitionDidFinish()
-     *  </p>
-     *  @override
-     */
-    onEnterTransitionDidFinish: function(){
-        cc.Node.prototype.onEnterTransitionDidFinish.call(this);
-        var locChildren = this._protectedChildren;
-        for(var i = 0, len = locChildren.length;i< len;i++)
-            locChildren[i].onEnterTransitionDidFinish();
-    },
-
-    /**
-     * Calls its parent's onExit and calls its protected children's onExit
-     * @override
-     */
-    onExit:function(){
-        cc.Node.prototype.onExit.call(this);
-        var locChildren = this._protectedChildren;
-        for(var i = 0, len = locChildren.length;i< len;i++)
-            locChildren[i].onExit();
-    },
-
-    /**
-     * <p>
-     *      Event callback that is called every time the Node leaves the 'stage'.                                      <br/>
-     *      If the Node leaves the 'stage' with a transition, this callback is called when the transition starts.
-     * </p>
-     */
-    onExitTransitionDidStart: function(){
-        cc.Node.prototype.onExitTransitionDidStart.call(this);
-        var locChildren = this._protectedChildren;
-        for(var i = 0, len = locChildren.length;i< len;i++)
-            locChildren[i].onExitTransitionDidStart();
+    _changePosition: function () {
     },
 
     _createRenderCmd: function () {

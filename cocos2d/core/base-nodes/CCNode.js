@@ -216,68 +216,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         return true;
     },
 
-    _arrayMakeObjectsPerformSelector: function (array, callbackType) {
-        if (!array || array.length === 0)
-            return;
-
-        var i, len = array.length, node;
-        var nodeCallbackType = cc.Node._stateCallbackType;
-        switch (callbackType) {
-            case nodeCallbackType.onEnter:
-                for (i = 0; i < len; i++) {
-                    node = array[i];
-                    if (node)
-                        node.onEnter();
-                }
-                break;
-            case nodeCallbackType.onExit:
-                for (i = 0; i < len; i++) {
-                    node = array[i];
-                    if (node)
-                        node.onExit();
-                }
-                break;
-            case nodeCallbackType.onEnterTransitionDidFinish:
-                for (i = 0; i < len; i++) {
-                    node = array[i];
-                    if (node)
-                        node.onEnterTransitionDidFinish();
-                }
-                break;
-            case nodeCallbackType.cleanup:
-                for (i = 0; i < len; i++) {
-                    node = array[i];
-                    if (node)
-                        node.cleanup();
-                }
-                break;
-            case nodeCallbackType.updateTransform:
-                for (i = 0; i < len; i++) {
-                    node = array[i];
-                    if (node)
-                        node.updateTransform();
-                }
-                break;
-            case nodeCallbackType.onExitTransitionDidStart:
-                for (i = 0; i < len; i++) {
-                    node = array[i];
-                    if (node)
-                        node.onExitTransitionDidStart();
-                }
-                break;
-            case nodeCallbackType.sortAllChildren:
-                for (i = 0; i < len; i++) {
-                    node = array[i];
-                    if (node)
-                        node.sortAllChildren();
-                }
-                break;
-            default :
-                cc.assert(0, cc._LogInfos.Node__arrayMakeObjectsPerformSelector);
-                break;
-        }
-    },
-
     /**
      * <p>Properties configuration function </br>
      * All properties in attrs will be set to the node, </br>
@@ -1177,9 +1115,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
         // event
         cc.eventManager.removeListeners(this);
-
-        // timers
-        this._arrayMakeObjectsPerformSelector(this._children, cc.Node._stateCallbackType.cleanup);
     },
 
     // composition: GET
@@ -1264,10 +1199,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         child.setOrderOfArrival(cc.s_globalOrderOfArrival++);
 
         if (this._running) {
-            child.onEnter();
+            child._performRecursive(cc.Node._stateCallbackType.onEnter);
             // prevent onEnterTransitionDidFinish to be called twice when a node is added in onEnter
             if (this._isTransitionFinished)
-                child.onEnterTransitionDidFinish();
+                child._performRecursive(cc.Node._stateCallbackType.onEnterTransitionDidFinish);
         }
         child._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
         if (this._cascadeColorEnabled)
@@ -1370,13 +1305,13 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
                 var node = __children[i];
                 if (node) {
                     if (this._running) {
-                        node.onExitTransitionDidStart();
-                        node.onExit();
+                        node._performRecursive(cc.Node._stateCallbackType.onExitTransitionDidStart);
+                        node._performRecursive(cc.Node._stateCallbackType.onExit);
                     }
 
                     // If you don't do cleanup, the node's actions will not get removed and the
                     if (cleanup)
-                        node.cleanup();
+                        node._performRecursive(cc.Node._stateCallbackType.cleanup);
 
                     // set parent nil at the end
                     node.parent = null;
@@ -1393,13 +1328,13 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         //  -1st do onExit
         //  -2nd cleanup
         if (this._running) {
-            child.onExitTransitionDidStart();
-            child.onExit();
+            child._performRecursive(cc.Node._stateCallbackType.onExitTransitionDidStart);
+            child._performRecursive(cc.Node._stateCallbackType.onExit);
         }
 
         // If you don't do cleanup, the child's actions will not get removed and the
         if (doCleanup)
-            child.cleanup();
+            child._performRecursive(cc.Node._stateCallbackType.cleanup);
 
         // set parent nil at the end
         child.parent = null;
@@ -1501,8 +1436,70 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     onEnter: function () {
         this._isTransitionFinished = false;
         this._running = true;//should be running before resumeSchedule
-        this._arrayMakeObjectsPerformSelector(this._children, cc.Node._stateCallbackType.onEnter);
         this.resume();
+    },
+
+    _performRecursive: function (callbackType) {
+        var nodeCallbackType = cc.Node._stateCallbackType;
+        if (callbackType >= nodeCallbackType.max) {
+            return;
+        }
+
+        var index = 0;
+        var children, child, curr, i, len;
+        var stack = cc.Node._performStacks[cc.Node._performing];
+        if (!stack) {
+            stack = [];
+            cc.Node._performStacks.push(stack);
+        }
+        stack.length = 0;
+        cc.Node._performing++;
+        curr = stack[0] = this;
+        while (curr) {
+            // Walk through children
+            children = curr._children;
+            if (children && children.length > 0) {
+                for (i = 0, len = children.length; i < len; ++i) {
+                    child = children[i];
+                    stack.push(child);
+                }
+            }
+            children = curr._protectedChildren;
+            if (children && children.length > 0) {
+                for (i = 0, len = children.length; i < len; ++i) {
+                    child = children[i];
+                    stack.push(child);
+                }
+            }
+
+            index++;
+            curr = stack[index];
+        }
+        for (i = stack.length - 1; i >= 0; --i) {
+            curr = stack[i];
+            stack[i] = null;
+            if (!curr) continue;
+
+            // Perform actual action
+            switch (callbackType) {
+            case nodeCallbackType.onEnter:
+                curr.onEnter();
+                break;
+            case nodeCallbackType.onExit:
+                curr.onExit();
+                break;
+            case nodeCallbackType.onEnterTransitionDidFinish:
+                curr.onEnterTransitionDidFinish();
+                break;
+            case nodeCallbackType.cleanup:
+                curr.cleanup();
+                break;
+            case nodeCallbackType.onExitTransitionDidStart:
+                curr.onExitTransitionDidStart();
+                break;
+            }
+        }
+        cc.Node._performing--;
     },
 
     /**
@@ -1515,7 +1512,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     onEnterTransitionDidFinish: function () {
         this._isTransitionFinished = true;
-        this._arrayMakeObjectsPerformSelector(this._children, cc.Node._stateCallbackType.onEnterTransitionDidFinish);
     },
 
     /**
@@ -1525,7 +1521,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @function
      */
     onExitTransitionDidStart: function () {
-        this._arrayMakeObjectsPerformSelector(this._children, cc.Node._stateCallbackType.onExitTransitionDidStart);
     },
 
     /**
@@ -1540,7 +1535,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     onExit: function () {
         this._running = false;
         this.pause();
-        this._arrayMakeObjectsPerformSelector(this._children, cc.Node._stateCallbackType.onExit);
         this.removeAllComponents();
     },
 
@@ -2011,8 +2005,12 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @function
      */
     updateTransform: function () {
-        // Recursively iterate over children
-        this._arrayMakeObjectsPerformSelector(this._children, cc.Node._stateCallbackType.updateTransform);
+        var children = this._children, node;
+        for (var i = 0; i < children.length; i++) {
+            varnode = children[i];
+            if (node)
+                node.updateTransform();
+        }
     },
 
     /**
@@ -2541,7 +2539,16 @@ cc.Node.create = function () {
     return new cc.Node();
 };
 
-cc.Node._stateCallbackType = {onEnter: 1, onExit: 2, cleanup: 3, onEnterTransitionDidFinish: 4, updateTransform: 5, onExitTransitionDidStart: 6, sortAllChildren: 7};
+cc.Node._stateCallbackType = {
+    onEnter: 1,
+    onExit: 2,
+    cleanup: 3,
+    onEnterTransitionDidFinish: 4,
+    onExitTransitionDidStart: 5,
+    max: 6
+};
+cc.Node._performStacks = [[]];
+cc.Node._performing = 0;
 
 cc.assert(cc.isFunction(cc._tmp.PrototypeCCNode), cc._LogInfos.MissingFile, "BaseNodesPropertyDefine.js");
 cc._tmp.PrototypeCCNode();

@@ -110,7 +110,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     onEnter: function () {
         ccui.Widget.prototype.onEnter.call(this);
         if (this._clippingStencil)
-            this._clippingStencil.onEnter();
+            this._clippingStencil._performRecursive(cc.Node._stateCallbackType.onEnter);
         this._doLayoutDirty = true;
         this._clippingRectDirty = true;
     },
@@ -122,7 +122,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     onExit: function () {
         ccui.Widget.prototype.onExit.call(this);
         if (this._clippingStencil)
-            this._clippingStencil.onExit();
+            this._clippingStencil._performRecursive(cc.Node._stateCallbackType.onExit);
     },
 
     /**
@@ -341,11 +341,11 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                     this._clippingStencil = new cc.DrawNode();
                     this._renderCmd.rebindStencilRendering(this._clippingStencil);
                     if (this._running)
-                        this._clippingStencil.onEnter();
+                        this._clippingStencil._performRecursive(cc.Node._stateCallbackType.onEnter);
                     this._setStencilClippingSize(this._contentSize);
                 } else {
                     if (this._running && this._clippingStencil)
-                        this._clippingStencil.onExit();
+                        this._clippingStencil._performRecursive(cc.Node._stateCallbackType.onExit);
                     this._clippingStencil = null;
                 }
                 break;
