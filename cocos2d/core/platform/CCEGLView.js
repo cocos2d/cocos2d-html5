@@ -102,7 +102,7 @@ switch (__BrowserGetter.adaptationType) {
         break;
 }
 
-var _scissorRect = cc.rect();
+var _scissorRect = null;
 
 /**
  * cc.view is the singleton object which represents the game window.<br/>
@@ -801,15 +801,24 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
      * @param {Number} h
      */
     setScissorInPoints: function (x, y, w, h) {
-        var zoomFactor = this._frameZoomFactor, scaleX = this._scaleX, scaleY = this._scaleY;
-        _scissorRect.x = x;
-        _scissorRect.y = y;
-        _scissorRect.width = w;
-        _scissorRect.height = h;
-        cc._renderContext.scissor(x * scaleX * zoomFactor + this._viewPortRect.x * zoomFactor,
-                                  y * scaleY * zoomFactor + this._viewPortRect.y * zoomFactor,
-                                  w * scaleX * zoomFactor,
-                                  h * scaleY * zoomFactor);
+        var locFrameZoomFactor = this._frameZoomFactor, locScaleX = this._scaleX, locScaleY = this._scaleY;
+        var sx = Math.ceil(x * locScaleX * locFrameZoomFactor + this._viewPortRect.x * locFrameZoomFactor);
+        var sy = Math.ceil(y * locScaleY * locFrameZoomFactor + this._viewPortRect.y * locFrameZoomFactor);
+        var sw = Math.ceil(w * locScaleX * locFrameZoomFactor);
+        var sh = Math.ceil(h * locScaleY * locFrameZoomFactor);
+
+        if (!_scissorRect) {
+            var boxArr = gl.getParameter(gl.SCISSOR_BOX);
+            _scissorRect = cc.rect(boxArr[0], boxArr[1], boxArr[2], boxArr[3]);
+        }
+
+        if (_scissorRect.x != sx || _scissorRect.y != sy || _scissorRect.width != sw || _scissorRect.height != sh) {
+            _scissorRect.x = sx;
+            _scissorRect.y = sy;
+            _scissorRect.width = sw;
+            _scissorRect.height = sh;
+            cc._renderContext.scissor(sx, sy, sw, sh);
+        }
     },
 
     /**
@@ -825,7 +834,18 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
      * @return {cc.Rect}
      */
     getScissorRect: function () {
-        return cc.rect(_scissorRect);
+        if (!_scissorRect) {
+            var boxArr = gl.getParameter(gl.SCISSOR_BOX);
+            _scissorRect = cc.rect(boxArr[0], boxArr[1], boxArr[2], boxArr[3]);
+        }
+        var scaleX = this._scaleX;
+        var scaleY = this._scaleY;
+        return cc.rect(
+            (_scissorRect.x - this._viewPortRect.x) / scaleX,
+            (_scissorRect.y - this._viewPortRect.y) / scaleY,
+            _scissorRect.width / scaleX,
+            _scissorRect.height / scaleY
+        );
     },
 
     /**
