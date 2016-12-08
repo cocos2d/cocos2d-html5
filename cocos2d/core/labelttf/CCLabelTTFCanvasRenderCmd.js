@@ -111,6 +111,7 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
 
         this._isMultiLine = false;
         this._measureConfig();
+        var textWidthCache = {};
         if (locDimensionsWidth !== 0) {
             // Content processing
             this._strings = node._string.split('\n');
@@ -121,7 +122,13 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
         } else {
             this._strings = node._string.split('\n');
             for (i = 0, strLength = this._strings.length; i < strLength; i++) {
-                locLineWidth.push(this._measure(this._strings[i]));
+                if(this._strings[i]) {
+                    var measuredWidth = this._measure(this._strings[i]);
+                    locLineWidth.push(measuredWidth);
+                    textWidthCache[this._strings[i]] = measuredWidth;
+                } else {
+                    locLineWidth.push(0);
+                }
             }
         }
 
@@ -139,14 +146,18 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
 
         //get offset for stroke and shadow
         if (locDimensionsWidth === 0) {
-            if (this._isMultiLine)
-                locSize = cc.size(
-                    Math.ceil(Math.max.apply(Math, locLineWidth) + locStrokeShadowOffsetX),
-                    Math.ceil((this._fontClientHeight * pixelRatio * this._strings.length) + locStrokeShadowOffsetY));
-            else
-                locSize = cc.size(
-                    Math.ceil(this._measure(node._string) + locStrokeShadowOffsetX),
-                    Math.ceil(this._fontClientHeight * pixelRatio + locStrokeShadowOffsetY));
+            if (this._isMultiLine) {
+                locSize = cc.size(Math.ceil(Math.max.apply(Math, locLineWidth) + locStrokeShadowOffsetX),
+                                  Math.ceil((this._fontClientHeight * pixelRatio * this._strings.length) + locStrokeShadowOffsetY));
+            }
+            else {
+                var measuredWidth = textWidthCache[node._string];
+                if(!measuredWidth && node._string) {
+                    measuredWidth = this._measure(node._string);
+                }
+                locSize = cc.size(Math.ceil((measuredWidth ? measuredWidth : 0) + locStrokeShadowOffsetX),
+                                  Math.ceil(this._fontClientHeight * pixelRatio + locStrokeShadowOffsetY));
+            }
         } else {
             if (node._dimensions.height === 0) {
                 if (this._isMultiLine)
@@ -381,7 +392,7 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
         this._labelContext = locCanvas.getContext("2d");
     };
 
-    cc.LabelTTF.CacheRenderCmd.prototype = Object.create( cc.LabelTTF.RenderCmd.prototype);
+    cc.LabelTTF.CacheRenderCmd.prototype = Object.create(cc.LabelTTF.RenderCmd.prototype);
     cc.inject(cc.LabelTTF.RenderCmd.prototype, cc.LabelTTF.CacheRenderCmd.prototype);
 
     var proto = cc.LabelTTF.CacheRenderCmd.prototype;
@@ -397,7 +408,7 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
 
         var locContext = this._labelContext, locLabelCanvas = this._labelCanvas;
 
-        if(!node._texture){
+        if (!node._texture) {
             var labelTexture = new cc.Texture2D();
             labelTexture.initWithElement(this._labelCanvas);
             node.setTexture(labelTexture);
@@ -430,7 +441,11 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
     };
 
     proto._measure = function (text) {
-        return this._labelContext.measureText(text).width;
+        if (text) {
+            return this._labelContext.measureText(text).width;
+        } else {
+            return 0;
+        }
     };
 
 })();
@@ -462,9 +477,13 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
     };
 
     proto._measure = function (text) {
-        var context = cc._renderContext.getContext();
-        context.font = this._fontStyleStr;
-        return context.measureText(text).width;
+        if(text) {
+            var context = cc._renderContext.getContext();
+            context.font = this._fontStyleStr;
+            return context.measureText(text).width;
+        } else {
+            return 0;
+        }
     };
 
     proto._updateTexture = function () {

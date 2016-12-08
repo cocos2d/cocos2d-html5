@@ -128,7 +128,9 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             }
         }
         if (this._textureLoaded) {
-            this.createFontChars();
+            if(this._string && this._string.length > 0) {
+                this.createFontChars();
+            }
             if (needUpdateLabel)
                 this.updateLabel();
         }
@@ -273,6 +275,9 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
      * updates the font chars based on the string to render
      */
     createFontChars: function () {
+        var locStr = this._string;
+        var stringLen = locStr ? locStr.length : 0;
+
         var self = this;
         var cmd = this._renderCmd;
         var locTexture = cmd._texture || this._texture;
@@ -285,11 +290,6 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 
         var quantityOfLines = 1;
 
-        var locStr = self._string;
-        var stringLen = locStr ? locStr.length : 0;
-
-        if (stringLen === 0)
-            return;
 
         var i, locCfg = self._config, locKerningDict = locCfg.kerningDict,
             locCommonH = locCfg.commonHeight, locFontDict = locCfg.fontDefDictionary;
@@ -383,13 +383,17 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         var self = this;
         var locChildren = self._children;
         if (locChildren) {
-            for (var i = 0, li = locChildren.length; i < li; i++) {
+            var length = locChildren.length;
+            for (var i = 0, li = length; i < li; i++) {
                 var node = locChildren[i];
                 if (node) node.visible = false;
             }
         }
-        if (self._config)
-            self.createFontChars();
+        if (self._config) {
+            if(self._string && self._string.length > 0) {
+                self.createFontChars();
+            }
+        }
 
         if (!fromUpdate)
             self.updateLabel();
@@ -715,7 +719,10 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                     var self1 = this;
                     self1._textureLoaded = true;
                     self1.setTexture(sender);
-                    self1.createFontChars();
+                    if(self1._string && self1._string.length > 0) {
+                        self1.createFontChars();
+                    }
+
                     self1._changeTextureColor();
                     self1.updateLabel();
 
@@ -723,7 +730,9 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                 }, self);
             } else {
                 self.setTexture(texture);
-                self.createFontChars();
+                if(self._string && self._string.length > 0) {
+                    self.createFontChars();
+                }
             }
         }
     },
