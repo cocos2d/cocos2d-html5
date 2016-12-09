@@ -49,6 +49,7 @@ ccui.LabelBMFont = ccui.TextBMFont = ccui.Widget.extend(/** @lends ccui.TextBMFo
      */
     ctor: function (text, filename) {
         ccui.Widget.prototype.ctor.call(this);
+        this._loader = new cc.Sprite.LoadManager();
 
         if (filename !== undefined) {
             this.setFntFile(filename);
@@ -80,14 +81,6 @@ ccui.LabelBMFont = ccui.TextBMFont = ccui.Widget.extend(/** @lends ccui.TextBMFo
         if (!locRenderer._textureLoaded) {
             locRenderer.addEventListener("load", function () {
                 _self.setFntFile(_self._fntFileName);
-                var parent = _self.parent;
-                while (parent) {
-                    if (parent.requestDoLayout) {
-                        parent.requestDoLayout();
-                        break;
-                    }
-                    parent = parent.parent;
-                }
             });
         }
     },
@@ -107,6 +100,13 @@ ccui.LabelBMFont = ccui.TextBMFont = ccui.Widget.extend(/** @lends ccui.TextBMFo
      * @param {String} value
      */
     setString: function (value) {
+        this._loader.clear();
+        if (!this._labelBMFontRenderer._textureLoaded) {
+            this._loader.add(this._labelBMFontRenderer, function () {
+                this.setString(value);
+            }, this);
+            return;
+        }
         if (value === this._labelBMFontRenderer.getString())
             return;
         this._stringValue = value;

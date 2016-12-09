@@ -204,6 +204,8 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
             cc.eventManager.addListener(locListener, this);
         if(!this._usingLayoutComponent)
             this.updateSizeAndPosition();
+        if (this._sizeDirty)
+            this._onSizeChanged();
         cc.ProtectedNode.prototype.onEnter.call(this);
     },
 
@@ -347,9 +349,10 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
      * @override
      */
     setContentSize: function(contentSize, height){
-        var locWidth = (height === undefined) ? contentSize.width : contentSize;
-        var locHeight = (height === undefined) ? contentSize.height : height;
-        cc.Node.prototype.setContentSize.call(this, locWidth, locHeight);
+        cc.Node.prototype.setContentSize.call(this, contentSize, height);
+
+        var locWidth = this._contentSize.width;
+        var locHeight = this._contentSize.height;
 
         this._customSize.width = locWidth;
         this._customSize.height = locHeight;
@@ -364,10 +367,18 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
             this._sizePercent.x = (pSize.width > 0.0) ? locWidth / pSize.width : 0.0;
             this._sizePercent.y = (pSize.height > 0.0) ? locHeight / pSize.height : 0.0;
         }
-        this._onSizeChanged();
+
+        if (this._running) {
+            this._onSizeChanged();
+        } else {
+            this._sizeDirty = true;
+        }
     },
 
     _setWidth: function (w) {
+        if (w === this._contentSize.width) {
+            return;
+        }
         cc.Node.prototype._setWidth.call(this, w);
         this._customSize.width = w;
         if(this._unifySize){
@@ -381,9 +392,18 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
             var locWidth = widgetParent ? widgetParent.width : this._parent.width;
             this._sizePercent.x = locWidth > 0 ? this._customSize.width / locWidth : 0;
         }
-        this._onSizeChanged();
+
+        if (this._running) {
+            this._onSizeChanged();
+        } else {
+            this._sizeDirty = true;
+        }
     },
     _setHeight: function (h) {
+        if (h === this._contentSize.height) {
+            return;
+        }
+
         cc.Node.prototype._setHeight.call(this, h);
         this._customSize.height = h;
         if(this._unifySize){
@@ -397,7 +417,12 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
             var locH = widgetParent ? widgetParent.height : this._parent.height;
             this._sizePercent.y = locH > 0 ? this._customSize.height / locH : 0;
         }
-        this._onSizeChanged();
+
+        if (this._running) {
+            this._onSizeChanged();
+        } else {
+            this._sizeDirty = true;
+        }
     },
 
     /**
@@ -629,12 +654,13 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
      */
     _onSizeChanged: function () {
         if(!this._usingLayoutComponent){
-            var locChildren =  this.getChildren();
+            var locChildren = this.getChildren();
             for (var i = 0, len = locChildren.length; i < len; i++) {
                 var child = locChildren[i];
-                if(child instanceof ccui.Widget)
+                if (child instanceof ccui.Widget)
                     child.updateSizeAndPosition();
             }
+            this._sizeDirty = false;
         }
     },
 
@@ -1196,6 +1222,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
             return;
         }
         this._positionPercent.x = percent;
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
     },
     _setYPercent: function (percent) {
         if (this._usingLayoutComponent){
@@ -1205,6 +1232,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
             return;
         }
         this._positionPercent.y = percent;
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
     },
 
     /**
@@ -1501,7 +1529,6 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
             if (parameter)
                 this.setLayoutParameter(parameter.clone());
         }
-        this._onSizeChanged();
     },
 
     /*temp action*/

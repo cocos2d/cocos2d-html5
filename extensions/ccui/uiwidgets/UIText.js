@@ -105,6 +105,13 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
         this._labelRendererAdaptDirty = true;
     },
 
+    _setString: function (text) {
+        if(text === this._labelRenderer.getString()) return;
+
+        this._labelRenderer.setString(text);
+        this._labelRendererAdaptDirty = true;
+    },
+
     /**
      * Gets the string value of ccui.Text.
      * @deprecated since v3.0, please use getString instead.
@@ -142,6 +149,12 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
         this._labelRendererAdaptDirty = true;
     },
 
+    _setFontSize: function (size) {
+        this._labelRenderer.setFontSize(size);
+        this._fontSize = size;
+        this._labelRendererAdaptDirty = true;
+    },
+
     /**
      * Returns font Size of ccui.Text
      * @returns {Number}
@@ -159,6 +172,16 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
         this._labelRenderer.setFontName(name);
         this._updateContentSizeWithTextureSize(this._labelRenderer.getContentSize());
         this._labelRendererAdaptDirty = true;
+    },
+
+    _setFontName: function (name) {
+        this._fontName = name;
+        this._labelRenderer.setFontName(name);
+        this._labelRendererAdaptDirty = true;
+    },
+
+    _updateUITextContentSize: function () {
+        this._updateContentSizeWithTextureSize(this._labelRenderer.getContentSize());
     },
 
     /**
@@ -203,6 +226,14 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
         this._labelRendererAdaptDirty = true;
     },
 
+    _setTextAreaSize: function (size) {
+        this._labelRenderer.setDimensions(size);
+        if (!this._ignoreSize){
+            this._customSize = size;
+        }
+        this._labelRendererAdaptDirty = true;
+    },
+
     /**
      * Returns renderer's dimension.
      * @returns {cc.Size}
@@ -218,6 +249,12 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
     setTextHorizontalAlignment: function (alignment) {
         this._labelRenderer.setHorizontalAlignment(alignment);
         this._updateContentSizeWithTextureSize(this._labelRenderer.getContentSize());
+        this._labelRendererAdaptDirty = true;
+    },
+
+
+    _setTextHorizontalAlignment: function (alignment) {
+        this._labelRenderer.setHorizontalAlignment(alignment);
         this._labelRendererAdaptDirty = true;
     },
 
@@ -239,6 +276,10 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
         this._labelRendererAdaptDirty = true;
     },
 
+    _setTextVerticalAlignment: function (alignment) {
+        this._labelRenderer.setVerticalAlignment(alignment);
+        this._labelRendererAdaptDirty = true;
+    },
     /**
      * Gets text vertical alignment.
      * @returns {VERTICAL_TEXT_ALIGNMENT_TOP|VERTICAL_TEXT_ALIGNMENT_CENTER|VERTICAL_TEXT_ALIGNMENT_BOTTOM}
