@@ -246,23 +246,3 @@ cc.getImageFormatByData = function (imgData) {
     }
     return cc.FMT_UNKNOWN;
 };
-
-/**
- * Another way to subclass: Using Google Closure.
- * The following code was copied + pasted from goog.base / goog.inherits
- * @function
- * @param {Function} childCtor
- * @param {Function} parentCtor
- */
-cc.inherits = function (childCtor, parentCtor) {
-    function tempCtor() {}
-    tempCtor.prototype = parentCtor.prototype;
-    childCtor.superClass_ = parentCtor.prototype;
-    childCtor.prototype = new tempCtor();
-    childCtor.prototype.constructor = childCtor;
-
-    // Copy "static" method, but doesn't generate subclasses.
-// for( var i in parentCtor ) {
-// childCtor[ i ] = parentCtor[ i ];
-// }
-};

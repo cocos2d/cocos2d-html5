@@ -497,6 +497,13 @@ cc.ORIENTATION_LANDSCAPE = 2;
  */
 cc.ORIENTATION_AUTO = 3;
 
+/**
+ * The limit count for concurrency http request, useful in some mobile browsers
+ * @constant
+ * @type Number
+ */
+cc.CONCURRENCY_HTTP_REQUEST_COUNT = cc.sys.isMobile ? 9 : 0;
+
 
 // ------------------- vertex attrib flags -----------------------------
 /**
