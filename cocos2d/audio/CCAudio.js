@@ -118,7 +118,7 @@ cc.Audio = cc.Class.extend({
             cc.Audio.touchPlayList.push({ loop: loop, offset: offset, audio: this._element });
         }
 
-        if (cc.Audio.bindTouch === false) {
+        if (cc.Audio.bindTouch === false && this._element.paused) {
             cc.Audio.bindTouch = true;
             // Listen to the touchstart body event and play the audio when necessary.
             cc.game.canvas.addEventListener('touchstart', cc.Audio.touchStart);
@@ -391,8 +391,6 @@ cc.Audio.WebAudio.prototype = {
             if (audio)
                 return cb(null, audio);
 
-            var i;
-
             if (cc.loader.audioPath)
                 realUrl = cc.path.join(cc.loader.audioPath, realUrl);
 
@@ -528,6 +526,12 @@ cc.Audio.WebAudio.prototype = {
         stopMusic: function(releaseData){
             var audio = this._currMusic;
             if (audio) {
+                var list = cc.Audio.touchPlayList;
+                for (var i=list.length-1; i>=0; --i) {
+                    if (this[i] && this[i].audio === audio._element)
+                        list.splice(i, 1);
+                }
+
                 audio.stop();
                 this._currMusic = null;
                 if (releaseData)
@@ -541,7 +545,7 @@ cc.Audio.WebAudio.prototype = {
          * //example
          * cc.audioEngine.pauseMusic();
          */
-        pauseMusic: function(){
+        pauseMusic: function () {
             var audio = this._currMusic;
             if (audio)
                 audio.pause();
@@ -553,7 +557,7 @@ cc.Audio.WebAudio.prototype = {
          * //example
          * cc.audioEngine.resumeMusic();
          */
-        resumeMusic: function(){
+        resumeMusic: function () {
             var audio = this._currMusic;
             if (audio)
                 audio.resume();
@@ -649,9 +653,7 @@ cc.Audio.WebAudio.prototype = {
                 effectList = this._audioPool[url] = [];
             }
 
-            var i;
-
-            for (i = 0; i < effectList.length; i++) {
+            for (var i = 0; i < effectList.length; i++) {
                 if (!effectList[i].getPlaying()) {
                     break;
                 }
