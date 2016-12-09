@@ -419,7 +419,10 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
         if (node._string.length === 0) {
             locLabelCanvas.width = width;
             locLabelCanvas.height = height;
-            node._texture && node._texture.handleLoadedTexture();
+            node._texture && node._texture.handleLoadedTexture(true);
+            if(this._updateBlendFunc) {
+                this._updateBlendFunc();
+            }
             node.setTextureRect(this._texRect);
             return true;
         }
