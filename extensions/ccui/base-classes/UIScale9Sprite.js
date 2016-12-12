@@ -433,12 +433,6 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
         this._updateCapInsets(this._spriteFrame._rect, this._capInsetsInternal);
     },
 
-    setPreferredSize: function (preferredSize) {
-        if (!preferredSize || cc.sizeEqualToSize(this._contentSize, preferredSize)) return;
-
-        this.setContentSize(preferredSize);
-    },
-
     _updateCapInsets: function (rect, capInsets) {
         if(!capInsets || !rect || cc._rectEqualToZero(capInsets)) {
             rect = rect || {x:0, y:0, width: this._contentSize.width, height: this._contentSize.height};
@@ -650,6 +644,15 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
         return new cc.BlendFunc(this._blendFunc.src, this._blendFunc.dst);
     },
 
+    setPreferredSize: function (preferredSize) {
+        if (!preferredSize || cc.sizeEqualToSize(this._contentSize, preferredSize)) return;
+        this.setContentSize(preferredSize);
+    },
+
+    getPreferredSize: function () {
+        return this.getContentSize();
+    },
+
     // overrides
     setContentSize: function (width, height) {
         if (height === undefined) {
@@ -664,7 +667,7 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
         this._quadsDirty = true;
     },
 
-    getContentSize: function() {
+    getContentSize: function () {
         if(this._renderingType === ccui.Scale9Sprite.RenderingType.SIMPLE) {
             if(this._spriteFrame) {
                 return this._spriteFrame._originalSize;
