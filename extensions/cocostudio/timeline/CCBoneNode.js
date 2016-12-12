@@ -83,6 +83,10 @@ ccs.BoneNode = (function () {
             //this._updateColor();
         },
 
+        visit: function (parent) {
+            this._visit && this._visit(parent && parent._renderCmd);
+        },
+
         addSkin: function (skin, display, hideOthers/*false*/) {
             // skin, display
             // skin, display, hideOthers
@@ -531,10 +535,6 @@ ccs.BoneNode = (function () {
         var proto = BoneNodeCanvasCmd.prototype = Object.create(Node.CanvasRenderCmd.prototype);
         proto.constructor = BoneNodeCanvasCmd;
 
-        proto.visit = function (parentCmd) {
-            var node = this._node;
-            node._visit && node._visit(parentCmd);
-        };
         proto.updateDebugPoint = function (points) {
             this._drawNode.clear();
             this._drawNode.drawPoly(points, this._color, 0, this._color);
@@ -564,10 +564,6 @@ ccs.BoneNode = (function () {
         var proto = BoneNodeWebGLCmd.prototype = Object.create(Node.WebGLRenderCmd.prototype);
         proto.constructor = BoneNodeWebGLCmd;
 
-        proto.visit = function (parentCmd) {
-            var node = this._node;
-            node._visit && node._visit(parentCmd);
-        };
         proto.updateDebugPoint = function (points) {
             this._drawNode.clear();
             this._drawNode.drawPoly(points, this._color, 0, this._color);

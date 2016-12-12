@@ -172,7 +172,7 @@ ccs.SkeletonNode = (function () {
                     subOrderedBoneCmd = subOrderedAllBones[i]._renderCmd;
                     cc.renderer.pushRenderCommand(subOrderedBoneCmd._drawNode._renderCmd);
                 }
-            this._dirtyFlag = 0;
+            cmd._dirtyFlag = 0;
         },
 
         _checkSubBonesDirty: function () {

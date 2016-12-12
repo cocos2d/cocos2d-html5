@@ -37,37 +37,6 @@
     proto.constructor = ccui.Layout.CanvasRenderCmd;
     proto._layoutCmdCtor = ccui.Layout.CanvasRenderCmd;
 
-    cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
-        if (ccui.Widget.CanvasRenderCmd) {
-            ccui.Layout.CanvasRenderCmd.prototype.widgetVisit = ccui.Widget.CanvasRenderCmd.prototype.widgetVisit;
-        }
-    });
-
-    proto.visit = function(parentCmd){
-        var node = this._node;
-        if (!node._visible)
-            return;
-        node._adaptRenderers();
-        node._doLayout();
-
-        if (node._clippingEnabled) {
-            switch (node._clippingType) {
-                case ccui.Layout.CLIPPING_STENCIL:
-                    this.stencilClippingVisit(parentCmd);
-                    break;
-                case ccui.Layout.CLIPPING_SCISSOR:
-                    this.scissorClippingVisit(parentCmd);
-                    break;
-                default:
-                    break;
-            }
-        } else {
-            this.widgetVisit(parentCmd);
-        }
-    };
-
-    proto.layoutVisit = proto.visit;
-
     proto._onRenderSaveCmd = function (ctx, scaleX, scaleY) {
         var wrapper = ctx || cc._renderContext, context = wrapper.getContext();
         wrapper.save();
@@ -122,33 +91,10 @@
         node._clippingStencil.visit(this);
 
         cc.renderer.pushRenderCommand(this._rendererClipCmd);
-            node.sortAllChildren();
-            node.sortAllProtectedChildren();
+    };
 
-            var children = node._children;
-            var j=0, locProtectChildren = node._protectedChildren, i = 0, locChild;
-            var iLen = children.length, jLen = locProtectChildren.length;
-
-            for( ; i < iLen; i++ ){
-                locChild = children[i];
-                if ( locChild && locChild.getLocalZOrder() < 0 )
-                    locChild.visit(this);
-                else
-                    break;
-            }
-            for( ; j < jLen; j++ ) {
-                locChild = locProtectChildren[j];
-                if ( locChild && locChild.getLocalZOrder() < 0 )
-                    locChild.visit(this);
-                else
-                    break;
-            }
-            for (; i < iLen; i++)
-                children[i].visit(this);
-            for (; j < jLen; j++)
-                locProtectChildren[j].visit(this);
-            cc.renderer.pushRenderCommand(this._rendererRestoreCmd);
-        this._dirtyFlag = 0;
+    proto.postStencilVisit = proto.postScissorVisit = function () {
+        cc.renderer.pushRenderCommand(this._rendererRestoreCmd);
     };
 
     ccui.Layout.CanvasRenderCmd._getSharedCache = function () {

@@ -168,47 +168,40 @@
         return cc.ClippingNode.CanvasRenderCmd.prototype._godhelpme;
     };
 
-    proto.visit = function(parentCmd){
+    proto.clippingVisit = function (parentCmd) {
         var node = this._node;
-        // quick return if not visible
-        if (!node._visible)
-            return;
-
         parentCmd = parentCmd || this.getParentRenderCmd();
-        if( parentCmd)
-            this._curLevel = parentCmd._curLevel + 1;
-        var transformRenderCmd = this;
+        this.visit(parentCmd);
 
-        this._syncStatus(parentCmd);
         // Composition mode, costy but support texture stencil
         this._clipElemType = !(!this._cangodhelpme() && node._stencil instanceof cc.DrawNode);
         if (!node._stencil || !node._stencil.visible) {
             if (this.inverted)
-                this.originVisit(parentCmd);   // draw everything
+                node._visitChildren();   // draw everything
             return;
         }
 
         cc.renderer.pushRenderCommand(this._rendererSaveCmd);
-        if(this._clipElemType){
+        if (this._clipElemType) {
             // Draw everything first using node visit function
-            this.originVisit(parentCmd);
-        }else{
-            node._stencil.visit(this);
+            node._visitChildren();
+        } else {
+            node._stencil.visit(node);
         }
         cc.renderer.pushRenderCommand(this._rendererClipCmd);
 
-        if(this._clipElemType){
-            node._stencil.visit(transformRenderCmd);
-        }else{
-            var i, children = node._children;
+        if (this._clipElemType) {
+            node._stencil.visit(node);
+        } else {
             // Clip mode doesn't support recursive stencil, so once we used a clip stencil,
             // so if it has ClippingNode as a child, the child must uses composition stencil.
             this._cangodhelpme(true);
-            var len = children.length;
+            var children = node._children;
+            var i, len = children.length;
             if (len > 0) {
                 node.sortAllChildren();
                 for (i = 0; i < len; i++)
-                    children[i]._renderCmd.visit(this);
+                    children[i].visit(node);
             }
             this._cangodhelpme(false);
         }

@@ -22,7 +22,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 // ------------------------------ The cc.Node's render command for WebGL ----------------------------------
-(function() {
+(function () {
     cc.Node.WebGLRenderCmd = function (renderable) {
         this._node = renderable;
         this._anchorPointInPoints = {x: 0, y: 0};

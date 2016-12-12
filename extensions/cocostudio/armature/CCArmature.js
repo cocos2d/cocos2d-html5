@@ -149,6 +149,14 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
         return true;
     },
 
+    visit: function (parent) {
+        // quick return if not visible
+        if (!this._visible)
+            return;
+
+        this._renderCmd.visit(parent && parent._renderCmd);
+    },
+
     addChild: function (child, localZOrder, tag) {
         if (child instanceof ccui.Widget) {
             cc.log("Armature doesn't support to add Widget as its child, it will be fix soon.");

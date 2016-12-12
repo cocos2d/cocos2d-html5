@@ -58,29 +58,26 @@
         var node = this._node;
         this.originTransform(parentCmd, recursive);
         if (node._stencil) {
-            node._stencil._renderCmd.transform(this, recursive);
+            node._stencil._renderCmd.transform(this, true);
+            node._stencil._dirtyFlag &= ~cc.Node._dirtyFlags.transformDirty;
         }
     };
 
-    proto.visit = function(parentCmd){
+    proto.clippingVisit = function (parentCmd) {
         var node = this._node;
-        // quick return if not visible
-        if (!node._visible)
-            return;
-
-        if( node._parent && node._parent._renderCmd)
-            this._curLevel = node._parent._renderCmd._curLevel + 1;
+        parentCmd = parentCmd || this.getParentRenderCmd();
+        this.visit(parentCmd);
 
         // if stencil buffer disabled
         if (cc.stencilBits < 1) {
             // draw everything, as if there were no stencil
-            this.originVisit(parentCmd);
+            node._visitChildren();
             return;
         }
 
         if (!node._stencil || !node._stencil.visible) {
             if (node.inverted)
-                this.originVisit(parentCmd);   // draw everything
+                node._visitChildren();   // draw everything
             return;
         }
 
@@ -91,20 +88,14 @@
                 cc.ClippingNode.WebGLRenderCmd._visit_once = false;
             }
             // draw everything, as if there were no stencil
-            this.originVisit(parentCmd);
+            node._visitChildren();
             return;
         }
 
         cc.renderer.pushRenderCommand(this._beforeVisitCmd);
 
-        //optimize performance for javascript
-        var currentStack = cc.current_stack;
-        currentStack.stack.push(currentStack.top);
-        this._syncStatus(parentCmd);
-        currentStack.top = this._stackMatrix;
-
         // node._stencil._stackMatrix = node._stackMatrix;
-        node._stencil._renderCmd.visit(this);
+        node._stencil.visit(node);
 
         cc.renderer.pushRenderCommand(this._afterDrawStencilCmd);
 
@@ -115,15 +106,13 @@
             node.sortAllChildren();
             // draw children zOrder < 0
             for (var i = 0; i < childLen; i++) {
-                locChildren[i]._renderCmd.visit(this);
+                locChildren[i].visit(node);
             }
         }
 
         cc.renderer.pushRenderCommand(this._afterVisitCmd);
 
         this._dirtyFlag = 0;
-        //optimize performance for javascript
-        currentStack.top = currentStack.stack.pop();
     };
 
     proto.setStencil = function (stencil) {

@@ -34,60 +34,6 @@
     proto.constructor = cc.ProtectedNode.WebGLRenderCmd;
     proto._pNodeCmdCtor = cc.ProtectedNode.WebGLRenderCmd;
 
-    proto.visit = function(parentCmd){
-        var node = this._node;
-        // quick return if not visible
-        if (!node._visible)
-            return;
-        var  i, j;
-
-        this._syncStatus(parentCmd);
-
-        var locGrid = node.grid;
-        if (locGrid && locGrid._active)
-            locGrid.beforeDraw();
-
-        var locChildren = node._children, locProtectedChildren = node._protectedChildren;
-        var childLen = locChildren.length, pLen = locProtectedChildren.length;
-        node.sortAllChildren();
-        node.sortAllProtectedChildren();
-
-        var pChild;
-        // draw children zOrder < 0
-        for (i = 0; i < childLen; i++) {
-            if (locChildren[i] && locChildren[i]._localZOrder < 0)
-                locChildren[i].visit(this);
-            else
-                break;
-        }
-        for(j = 0; j < pLen; j++){
-            pChild = locProtectedChildren[j];
-            if (pChild && pChild._localZOrder < 0){
-                this._changeProtectedChild(pChild);
-                pChild.visit(this);
-            }else
-                break;
-        }
-
-        cc.renderer.pushRenderCommand(this);
-
-        // draw children zOrder >= 0
-        for (; i < childLen; i++) {
-            locChildren[i] && locChildren[i].visit(this);
-        }
-        for (; j < pLen; j++) {
-            pChild = locProtectedChildren[j];
-            if(!pChild) continue;
-            this._changeProtectedChild(pChild);
-            pChild.visit(this);
-        }
-
-        if (locGrid && locGrid._active)
-            locGrid.afterDraw(node);
-
-        this._dirtyFlag = 0;
-    };
-
     proto.transform = function (parentCmd, recursive) {
         this.originTransform(parentCmd, recursive);
 
@@ -100,6 +46,5 @@
         }
     };
 
-    proto.pNodeVisit = proto.visit;
     proto.pNodeTransform = proto.transform;
 })();

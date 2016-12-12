@@ -126,6 +126,76 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     },
 
     /**
+     * <p>
+     *     Calls adaptRenderers (its subclass will override it.) and do layout.
+     *     If clippingEnabled is true, it will clip/scissor area.
+     * </p>
+     * @override
+     * @param {cc.Node} [parent]
+     */
+    visit: function (parent) {
+        if (!this._visible)
+            return;
+
+        this._adaptRenderers();
+        this._doLayout();
+
+        var renderer = cc.renderer, cmd = this._renderCmd;
+        var parentCmd = parent && parent._renderCmd;
+        cmd.visit(parentCmd);
+
+        var stencilClipping = this._clippingEnabled && this._clippingType === ccui.Layout.CLIPPING_STENCIL;
+        var scissorClipping = this._clippingEnabled && this._clippingType === ccui.Layout.CLIPPING_SCISSOR;
+        
+        if (stencilClipping) {
+            cmd.stencilClippingVisit(parentCmd);
+        }
+        else if (scissorClipping) {
+            cmd.scissorClippingVisit(parentCmd);
+        }
+
+        var i, children = this._children, len = children.length, child;
+        var j, pChildren = this._protectedChildren, pLen = pChildren.length, pChild;
+
+        if (this._reorderChildDirty) this.sortAllChildren();
+        if (this._reorderProtectedChildDirty) this.sortAllProtectedChildren();
+        // draw children zOrder < 0
+        for (i = 0; i < len; i++) {
+            child = children[i];
+            if (child._localZOrder < 0) {
+                child.visit(this);
+            }
+            else break;
+        }
+        for (j = 0; j < pLen; j++) {
+            pChild = pChildren[j];
+            if (pChild._localZOrder < 0) {
+                cmd._changeProtectedChild(pChild);
+                pChild.visit(this);
+            }
+            else break;
+        }
+        // draw children zOrder >= 0
+        for (; i < len; i++) {
+            children[i].visit(this);
+        }
+        for (; j < pLen; j++) {
+            pChild = pChildren[j];
+            cmd._changeProtectedChild(pChild);
+            pChild.visit(this);
+        }
+
+        if (stencilClipping) {
+            cmd.postStencilVisit();
+        }
+        else if (scissorClipping) {
+            cmd.postScissorVisit();
+        }
+
+        cmd._dirtyFlag = 0;
+    },
+
+    /**
      * If a layout is loop focused which means that the focus movement will be inside the layout
      * @param {Boolean} loop pass true to let the focus movement loop inside the layout
      */
@@ -293,36 +363,6 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      */
     isClippingEnabled: function () {
         return this._clippingEnabled;
-    },
-
-    /**
-     * <p>
-     *     Calls adaptRenderers (its subclass will override it.) and do layout.
-     *     If clippingEnabled is true, it will clip/scissor area.
-     * </p>
-     * @override
-     * @param {cc.Node.RenderCmd} [parentCmd]
-     */
-    visit: function (parentCmd) {
-        if (!this._visible)
-            return;
-        this._adaptRenderers();
-        this._doLayout();
-
-        if (this._clippingEnabled) {
-            switch (this._clippingType) {
-                case ccui.Layout.CLIPPING_STENCIL:
-                    this._renderCmd.stencilClippingVisit(parentCmd);
-                    break;
-                case ccui.Layout.CLIPPING_SCISSOR:
-                    this._renderCmd.scissorClippingVisit(parentCmd);
-                    break;
-                default:
-                    break;
-            }
-        } else {
-            ccui.Widget.prototype.visit.call(this, parentCmd);
-        }
     },
 
     /**

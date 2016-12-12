@@ -147,6 +147,17 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
         return this.initWithTexture(tex, capacity);
     },
 
+    visit: function (parent) {
+        // quick return if not visible
+        if (!this._visible)
+            return;
+
+        var cmd = this._renderCmd;
+        cmd.visit(parent && parent._renderCmd);
+        renderer.pushRenderCommand(cmd);
+        cmd._dirtyFlag = 0;
+    },
+
     /**
      * Add a child into the cc.ParticleBatchNode
      * @param {cc.ParticleSystem} child

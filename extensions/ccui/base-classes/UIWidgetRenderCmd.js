@@ -33,11 +33,19 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
         proto.constructor = ccui.Widget.CanvasRenderCmd;
 
         proto.visit = function (parentCmd) {
-            var node = this._node;
-            if (node._visible) {
-                node._adaptRenderers();
-                this.pNodeVisit(parentCmd);
+            var node = this._node, renderer = cc.renderer;
+
+            parentCmd = parentCmd || this.getParentRenderCmd();
+            if (parentCmd)
+                this._curLevel = parentCmd._curLevel + 1;
+
+            if (isNaN(node._customZ)) {
+                node._vertexZ = renderer.assignedZ;
+                renderer.assignedZ += renderer.assignedZStep;
             }
+
+            node._adaptRenderers();
+            this._syncStatus(parentCmd);
         };
 
         proto.transform = function (parentCmd, recursive) {
@@ -63,7 +71,6 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
             }
         };
 
-        proto.widgetVisit = proto.visit;
         proto.widgetTransform = proto.transform;
     } else {
         ccui.Widget.WebGLRenderCmd = function (renderable) {
@@ -75,14 +82,22 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
         proto.constructor = ccui.Widget.WebGLRenderCmd;
 
         proto.visit = function (parentCmd) {
-            var node = this._node;
-            if (node._visible) {
-                node._adaptRenderers();
-                this.pNodeVisit(parentCmd);
+            var node = this._node, renderer = cc.renderer;
+
+            parentCmd = parentCmd || this.getParentRenderCmd();
+            if (parentCmd)
+                this._curLevel = parentCmd._curLevel + 1;
+
+            if (isNaN(node._customZ)) {
+                node._vertexZ = renderer.assignedZ;
+                renderer.assignedZ += renderer.assignedZStep;
             }
+
+            node._adaptRenderers();
+            this._syncStatus(parentCmd);
         };
 
-        proto.transform = function(parentCmd, recursive){
+        proto.transform = function (parentCmd, recursive) {
             var node = this._node;
             if (node._visible && node._running) {
                 node._adaptRenderers();
@@ -101,7 +116,6 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
             }
         };
 
-        proto.widgetVisit = proto.visit;
         proto.widgetTransform = proto.transform;
     }
 });

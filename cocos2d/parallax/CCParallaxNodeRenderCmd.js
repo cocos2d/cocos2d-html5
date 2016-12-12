@@ -35,7 +35,7 @@
 
     proto.updateStatus = function () {
         this._node._updateParallaxPosition();
-        cc.Node.CanvasRenderCmd.prototype.updateStatus.call(this);
+        this.originUpdateStatus();
     };
 
     proto._syncStatus = function (parentCmd) {
@@ -58,7 +58,7 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
 
     proto.updateStatus = function () {
         this._node._updateParallaxPosition();
-        cc.Node.WebGLRenderCmd.prototype.updateStatus.call(this);
+        this.originUpdateStatus();
     };
 
     proto._syncStatus = function (parentCmd) {

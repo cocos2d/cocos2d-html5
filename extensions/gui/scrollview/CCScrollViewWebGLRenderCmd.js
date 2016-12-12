@@ -68,39 +68,4 @@
             ctx.disable(ctx.SCISSOR_TEST);
         }
     };
-
-    proto.visit = function(parentCmd){
-        var node = this._node;
-        if (!node._visible) return;
-
-        var i, locChildren = node._children, selChild, childrenLen;
-
-        this._syncStatus(parentCmd);
-
-        if (node._clippingToBounds) {
-            cc.renderer.pushRenderCommand(this.startCmd);
-        }
-
-        if (locChildren && locChildren.length > 0) {
-            childrenLen = locChildren.length;
-            // draw children zOrder < 0
-            for (i = 0; i < childrenLen; i++) {
-                selChild = locChildren[i];
-                if (selChild && selChild._localZOrder < 0)
-                    selChild._renderCmd.visit();
-                else
-                    break;
-            }
-
-            // draw children zOrder >= 0
-            for (; i < childrenLen; i++)
-                locChildren[i]._renderCmd.visit();
-        }
-
-        if (node._clippingToBounds) {
-            cc.renderer.pushRenderCommand(this.endCmd);
-        }
-
-        this._dirtyFlag = 0;
-    };
 })();

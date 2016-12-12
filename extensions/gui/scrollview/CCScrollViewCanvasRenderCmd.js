@@ -61,25 +61,4 @@
         wrapper = wrapper || cc._renderContext;
         wrapper.restore();
     };
-
-    proto.visit = function(parentCmd){
-        var node = this._node;
-        if (!node._visible) return;
-        
-        var i, locChildren = node._children, childrenLen;
-
-        this._syncStatus(parentCmd);
-        cc.renderer.pushRenderCommand(this.startCmd);
-
-        if (locChildren && locChildren.length > 0) {
-            childrenLen = locChildren.length;
-            node.sortAllChildren();
-            for (i = 0; i < childrenLen; i++) {
-                locChildren[i]._renderCmd.visit(this);
-            }
-        }
-        cc.renderer.pushRenderCommand(this.endCmd);
-        
-        this._dirtyFlag = 0;
-    };
 })();

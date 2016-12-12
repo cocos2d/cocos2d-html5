@@ -102,11 +102,4 @@
     proto.clearDepth = function (depthValue) {
         cc.log("clearDepth isn't supported on Cocos2d-Html5");
     };
-
-    proto.visit = function(parentCmd){
-        var node = this._node;
-        this._syncStatus(parentCmd);
-        node.sprite.visit(this);
-        this._dirtyFlag = 0;
-    };
 })();

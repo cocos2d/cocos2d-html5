@@ -47,35 +47,13 @@
     proto.constructor = ccui.Layout.WebGLRenderCmd;
     proto._layoutCmdCtor = ccui.Layout.CanvasRenderCmd;
 
-    proto.visit = function(parentCmd){
-        var node = this._node;
-        if (!node._visible)
-            return;
+    proto._syncStatus = function (parentCmd) {
+        this._originSyncStatus(parentCmd);
 
-        if(parentCmd && (parentCmd._dirtyFlag & cc.Node._dirtyFlags.transformDirty))
-            node._clippingRectDirty = true;
-
-        node._adaptRenderers();
-        node._doLayout();
-
-        if (node._clippingEnabled) {
-            switch (node._clippingType) {
-                case ccui.Layout.CLIPPING_STENCIL:
-                    this.stencilClippingVisit(parentCmd);
-                    break;
-                case ccui.Layout.CLIPPING_SCISSOR:
-                    this.scissorClippingVisit(parentCmd);
-                    break;
-                default:
-                    break;
-            }
-        } else {
-            this.pNodeVisit(parentCmd);
-        }
+        if (parentCmd && (parentCmd._dirtyFlag & cc.Node._dirtyFlags.transformDirty))
+            this._node._clippingRectDirty = true;
     };
-
-    proto.layoutVisit = proto.visit;
-
+    
     proto._onBeforeVisitStencil = function (ctx) {
         var gl = ctx || cc._renderContext;
 
@@ -184,7 +162,6 @@
                 ccui.Layout.WebGLRenderCmd._visit_once = false;
             }
             // draw everything, as if there where no stencil
-            cc.Node.prototype.visit.call(node, parentCmd);
             return;
         }
 
@@ -199,46 +176,16 @@
         //optimize performance for javascript
         var currentStack = cc.current_stack;
         currentStack.stack.push(currentStack.top);
-        this._syncStatus(parentCmd);
-        this._dirtyFlag = 0;
         currentStack.top = this._stackMatrix;
 
         node._clippingStencil.visit(this);
 
         cc.renderer.pushRenderCommand(this._afterDrawStencilCmd);
+    };
 
-        // draw (according to the stencil test func) this node and its childs
-        var i = 0;      // used by _children
-        var j = 0;      // used by _protectedChildren
-
-        node.sortAllChildren();
-        node.sortAllProtectedChildren();
-        var locChildren = node._children, locProtectChildren = node._protectedChildren;
-        var iLen = locChildren.length, jLen = locProtectChildren.length, child;
-        for( ; i < iLen; i++ ){
-            child = locChildren[i];
-            if ( child && child.getLocalZOrder() < 0 )
-                child.visit(this);
-            else
-                break;
-        }
-        for( ; j < jLen; j++ ) {
-            child = locProtectChildren[j];
-            if ( child && child.getLocalZOrder() < 0 )
-                child.visit(this);
-            else
-                break;
-        }
-
-        for (; i < iLen; i++)
-            locChildren[i].visit(this);
-        for (; j < jLen; j++)
-            locProtectChildren[j].visit(this);
-
-        cc.renderer.pushRenderCommand(this._afterVisitCmdStencil);
-
-        //optimize performance for javascript
-        currentStack.top = currentStack.stack.pop();
+    proto.postStencilVisit = function () {
+        renderer.pushRenderCommand(cmd._afterVisitCmdStencil);
+        cc.current_stack.top = cc.current_stack.stack.pop();
     };
 
     proto.scissorClippingVisit = function (parentCmd) {
@@ -247,7 +194,9 @@
             this._afterVisitCmdScissor = new cc.CustomRenderCmd(this, this._onAfterVisitScissor);
         }
         cc.renderer.pushRenderCommand(this._beforeVisitCmdScissor);
-        this.pNodeVisit(parentCmd);
+    };
+
+    proto.postScissorVisit = function () {
         cc.renderer.pushRenderCommand(this._afterVisitCmdScissor);
     };
 

@@ -327,7 +327,7 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
         if (locFlag & flags.textDirty)
             this._updateTexture();
 
-        cc.Node.RenderCmd.prototype.updateStatus.call(this);
+        this.originUpdateStatus();
     };
 
     proto._syncStatus = function (parentCmd) {

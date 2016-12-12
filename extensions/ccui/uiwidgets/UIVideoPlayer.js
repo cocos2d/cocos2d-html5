@@ -49,6 +49,33 @@ ccui.VideoPlayer = ccui.Widget.extend(/** @lends ccui.VideoPlayer# */{
         return new ccui.VideoPlayer.RenderCmd(this);
     },
 
+    visit: function () {
+        var cmd = this._renderCmd,
+            div = cmd._div,
+            container = cc.container,
+            eventManager = cc.eventManager;
+        if (this._visible) {
+            container.appendChild(cmd._video);
+            if (this._listener === null)
+                this._listener = cc.eventManager.addCustomListener(cc.game.EVENT_RESIZE, function () {
+                    cmd.resize();
+                });
+        } else {
+            var hasChild = false;
+            if ('contains' in container) {
+                hasChild = container.contains(cmd._video);
+            } else {
+                hasChild = container.compareDocumentPosition(cmd._video) % 16;
+            }
+            if (hasChild)
+                container.removeChild(cmd._video);
+            eventManager.removeListener(cmd._listener);
+            cmd._listener = null;
+        }
+        cmd.updateStatus();
+        cmd.resize();
+    },
+
     /**
      * Set the video address
      * Automatically replace extname
@@ -353,31 +380,6 @@ ccui.VideoPlayer.EventType = {
     var proto = ccui.VideoPlayer.RenderCmd.prototype = Object.create(RenderCmd.prototype);
     proto.constructor = ccui.VideoPlayer.RenderCmd;
 
-    proto.visit = function(){
-        var self = this,
-            container = cc.container,
-            eventManager = cc.eventManager;
-        if(this._node._visible){
-            container.appendChild(this._video);
-            if(this._listener === null)
-                this._listener = cc.eventManager.addCustomListener(cc.game.EVENT_RESIZE, function () {
-                    self.resize();
-                });
-        }else{
-            var hasChild = false;
-            if('contains' in container) {
-                hasChild = container.contains(this._video);
-            }else {
-                hasChild = container.compareDocumentPosition(this._video) % 16;
-            }
-            if(hasChild)
-                container.removeChild(this._video);
-            eventManager.removeListener(this._listener);
-            this._listener = null;
-        }
-        this.updateStatus();
-    };
-
     proto.transform = function (parentCmd, recursive) {
         this.originTransform(parentCmd, recursive);
         this.updateMatrix(this._worldTransform, cc.view._scaleX, cc.view._scaleY);
@@ -484,7 +486,7 @@ ccui.VideoPlayer.EventType = {
         node._playing = false;
         node._stopped = true;
         this.initStyle();
-        this.visit();
+        this._node.visit();
 
         source = document.createElement("source");
         source.src = path;

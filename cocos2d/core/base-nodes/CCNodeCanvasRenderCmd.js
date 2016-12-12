@@ -46,11 +46,17 @@ var dirtyFlags = cc.Node._dirtyFlags = {
 };
 
 var ONE_DEGREE = Math.PI / 180;
-var stack = new Array(50);
 
 function transformChildTree(root) {
     var index = 1;
     var children, child, curr, parentCmd, i, len;
+    var stack = cc.Node._performStacks[cc.Node._performing];
+    if (!stack) {
+        stack = [];
+        cc.Node._performStacks.push(stack);
+    }
+    stack.length = 0;
+    cc.Node._performing++;
     stack[0] = root;
     while (index) {
         index--;
@@ -79,6 +85,7 @@ function transformChildTree(root) {
             }
         }
     }
+    cc.Node._performing--;
 }
 
 //-------------------------Base -------------------------
@@ -317,9 +324,6 @@ cc.Node.RenderCmd.prototype = {
 
     visit: function (parentCmd) {
         var node = this._node, renderer = cc.renderer;
-        // quick return if not visible
-        if (!node._visible)
-            return;
 
         parentCmd = parentCmd || this.getParentRenderCmd();
         if (parentCmd)
@@ -331,7 +335,6 @@ cc.Node.RenderCmd.prototype = {
         }
 
         this._syncStatus(parentCmd);
-        this.visitChildren();
     },
 
     _updateDisplayColor: function (parentColor) {
@@ -436,7 +439,8 @@ cc.Node.RenderCmd.prototype = {
         this._displayedOpacity = node._realOpacity * parentOpacity / 255.0;
     },
 
-    _updateColor: function(){},
+    _updateColor: function () {
+    },
 
     updateStatus: function () {
         var locFlag = this._dirtyFlag;
@@ -470,7 +474,7 @@ cc.Node.RenderCmd.prototype = {
     _syncStatus: function (parentCmd) {
         //  In the visit logic does not restore the _dirtyFlag
         //  Because child elements need parent's _dirtyFlag to change himself
-        var locFlag = this._dirtyFlag, parentNode = null;
+        var locFlag = this._dirtyFlag, parentNode = parentCmd ? parentCmd._node : null;
 
         //  There is a possibility:
         //    The parent element changed color, child element not change
@@ -509,39 +513,11 @@ cc.Node.RenderCmd.prototype = {
 
         if (locFlag & dirtyFlags.orderDirty)
             this._dirtyFlag &= ~dirtyFlags.orderDirty;
-    },
-
-    visitChildren: function () {
-        var renderer = cc.renderer;
-        var node = this._node;
-        var i, children = node._children, child;
-        var len = children.length;
-        if (len > 0) {
-            node.sortAllChildren();
-            // draw children zOrder < 0
-            for (i = 0; i < len; i++) {
-                child = children[i];
-                if (child._localZOrder < 0) {
-                    child._renderCmd.visit(this);
-                }
-                else {
-                    break;
-                }
-            }
-
-            renderer.pushRenderCommand(this);
-            for (; i < len; i++) {
-                children[i]._renderCmd.visit(this);
-            }
-        } else {
-            renderer.pushRenderCommand(this);
-        }
-        this._dirtyFlag = 0;
     }
 };
 
-cc.Node.RenderCmd.prototype.originVisit = cc.Node.RenderCmd.prototype.visit;
 cc.Node.RenderCmd.prototype.originTransform = cc.Node.RenderCmd.prototype.transform;
+cc.Node.RenderCmd.prototype.originUpdateStatus = cc.Node.RenderCmd.prototype.updateStatus;
 cc.Node.RenderCmd.prototype._originSyncStatus = cc.Node.RenderCmd.prototype._syncStatus;
 
 //-----------------------Canvas ---------------------------

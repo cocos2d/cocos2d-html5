@@ -46,6 +46,62 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
         this._protectedChildren = [];
     },
 
+    visit: function (parent) {
+        // quick return if not visible
+        if (!this._visible)
+            return;
+
+        var renderer = cc.renderer, cmd = this._renderCmd;
+        var i, children = this._children, len = children.length, child;
+        var j, pChildren = this._protectedChildren, pLen = pChildren.length, pChild;
+
+        cmd.visit(parent && parent._renderCmd);
+
+        var locGrid = this.grid;
+        if (locGrid && locGrid._active)
+            locGrid.beforeDraw();
+
+        if (this._reorderChildDirty) this.sortAllChildren();
+        if (this._reorderProtectedChildDirty) this.sortAllProtectedChildren();
+
+        // draw children zOrder < 0
+        for (i = 0; i < len; i++) {
+            child = children[i];
+            if (child._localZOrder < 0) {
+                child.visit(this);
+            }
+            else {
+                break;
+            }
+        }
+        for (j = 0; j < pLen; j++) {
+            pChild = pChildren[j];
+            if (pChild && pChild._localZOrder < 0) {
+                cmd._changeProtectedChild(pChild);
+                pChild.visit(this);
+            }
+            else
+                break;
+        }
+
+        renderer.pushRenderCommand(cmd);
+
+        for (; i < len; i++) {
+            children[i].visit(this);
+        }
+        for (; j < pLen; j++) {
+            pChild = pChildren[j];
+            if (!pChild) continue;
+            cmd._changeProtectedChild(pChild);
+            pChild.visit(this);
+        }
+
+        if (locGrid && locGrid._active)
+            locGrid.afterDraw(this);
+
+        cmd._dirtyFlag = 0;
+    },
+
     /**
      * <p>
      *  Adds a child to the container with z order and tag                                                                         <br/>

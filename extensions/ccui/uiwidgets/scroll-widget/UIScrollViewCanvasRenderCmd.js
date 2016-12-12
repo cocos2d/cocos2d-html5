@@ -10,21 +10,6 @@
     var proto = ccui.ScrollView.CanvasRenderCmd.prototype = Object.create(ccui.Layout.CanvasRenderCmd.prototype);
     proto.constructor = ccui.ScrollView.CanvasRenderCmd;
 
-    proto.visit = function(parentCmd) {
-        var node = this._node;
-        if (!node._visible)
-            return;
-        var currentID = node.__instanceId;
-        
-        cc.renderer.pushRenderCommand(this);
-        //cc.renderer._turnToCacheMode(currentID);
-
-        this.layoutVisit(parentCmd);
-
-        this._dirtyFlag = 0;
-        //cc.renderer._turnToNormalMode();
-    };
-
     proto.rendering = function (ctx) {
         var currentID = this._node.__instanceId;
         var i, locCmds = cc.renderer._cacheToCanvasCmds[currentID], len,

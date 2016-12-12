@@ -41,6 +41,34 @@ ccui.WebView = ccui.Widget.extend(/** @lends ccui.WebView# */{
             this.loadURL(path);
     },
 
+    visit: function () {
+        var cmd = this._renderCmd,
+            div = cmd._div,
+            container = cc.container,
+            eventManager = cc.eventManager;
+        if (this._visible) {
+            container.appendChild(div);
+            if (this._listener === null)
+                this._listener = eventManager.addCustomListener(cc.game.EVENT_RESIZE, function () {
+                    cmd.resize();
+                });
+        } else {
+            var hasChild = false;
+            if ('contains' in container) {
+                hasChild = container.contains(div);
+            } else {
+                hasChild = container.compareDocumentPosition(div) % 16;
+            }
+            if (hasChild)
+                container.removeChild(div);
+            var list = eventManager._listenersMap[cc.game.EVENT_RESIZE].getFixedPriorityListeners();
+            eventManager._removeListenerInVector(list, cmd._listener);
+            cmd._listener = null;
+        }
+        cmd.updateStatus();
+        cmd.resize(cc.view);
+    },
+
     setJavascriptInterfaceScheme: function (scheme) {
     },
     loadData: function (data, MIMEType, encoding, baseURL) {
@@ -312,33 +340,6 @@ ccui.WebView.EventType = {
         if (locFlag & flags.orderDirty) {
             this._dirtyFlag = this._dirtyFlag & flags.orderDirty ^ this._dirtyFlag;
         }
-    };
-
-    proto.visit = function(){
-        var self = this,
-            container = cc.container,
-            eventManager = cc.eventManager;
-        if(this._node._visible){
-            container.appendChild(this._div);
-            if(this._listener === null)
-                this._listener = eventManager.addCustomListener(cc.game.EVENT_RESIZE, function () {
-                    self.resize();
-                });
-        }else{
-            var hasChild = false;
-            if('contains' in container) {
-                hasChild = container.contains(this._div);
-            }else {
-                hasChild = container.compareDocumentPosition(this._div) % 16;
-            }
-            if(hasChild)
-                container.removeChild(this._div);
-            var list = eventManager._listenersMap[cc.game.EVENT_RESIZE].getFixedPriorityListeners();
-            eventManager._removeListenerInVector(list, this._listener);
-            this._listener = null;
-        }
-        this.updateStatus();
-        this.resize(cc.view);
     };
 
     proto.resize = function (view) {

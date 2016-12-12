@@ -67,19 +67,6 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
     },
 
     /**
-     * Initialization of the node, please do not call this function by yourself, you should pass the parameters to constructor to initialize it .
-     * @function
-     * @param {cc.Node} [stencil=null]
-     */
-    init: function (stencil) {
-        this._stencil = stencil;
-        this.alphaThreshold = 1;
-        this.inverted = false;
-        this._renderCmd.initStencilBits();
-        return true;
-    },
-
-    /**
      * <p>
      *     Event callback that is invoked every time when node enters the 'stage'.                                   <br/>
      *     If the CCNode enters the 'stage' with a transition, this event is called when the transition starts.        <br/>
@@ -133,6 +120,28 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
     onExit: function () {
         this._stencil._performRecursive(cc.Node._stateCallbackType.onExit);
         cc.Node.prototype.onExit.call(this);
+    },
+
+    visit: function (parent) {
+        if (!this._visible)
+            return;
+
+        this._renderCmd.clippingVisit(parent && parent._renderCmd);
+    },
+
+    _visitChildren: function () {
+        var renderer = cc.renderer;
+        if (this._reorderChildDirty) {
+            this.sortAllChildren();
+        }
+        var children = this._children, child;
+        for (var i = 0, len = children.length; i < len; i++) {
+            child = children[i];
+            if (child && child._visible) {
+                child.visit(this);
+            }
+        }
+        this._renderCmd._dirtyFlag = 0;
     },
 
     /**

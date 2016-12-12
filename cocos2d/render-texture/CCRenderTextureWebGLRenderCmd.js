@@ -365,28 +365,7 @@
     };
 
     proto.visit = function (parentCmd) {
-        var node = this._node;
-        if (!node._visible)
-            return;
-        cc.kmGLPushMatrix();
-
-        //TODO using GridNode
-        /*        var locGrid = this.grid;
-         if (locGrid && locGrid.isActive()) {
-         locGrid.beforeDraw();
-         this.transformAncestors();
-         }*/
-
         this._syncStatus(parentCmd);
-        //this.toRenderer();
         cc.renderer.pushRenderCommand(this);
-        node.sprite.visit(this);
-
-        //TODO GridNode
-        /*        if (locGrid && locGrid.isActive())
-         locGrid.afterDraw(this);*/
-
-        this._dirtyFlag = 0;
-        cc.kmGLPopMatrix();
     };
 })();

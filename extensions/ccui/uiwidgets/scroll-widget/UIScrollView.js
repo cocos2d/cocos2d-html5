@@ -110,19 +110,6 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     },
 
     /**
-     * Initializes a ccui.ScrollView. Please do not call this function by yourself, you should pass the parameters to constructor to initialize it.
-     * @returns {boolean}
-     */
-    init: function () {
-        if (ccui.Layout.prototype.init.call(this)) {
-            
-            
-            return true;
-        }
-        return false;
-    },
-
-    /**
      * Calls the parent class' onEnter and schedules update function.
      * @override
      */
@@ -134,6 +121,69 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     onExit: function () {
         cc.renderer._removeCache(this.__instanceId);
         ccui.Layout.prototype.onExit.call(this);
+    },
+
+    visit: function (parent) {
+        if (!this._visible)
+            return;
+
+        this._adaptRenderers();
+        this._doLayout();
+
+        var renderer = cc.renderer, cmd = this._renderCmd;
+        var parentCmd = parent && parent._renderCmd;
+        cmd.visit(parentCmd);
+        
+        renderer.pushRenderCommand(cmd);
+        if (cmd instanceof ccui.ScrollView.WebGLRenderCmd) {
+            var currentID = this.__instanceId;
+            renderer._turnToCacheMode(currentID);
+        }
+
+        var stencilClipping = this._clippingEnabled && this._clippingType === ccui.Layout.CLIPPING_STENCIL;
+        var scissorClipping = this._clippingEnabled && this._clippingType === ccui.Layout.CLIPPING_SCISSOR;
+        
+        if (stencilClipping) {
+            cmd.stencilClippingVisit(parentCmd);
+        }
+        else if (scissorClipping) {
+            cmd.scissorClippingVisit(parentCmd);
+        }
+
+        var i, children = this._children, len = children.length, child;
+        var j, pChildren = this._protectedChildren, pLen = pChildren.length, pChild;
+
+        if (this._reorderChildDirty) this.sortAllChildren();
+        if (this._reorderProtectedChildDirty) this.sortAllProtectedChildren();
+        for (i = 0; i < len; i++) {
+            child = children[i];
+            if (child && child._visible) {
+                child.visit(this);
+            }
+        }
+        for (j = 0; j < pLen; j++) {
+            pChild = pChildren[j];
+            if (pChild && pChild._visible) {
+                cmd._changeProtectedChild(pChild);
+                pChild.visit(this);
+            }
+        }
+
+        if (stencilClipping) {
+            cmd.postStencilVisit();
+        }
+        else if (scissorClipping) {
+            cmd.postScissorVisit();
+        }
+
+        if (cmd instanceof ccui.ScrollView.WebGLRenderCmd) {
+            renderer._turnToNormalMode();
+        }
+
+        // Need to update children after do layout
+        this.updateChildren();
+
+        cmd._dirtyFlag = 0;
     },
 
     /**

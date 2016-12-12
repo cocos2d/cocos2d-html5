@@ -165,6 +165,34 @@ cc.ScrollView = cc.Layer.extend(/** @lends cc.ScrollView# */{
         return false;
     },
 
+    visit: function (parent) {
+        if (!this._visible) {
+            return;
+        }
+
+        var renderer = cc.renderer, cmd = this._renderCmd;
+        cmd.visit(parent && parent._renderCmd);
+
+        if (this._clippingToBounds) {
+            renderer.pushRenderCommand(cmd.startCmd);
+        }
+
+        var i, children = this._children, len = children.length;
+        if (len > 0) {
+            if (this._reorderChildDirty) {
+                this.sortAllChildren();
+            }
+            for (i = 0; i < len; i++) {
+                children[i].visit(this);
+            }
+        }
+
+        if (this._clippingToBounds) {
+            renderer.pushRenderCommand(cmd.endCmd);
+        }
+        cmd._dirtyFlag = 0;
+    },
+
     /**
      * Sets a new content offset. It ignores max/min offset. It just sets what's given. (just like UIKit's UIScrollView)
      *

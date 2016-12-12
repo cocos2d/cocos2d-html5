@@ -132,6 +132,18 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
             return new cc.RenderTexture.WebGLRenderCmd(this);
     },
 
+    visit: function (parent) {
+        // quick return if not visible
+        if (!this._visible)
+            return;
+
+        var renderer = cc.renderer, cmd = this._renderCmd;
+
+        cmd.visit(parent && parent._renderCmd);
+        this.sprite.visit(this);
+        cmd._dirtyFlag = 0;
+    },
+
     /**
      * Clear RenderTexture.
      * @function

@@ -184,7 +184,7 @@
             this._dirtyFlag = locFlag & flags.gradientDirty ^ locFlag;
         }
 
-        cc.Node.RenderCmd.prototype.updateStatus.call(this);
+        this.originUpdateStatus();
     };
 
     proto._syncStatus = function (parentCmd) {

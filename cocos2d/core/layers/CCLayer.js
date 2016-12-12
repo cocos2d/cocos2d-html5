@@ -85,6 +85,46 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
         return this._renderCmd._isBaked;
     },
 
+    visit: function () {
+        // quick return if not visible
+        if (!this._visible)
+            return;
+
+        var renderer = cc.renderer, cmd = this._renderCmd;
+        cmd.visit(parent && parent._renderCmd);
+
+        if (cmd._isBaked) {
+            renderer.pushRenderCommand(cmd);
+            cmd._bakeSprite.visit(this);
+        }
+        else {
+            var i, children = this._children, len = children.length, child;
+            if (len > 0) {
+                if (this._reorderChildDirty) {
+                    this.sortAllChildren();
+                }
+                // draw children zOrder < 0
+                for (i = 0; i < len; i++) {
+                    child = children[i];
+                    if (child._localZOrder < 0) {
+                        child.visit(this);
+                    }
+                    else {
+                        break;
+                    }
+                }
+
+                renderer.pushRenderCommand(cmd);
+                for (; i < len; i++) {
+                    children[i].visit(this);
+                }
+            } else {
+                renderer.pushRenderCommand(cmd);
+            }
+        }
+        cmd._dirtyFlag = 0;
+    },
+
     addChild: function (child, localZOrder, tag) {
         cc.Node.prototype.addChild.call(this, child, localZOrder, tag);
         this._renderCmd._bakeForAddChild(child);
@@ -216,6 +256,49 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
 
         cc.LayerColor.prototype.setContentSize.call(this, width, height);
         return true;
+    },
+
+    visit: function () {
+        // quick return if not visible
+        if (!this._visible)
+            return;
+
+        var renderer = cc.renderer, cmd = this._renderCmd;
+        cmd.visit(parent && parent._renderCmd);
+
+        if (cmd._isBaked) {
+            renderer.pushRenderCommand(cmd._bakeRenderCmd);
+            //the bakeSprite is drawing
+            cmd._bakeSprite._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
+            cmd._bakeSprite.visit(this);
+        }
+        else {
+            var i, children = this._children, len = children.length;
+            if (len > 0) {
+                if (this._reorderChildDirty) {
+                    this.sortAllChildren();
+                }
+                // draw children zOrder < 0
+                for (i = 0; i < len; i++) {
+                    child = children[i];
+                    if (child._localZOrder < 0) {
+                        child.visit(this);
+                    }
+                    else {
+                        break;
+                    }
+                }
+
+                renderer.pushRenderCommand(cmd);
+                for (; i < len; i++) {
+                    children[i].visit(this);
+                }
+            } else {
+                renderer.pushRenderCommand(cmd);
+            }
+        }
+
+        cmd._dirtyFlag = 0;
     },
 
     /**

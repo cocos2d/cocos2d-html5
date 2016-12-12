@@ -64,7 +64,7 @@
             this._dirtyFlag = locFlag & flags.orderDirty ^ locFlag;
         }
 
-        cc.Node.RenderCmd.prototype.updateStatus.call(this);
+        this.originUpdateStatus();
     };
 
     proto._syncStatus = function (parentCmd) {
@@ -162,26 +162,6 @@
 
             this._cacheDirty = false;
         }
-    };
-
-    proto.visit = function(parentCmd){
-        if(!this._isBaked){
-            this.originVisit(parentCmd);
-            return;
-        }
-
-        var node = this._node, children = node._children;
-        var len = children.length;
-        // quick return if not visible
-        if (!node._visible || len === 0)
-            return;
-
-        this._syncStatus(parentCmd);
-        cc.renderer.pushRenderCommand(this);
-
-        //the bakeSprite is drawing
-        this._bakeSprite.visit(this);
-        this._dirtyFlag = 0;
     };
 
     proto._bakeForAddChild = function (child) {
@@ -313,27 +293,6 @@
         }
     };
 
-    proto.visit = function(parentCmd){
-        if(!this._isBaked){
-            this.originVisit();
-            return;
-        }
-
-        var node = this._node;
-        // quick return if not visible
-        if (!node._visible)
-            return;
-
-        this._syncStatus(parentCmd);
-
-        cc.renderer.pushRenderCommand(this._bakeRenderCmd);
-
-        //the bakeSprite is drawing
-        this._bakeSprite._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
-        this._bakeSprite.visit(this);
-        this._dirtyFlag = 0;
-    };
-
     proto._getBoundingBoxForBake = function () {
         var node = this._node;
         //default size
@@ -409,7 +368,7 @@
             this._dirtyFlag = locFlag & flags.gradientDirty ^ locFlag;
         }
 
-        cc.Node.RenderCmd.prototype.updateStatus.call(this);
+        this.originUpdateStatus();
     };
 
     proto._syncStatus = function (parentCmd) {

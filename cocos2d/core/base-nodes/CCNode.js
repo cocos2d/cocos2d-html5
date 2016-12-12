@@ -2091,10 +2091,40 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     /**
      * Recursive method that visit its children and draw them
      * @function
-     * @param {cc.Node.RenderCmd} parentCmd
+     * @param {cc.Node} parent
      */
-    visit: function(parentCmd){
-        this._renderCmd.visit(parentCmd);
+    visit: function (parent) {
+        // quick return if not visible
+        if (!this._visible)
+            return;
+
+        var renderer = cc.renderer, cmd = this._renderCmd;
+        cmd.visit(parent && parent._renderCmd);
+
+        var i, children = this._children, len = children.length, child;
+        if (len > 0) {
+            if (this._reorderChildDirty) {
+                this.sortAllChildren();
+            }
+            // draw children zOrder < 0
+            for (i = 0; i < len; i++) {
+                child = children[i];
+                if (child._localZOrder < 0) {
+                    child.visit(this);
+                }
+                else {
+                    break;
+                }
+            }
+
+            renderer.pushRenderCommand(cmd);
+            for (; i < len; i++) {
+                children[i].visit(this);
+            }
+        } else {
+            renderer.pushRenderCommand(cmd);
+        }
+        cmd._dirtyFlag = 0;
     },
 
     /**

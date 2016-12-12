@@ -10,23 +10,6 @@
     var proto = ccui.ScrollView.WebGLRenderCmd.prototype = Object.create(ccui.Layout.WebGLRenderCmd.prototype);
     proto.constructor = ccui.ScrollView.WebGLRenderCmd;
 
-    proto.visit = function(parentCmd) {
-        var node = this._node;
-        if (!node._visible)
-            return;
-        var currentID = this._node.__instanceId;
-
-        cc.renderer.pushRenderCommand(this);
-        cc.renderer._turnToCacheMode(currentID);
-
-        this.layoutVisit(parentCmd);
-        // Need to update children after do layout
-        node.updateChildren();
-
-        this._dirtyFlag = 0;
-        cc.renderer._turnToNormalMode();
-    };
-
     proto.rendering = function (ctx) {
         var currentID = this._node.__instanceId,
             locCmds = cc.renderer._cacheToBufferCmds[currentID],

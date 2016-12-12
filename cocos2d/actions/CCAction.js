@@ -239,7 +239,7 @@ cc.Action.create = cc.action;
  */
 cc.FiniteTimeAction = cc.Action.extend(/** @lends cc.FiniteTimeAction# */{
     // duration in seconds
-    _duration:0,
+    _duration: 0,
 
     /**
      * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
