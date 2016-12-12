@@ -247,6 +247,9 @@
         "tilemap" : [
             "core", "compression",
 
+            "cocos2d/compression/gzip.js",
+            "cocos2d/compression/zlib.min.js",
+
             "cocos2d/tilemap/CCTGAlib.js",
             "cocos2d/tilemap/CCTMXTiledMap.js",
             "cocos2d/tilemap/CCTMXXMLParser.js",

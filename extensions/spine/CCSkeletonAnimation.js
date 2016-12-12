@@ -343,6 +343,6 @@ sp.SkeletonAnimation = sp.Skeleton.extend(/** @lends sp.SkeletonAnimation# */{
  * @param {Number} [scale] scale can be specified on the JSON or binary loader which will scale the bone positions, image sizes, and animation translations.
  * @returns {sp.Skeleton}
  */
-sp.SkeletonAnimation.create = function (skeletonDataFile, atlasFile/* or atlas*/, scale) {
+sp.SkeletonAnimation.createWithJsonFile = sp.SkeletonAnimation.create = function (skeletonDataFile, atlasFile/* or atlas*/, scale) {
     return new sp.SkeletonAnimation(skeletonDataFile, atlasFile, scale);
 };
