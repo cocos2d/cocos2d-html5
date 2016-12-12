@@ -30,6 +30,9 @@
 
         this._parentCmd = null;
         this._realAnchorPointInPoints = new cc.Point(0, 0);
+
+        this._transform = {a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0};
+        this._worldTransform = {a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0};
     };
 
     var proto = ccs.Armature.WebGLRenderCmd.prototype = Object.create(cc.Node.WebGLRenderCmd.prototype);

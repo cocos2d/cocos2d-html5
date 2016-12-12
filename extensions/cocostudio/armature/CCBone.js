@@ -688,6 +688,11 @@ ccs.Bone.RenderCmd = {
     },
 
     transform: function (parentCmd, recursive) {
+        if (!this._transform) {
+            this._transform = {a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0};
+            this._worldTransform = {a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0};
+        }
+
         var node = this._node,
             t = this._transform,
             wt = this._worldTransform,

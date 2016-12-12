@@ -378,6 +378,9 @@ cc.Audio.WebAudio.prototype = {
             request.onerror = function () {
                 cb('request error - ' + url);
             };
+            request.ontimeout = function () {
+                cb('request timeout - ' + url);
+            };
 
             request.send();
         },

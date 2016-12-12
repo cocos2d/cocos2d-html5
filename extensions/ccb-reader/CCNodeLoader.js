@@ -354,8 +354,8 @@ cc.NodeLoader = cc.Class.extend({
 
         // var containerSize = ccbReader._animationManager.getContainerSize(parent);
         var containerSize = parent ? parent._contentSize : ccbReader._animationManager._rootContainerSize;
-        cc._getAbsolutePosition(x, y, type, containerSize, propertyName, this._pt);
-        node.setPosition(cc.getAbsolutePosition(this._pt, type, containerSize, propertyName));   //different to -x    node.setPosition(pt);
+        cc.getAbsolutePosition(x, y, type, containerSize, propertyName, this._pt);
+        node.setPosition(this._pt);
 
         if (ccbReader._animatedProps.indexOf(propertyName) > -1) {
             var baseValue = [x, y, type];
@@ -800,8 +800,7 @@ cc.NodeLoader = cc.Class.extend({
 
     onHandlePropTypeScaleLock: function (node, parent, propertyName, scaleLock, ccbReader) {
         if (propertyName === PROPERTY_SCALE) {
-            node._scaleX = scaleLock.x;
-            node._scaleY = scaleLock.y;
+            node.setScale(scaleLock.x, scaleLock.y);
         } else {
             ASSERT_FAIL_UNEXPECTED_PROPERTY(propertyName);
         }

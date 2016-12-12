@@ -155,7 +155,7 @@ ccs.SkeletonNode = (function () {
             if (this._children.length !== 0) {
                 for (i = 0; i < this._children.length; i++) {
                     node = this._children[i];
-                    node._renderCmd.visit(cmd);
+                    node.visit(this);
                 }
             }
 

@@ -24,33 +24,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-cc.getAbsolutePosition = function (pt, type, containerSize, propName) {
-    if (type === CCB_POSITIONTYPE_RELATIVE_BOTTOM_LEFT) {
-        ;
-    }
-    else if (type === CCB_POSITIONTYPE_RELATIVE_TOP_LEFT) {
-        pt.y = containerSize.height - pt.y;
-    } 
-    else if (type === CCB_POSITIONTYPE_RELATIVE_TOP_RIGHT) {
-        pt.x = containerSize.width - pt.x;
-        pt.y = containerSize.height - pt.y;
-    } 
-    else if (type === CCB_POSITIONTYPE_RELATIVE_BOTTOM_RIGHT) {
-        pt.x = containerSize.width - pt.x;
-    } 
-    else if (type === CCB_POSITIONTYPE_PERCENT) {
-        pt.x = (containerSize.width * pt.x / 100.0);
-        pt.y = (containerSize.height * pt.y / 100.0);
-    } 
-    else if (type === CCB_POSITIONTYPE_MULTIPLY_RESOLUTION) {
-        var resolutionScale = cc.BuilderReader.getResolutionScale();
-        pt.x = pt.x * resolutionScale;
-        pt.y = pt.y * resolutionScale;
-    }
-    return pt;
-};
-
-cc._getAbsolutePosition = function (x, y, type, containerSize, propName, out) {
+cc.getAbsolutePosition = function (x, y, type, containerSize, propName, out) {
     var absPt = out || cc.p(0, 0);
     if (type === CCB_POSITIONTYPE_RELATIVE_BOTTOM_LEFT) {
         absPt.x = x;
@@ -86,6 +60,5 @@ cc.setRelativeScale = function (node, scaleX, scaleY, type, propName) {
         scaleY *= resolutionScale;
     }
 
-    node._scaleX = scaleX;
-    node._scaleY = scaleY;
+    node.setScale(scaleX, scaleY);
 };

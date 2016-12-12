@@ -27,6 +27,11 @@
     ccs.Skin.RenderCmd = {
         _realWorldTM: null,
         transform: function (parentCmd, recursive) {
+            if (!this._transform) {
+                this._transform = {a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0};
+                this._worldTransform = {a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0};
+            }
+
             var node = this._node,
                 pt = parentCmd ? parentCmd._worldTransform : null,
                 t = this._transform,
@@ -35,8 +40,8 @@
 
             if (dirty || pt) {
                 this.originTransform();
-                cc.affineTransformConcatIn(t, node.bone.getNodeToArmatureTransform());
-                this._dirtyFlag = this._dirtyFlag & cc.Node._dirtyFlags.transformDirty ^ this._dirtyFlag;
+                cc.affineTransformConcatIn(this._transform, node.bone.getNodeToArmatureTransform());
+                this._dirtyFlag &= ~cc.Node._dirtyFlags.transformDirty;
             }
 
             if (pt) {

@@ -285,7 +285,7 @@ cc.AsyncPool = function (srcObj, limit, iterator, onEnd, target) {
                 self._workingSize--;
                 if (self.finishedSize === self.size) {
                     var errors = self._errors.length === 0 ? null : self._errors;
-                    self.onEnd(self._onEndTarget, errors, self._results);
+                    self.onEnd(errors, self._results);
                     return;
                 }
                 self._handleItem();
@@ -773,7 +773,7 @@ cc.loader = (function () {
                         if (xhr.readyState === 4)
                             xhr.status === 200 ? cb(null, xhr.responseText) : cb({status:xhr.status, errorMessage:errInfo}, null);
                     };
-                    xhr.onerror = function () {
+                    xhr.onerror = xhr.ontimeout = function () {
                         cb({status: xhr.status, errorMessage: errInfo}, null);
                     };
                 }
@@ -800,7 +800,7 @@ cc.loader = (function () {
                 if(xhr.readyState === 4)
                     xhr.status === 200 ? cb(null, xhr.response) : cb({status:xhr.status, errorMessage:errInfo}, null);
             };
-            xhr.onerror = function(){
+            xhr.onerror = xhr.ontimeout = function(){
                 cb({status:xhr.status, errorMessage:errInfo}, null);
             };
             xhr.send(null);

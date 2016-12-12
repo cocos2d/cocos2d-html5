@@ -40,19 +40,8 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
         this._ignoreAnchorPointForPosition = true;
         this.setAnchorPoint(0.5, 0.5);
         this.setContentSize(cc.winSize);
-    },
-
-    /**
-     * Initialization of the layer, please do not call this function by yourself, you should pass the parameters to constructor to initialize a layer
-     */
-    init: function () {
-        var _t = this;
-        _t._ignoreAnchorPointForPosition = true;
-        _t.setAnchorPoint(0.5, 0.5);
-        _t.setContentSize(cc.winSize);
-        _t._cascadeColorEnabled = false;
-        _t._cascadeOpacityEnabled = false;
-        return true;
+        this._cascadeColorEnabled = false;
+        this._cascadeOpacityEnabled = false;
     },
 
     /**

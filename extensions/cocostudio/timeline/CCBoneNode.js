@@ -437,12 +437,12 @@ ccs.BoneNode = (function () {
                 for (i = 0; i < len; i++) {
                     child = children[i];
                     if (child._localZOrder < 0)
-                        child._renderCmd.visit(cmd);
+                        child.visit(this);
                     else
                         break;
                 }
                 for (; i < len; i++)
-                    children[i]._renderCmd.visit(cmd);
+                    children[i].visit(this);
             }
             cmd._dirtyFlag = 0;
         },

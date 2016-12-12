@@ -471,7 +471,7 @@ cc.BuilderAnimationManager = cc.Class.extend({
 
             var containerSize = this.getContainerSize(node.getParent());
 
-            var absPos = cc._getAbsolutePosition(x, y, type, containerSize, propName);
+            var absPos = cc.getAbsolutePosition(x, y, type, containerSize, propName);
 
             return cc.moveTo(duration, absPos);
         } else if (propName === "scale") {
@@ -523,7 +523,7 @@ cc.BuilderAnimationManager = cc.Class.extend({
 
                 x = value[0];
                 y = value[1];
-                cc._getAbsolutePosition(x, y, nType, this.getContainerSize(node.getParent()), propName, _pos);
+                cc.getAbsolutePosition(x, y, nType, this.getContainerSize(node.getParent()), propName, _pos);
                 node._position.x = _pos.x;
                 node._position.y = _pos.y;
             } else if (propName === "scale") {

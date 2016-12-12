@@ -155,6 +155,7 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
             return;
 
         this._renderCmd.visit(parent && parent._renderCmd);
+        this._renderCmd._dirtyFlag = 0;
     },
 
     addChild: function (child, localZOrder, tag) {

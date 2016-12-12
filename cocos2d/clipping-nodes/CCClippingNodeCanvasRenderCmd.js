@@ -158,8 +158,10 @@
     proto.transform = function (parentCmd, recursive) {
         this.originTransform(parentCmd, recursive);
         var node = this._node;
-        if (node._stencil && node._stencil._renderCmd)
-            node._stencil._renderCmd.transform(this, recursive);
+        if (node._stencil && node._stencil._renderCmd) {
+            node._stencil._renderCmd.transform(this, true);
+            node._stencil._dirtyFlag &= ~cc.Node._dirtyFlags.transformDirty;
+        }
     };
 
     proto._cangodhelpme = function (godhelpme) {
