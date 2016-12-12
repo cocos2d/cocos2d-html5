@@ -648,7 +648,7 @@ cc.SHADER_POSITION_TEXTURE = "ShaderPositionTexture";
  * @constant
  * @type {String}
  */
-cc.SHADER_POSITION_TEXTURE_UCOLOR = "ShaderPositionTexture_uColor";
+cc.SHADER_POSITION_TEXTURE_UCOLOR = "ShaderPositionTextureUColor";
 /**
  * @constant
  * @type {String}
@@ -658,7 +658,7 @@ cc.SHADER_POSITION_TEXTUREA8COLOR = "ShaderPositionTextureA8Color";
  * @constant
  * @type {String}
  */
-cc.SHADER_POSITION_UCOLOR = "ShaderPosition_uColor";
+cc.SHADER_POSITION_UCOLOR = "ShaderPositionUColor";
 /**
  * @constant
  * @type {String}

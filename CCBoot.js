@@ -313,7 +313,7 @@ cc.AsyncPool = function (srcObj, limit, iterator, onEnd, target) {
             self._onEndTarget = null;
             selector.call(target, errors, results);
         }
-    }
+    };
 };
 
 /**
@@ -2659,7 +2659,6 @@ cc.game = /** @lends cc.game# */{
             cc.renderer = cc.rendererWebGL;
             win.gl = this._renderContext; // global variable declared in CCMacro.js
             cc.renderer.init();
-            cc.shaderCache._init();
             cc._drawingUtil = new cc.DrawingPrimitiveWebGL(this._renderContext);
             cc.textureCache._initializingRenderer();
             cc.glExt = {};
