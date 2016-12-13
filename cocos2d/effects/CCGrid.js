@@ -39,7 +39,7 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
     _step: null,
     _grabber: null,
     _isTextureFlipped: false,
-    _shaderProgram: null,
+    _glProgramState: null,
     _directorProjection: 0,
 
     _dirty: false,
@@ -62,7 +62,7 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
         this._step = cc.p(0, 0);
         this._grabber = null;
         this._isTextureFlipped = false;
-        this._shaderProgram = null;
+        this._glProgramState = null;
         this._directorProjection = 0;
         this._dirty = false;
 
@@ -227,7 +227,7 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
         if (!this._grabber)
             return false;
         this._grabber.grab(this._texture);
-        this._shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURE);
+        this._glProgramState = cc.GLProgramState.getOrCreateWithGLProgram(cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURE));
         this.calculateVertexPoints();
         return true;
     },

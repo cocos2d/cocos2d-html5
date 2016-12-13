@@ -24,9 +24,6 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-// @TODO add floatv and intv methods, that take arrays
-// and float1..4 methods, which take arguments. 
-
 var types = 
 	{
 		GL_FLOAT: 0,
@@ -122,8 +119,8 @@ cc.UniformValue = cc.Class.extend({
 					this._value[1], this._value[2]);
 				break;
 			case types.GL_FLOAT_VEC4:
-				this._glprogram.setUniformLocationWith3f(this._uniform.location, this._value[0], 
-					this._value[1], this._value[2]);
+				this._glprogram.setUniformLocationWith4f(this._uniform.location, this._value[0], 
+					this._value[1], this._value[2], this._value[3]);
 				break;
 			case types.GL_FLOAT_MAT4:
 				this._glprogram.setUniformLocationWithMatrix4fv(this._uniform.location, this._value);
@@ -136,7 +133,7 @@ cc.UniformValue = cc.Class.extend({
 				cc.glBindTexture2DN(this._value, this._textureId);
 				break;
 			default:
-				cc.Assert(false, "Unsupported type");
+				;
 		}
 	},
 });

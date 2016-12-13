@@ -32,14 +32,12 @@
         this._textureAtlas = null;
         this._colorUnmodified = cc.color.WHITE;
         this._colorF32Array = null;
-        this._uniformColor = null;
 
         this._matrix = new cc.math.Matrix4();
         this._matrix.identity();
 
         //shader stuff
         this._shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURE_UCOLOR);
-        this._uniformColor = cc._renderContext.getUniformLocation(this._shaderProgram.getProgram(), "u_color");
     };
 
     var proto = cc.AtlasNode.WebGLRenderCmd.prototype = Object.create(cc.Node.WebGLRenderCmd.prototype);
@@ -71,8 +69,8 @@
         this._glProgramState.apply(this._matrix);
 
         cc.glBlendFunc(node._blendFunc.src, node._blendFunc.dst);
-        if (this._uniformColor && this._colorF32Array) {
-            context.uniform4fv(this._uniformColor, this._colorF32Array);
+        if (this._colorF32Array) {
+            this._glProgramState.setUniformVec4v("u_color", this._colorF32Array);
             this._textureAtlas.drawNumberOfQuads(node.quadsToDraw, 0);
         }
     };
