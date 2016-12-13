@@ -64,7 +64,7 @@
         if (this._vertexDataCount === 0 || !node._sprite)
             return;
 
-        this._shaderProgram.use();
+        this._glProgramState.apply();
         this._shaderProgram._updateProjectionUniform();
 
         var blendFunc = node._sprite._blendFunc;

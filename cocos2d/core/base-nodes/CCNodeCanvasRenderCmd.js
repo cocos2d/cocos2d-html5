@@ -513,7 +513,23 @@ cc.Node.RenderCmd.prototype = {
 
         if (locFlag & dirtyFlags.orderDirty)
             this._dirtyFlag &= ~dirtyFlags.orderDirty;
-    }
+    },
+
+    setShaderProgram: function (shaderProgram) {
+        //do nothing.
+    },
+
+    getShaderProgram: function () {
+        return null;
+    },
+
+    getGLProgramState: function () {
+        return null;
+    },
+
+    setGLProgramState: function (glProgramState) {
+        // do nothing
+    },
 };
 
 cc.Node.RenderCmd.prototype.originTransform = cc.Node.RenderCmd.prototype.transform;
@@ -605,14 +621,6 @@ cc.Node.RenderCmd.prototype._originSyncStatus = cc.Node.RenderCmd.prototype._syn
             if (item && item._renderCmd)
                 item._renderCmd.detachFromParent();
         }
-    };
-
-    proto.setShaderProgram = function (shaderProgram) {
-        //do nothing.
-    };
-
-    proto.getShaderProgram = function () {
-        return null;
     };
 
     //util functions

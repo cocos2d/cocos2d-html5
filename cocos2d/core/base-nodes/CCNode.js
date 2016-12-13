@@ -2228,6 +2228,14 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         this._renderCmd.setShaderProgram(newShaderProgram);
     },
 
+    setGLProgramState: function (glProgramState) {
+        this._renderCmd.setGLProgramState(glProgramState);
+    },
+
+    getGLProgramState: function () {
+        return this._renderCmd.getGLProgramState();
+    },
+
     /**
      * Returns the state of OpenGL server side.
      * @function

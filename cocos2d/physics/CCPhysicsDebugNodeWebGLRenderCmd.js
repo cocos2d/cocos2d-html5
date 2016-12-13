@@ -54,8 +54,7 @@
 
         //cc.DrawNode.prototype.draw.call(node);
         cc.glBlendFunc(node._blendFunc.src, node._blendFunc.dst);
-        this._shaderProgram.use();
-        this._shaderProgram._setUniformForMVPMatrixWithMat4(this._matrix);
+        this._glProgramState.apply(this._matrix);
         node._render();
 
         node.clear();
