@@ -22,9 +22,9 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-(function(){
+(function () {
     cc.DrawNode.WebGLRenderCmd = function (renderableObject) {
-        cc.Node.WebGLRenderCmd.call(this, renderableObject);
+        this._rootCtor(renderableObject);
         this._needDraw = true;
         this._matrix = new cc.math.Matrix4();
         this._matrix.identity();
@@ -35,7 +35,7 @@
 
     cc.DrawNode.WebGLRenderCmd.prototype.rendering = function (ctx) {
         var node = this._node;
-        if (node._buffer.length > 0) {
+        if (node._vertexCount > 0) {
             var wt = this._worldTransform;
             this._matrix.mat[0] = wt.a;
             this._matrix.mat[4] = wt.c;

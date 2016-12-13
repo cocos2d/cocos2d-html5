@@ -63,6 +63,11 @@ ccui.TextAtlas = ccui.Widget.extend(/** @lends ccui.TextAtlas# */{
         this._labelAtlasRenderer = new cc.LabelAtlas();
         this._labelAtlasRenderer.setAnchorPoint(cc.p(0.5, 0.5));
         this.addProtectedChild(this._labelAtlasRenderer, ccui.TextAtlas.RENDERER_ZORDER, -1);
+
+        this._labelAtlasRenderer.addEventListener('load', function () {
+            this._updateContentSizeWithTextureSize(this._labelAtlasRenderer.getContentSize());
+            this._findLayout();
+        }, this);
     },
 
     /**
@@ -97,7 +102,7 @@ ccui.TextAtlas = ccui.Widget.extend(/** @lends ccui.TextAtlas# */{
      * @param {String} value
      */
     setString: function (value) {
-        if(value === this._labelAtlasRenderer.getString())
+        if (value === this._labelAtlasRenderer.getString())
             return;
         this._stringValue = value;
         this._labelAtlasRenderer.setString(value);
@@ -137,7 +142,7 @@ ccui.TextAtlas = ccui.Widget.extend(/** @lends ccui.TextAtlas# */{
      * Returns the length of string.
      * @returns {*|Number|long|int}
      */
-    getStringLength: function(){
+    getStringLength: function () {
         return this._labelAtlasRenderer.getStringLength();
     },
 
@@ -146,8 +151,8 @@ ccui.TextAtlas = ccui.Widget.extend(/** @lends ccui.TextAtlas# */{
         this._labelAtlasRendererAdaptDirty = true;
     },
 
-    _adaptRenderers: function(){
-        if (this._labelAtlasRendererAdaptDirty){
+    _adaptRenderers: function () {
+        if (this._labelAtlasRendererAdaptDirty) {
             this._labelAtlasScaleChangedWithSize();
             this._labelAtlasRendererAdaptDirty = false;
         }
@@ -158,7 +163,7 @@ ccui.TextAtlas = ccui.Widget.extend(/** @lends ccui.TextAtlas# */{
      * @overrider
      * @returns {cc.Size}
      */
-    getVirtualRendererSize: function(){
+    getVirtualRendererSize: function () {
         return this._labelAtlasRenderer.getContentSize();
     },
 
@@ -195,7 +200,7 @@ ccui.TextAtlas = ccui.Widget.extend(/** @lends ccui.TextAtlas# */{
     },
 
     _copySpecialProperties: function (labelAtlas) {
-        if (labelAtlas){
+        if (labelAtlas) {
             this.setProperty(labelAtlas._stringValue, labelAtlas._charMapFileName, labelAtlas._itemWidth, labelAtlas._itemHeight, labelAtlas._startCharMap);
         }
     },

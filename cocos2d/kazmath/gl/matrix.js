@@ -26,7 +26,7 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-(function(cc) {
+(function (cc) {
     cc.KM_GL_MODELVIEW = 0x1700;
     cc.KM_GL_PROJECTION = 0x1701;
     cc.KM_GL_TEXTURE = 0x1702;
@@ -106,6 +106,7 @@
                 throw new Error("Invalid matrix mode specified");   //TODO: Proper error handling
                 break;
         }
+        cc.current_stack.lastUpdated = cc.director.getTotalFrames();
     };
 
     cc.kmGLLoadIdentity = function () {

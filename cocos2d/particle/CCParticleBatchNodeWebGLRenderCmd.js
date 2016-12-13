@@ -22,12 +22,12 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-(function(){
+(function () {
     /**
      * cc.ParticleBatchNode's rendering objects of WebGL
      */
-    cc.ParticleBatchNode.WebGLRenderCmd = function(renderable){
-        cc.Node.WebGLRenderCmd.call(this, renderable);
+    cc.ParticleBatchNode.WebGLRenderCmd = function (renderable) {
+        this._rootCtor(renderable);
         this._needDraw = true;
         this._matrix = new cc.math.Matrix4();
         this._matrix.identity();
@@ -55,29 +55,7 @@
         _t.textureAtlas.drawQuads();
     };
 
-    proto._initWithTexture = function(){
+    proto._initWithTexture = function () {
         this._shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
-    };
-
-    proto.visit = function(parentCmd){
-        var node = this._node;
-        // CAREFUL:
-        // This visit is almost identical to cc.Node#visit
-        // with the exception that it doesn't call visit on it's children
-        //
-        // The alternative is to have a void cc.Sprite#visit, but
-        // although this is less mantainable, is faster
-        //
-        if (!node._visible)
-            return;
-
-        parentCmd = parentCmd || this.getParentRenderCmd();
-        if (parentCmd)
-            this._curLevel = parentCmd._curLevel + 1;
-        this._syncStatus(parentCmd);
-
-        cc.renderer.pushRenderCommand(this);
-
-        this._dirtyFlag = 0;
     };
 })();

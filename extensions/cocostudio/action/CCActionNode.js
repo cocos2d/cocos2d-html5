@@ -72,12 +72,12 @@ ccs.ActionNode = ccs.Class.extend(/** @lends ccs.ActionNode# */{
             var actionFrameDic = actionFrameList[i];
             var frameIndex = actionFrameDic["frameid"];
             var frameTweenType = actionFrameDic["tweenType"];
-            if(frameTweenType == null)
+            if (frameTweenType == null)
                 frameTweenType = 0;
             var frameTweenParameterNum = actionFrameDic["tweenParameter"];
 
             var frameTweenParameter = [];
-            for (var j = 0; j < frameTweenParameterNum; j++){
+            for (var j = 0; j < frameTweenParameterNum; j++) {
                 var value = actionFrameDic["tweenParameter"][j];
                 frameTweenParameter.push(value);
             }
@@ -86,7 +86,7 @@ ccs.ActionNode = ccs.Class.extend(/** @lends ccs.ActionNode# */{
             if (actionFrameDic["positionx"] !== undefined) {
                 var positionX = actionFrameDic["positionx"];
                 var positionY = actionFrameDic["positiony"];
-                if(positionOffset && node.parent){
+                if (positionOffset && node.parent) {
                     var AnchorPointIn = node.parent.getAnchorPointInPoints();
                     positionX += AnchorPointIn.x;
                     positionY += AnchorPointIn.y;
@@ -249,7 +249,7 @@ ccs.ActionNode = ccs.Class.extend(/** @lends ccs.ActionNode# */{
      * @param {ccs.ActionFrame} frame
      */
     deleteFrame: function (frame) {
-        if (frame == null)
+        if (frame === undefined)
             return;
         var frameType = frame.frameType;
         var array = this._frameArray[frameType];
@@ -265,7 +265,7 @@ ccs.ActionNode = ccs.Class.extend(/** @lends ccs.ActionNode# */{
     },
 
     _refreshActionProperty: function () {
-        if (this._object === null)
+        if (!this._object)
             return null;
         var locSpawnArray = [];
         for (var i = 0; i < this._frameArrayNum; i++) {
@@ -284,10 +284,10 @@ ccs.ActionNode = ccs.Class.extend(/** @lends ccs.ActionNode# */{
                 else {
                     locAction = locFrame.getAction(0);
                 }
-                if(locAction)
+                if (locAction)
                     locSequenceArray.push(locAction);
             }
-            if(locSequenceArray){
+            if (locSequenceArray) {
                 var locSequence = cc.sequence(locSequenceArray);
                 if (locSequence !== null)
                     locSpawnArray.push(locSequence);
@@ -304,9 +304,9 @@ ccs.ActionNode = ccs.Class.extend(/** @lends ccs.ActionNode# */{
      * @param {cc.CallFunc} fun
      */
     playAction: function (fun) {
-        if (this._object === null || this._actionSpawn === null)
+        if (!this._object || !this._actionSpawn)
             return;
-        if(fun)
+        if (fun)
             this._action = cc.sequence(this._actionSpawn, fun);
         else
             this._action = cc.sequence(this._actionSpawn);
@@ -325,7 +325,7 @@ ccs.ActionNode = ccs.Class.extend(/** @lends ccs.ActionNode# */{
     stopAction: function () {
         var node = this.getActionNode();
         if (node !== null && this._action !== null) {
-            if(!this._action.isDone())
+            if (!this._action.isDone())
                 node.stopAction(this._action);
         }
     },
@@ -356,7 +356,7 @@ ccs.ActionNode = ccs.Class.extend(/** @lends ccs.ActionNode# */{
      */
     getLastFrameIndex: function () {
         var locFrameindex = -1;
-        var locIsFindFrame = false ,locFrameArray = this._frameArray;
+        var locIsFindFrame = false, locFrameArray = this._frameArray;
         for (var i = 0, len = this._frameArrayNum; i < len; i++) {
             var locArray = locFrameArray[i];
             if (locArray.length <= 0)
@@ -381,7 +381,7 @@ ccs.ActionNode = ccs.Class.extend(/** @lends ccs.ActionNode# */{
         var locUnitTime = this.getUnitTime();
         for (var i = 0; i < this._frameArrayNum; i++) {
             var locArray = this._frameArray[i];
-            if (locArray === null)
+            if (!locArray)
                 continue;
 
             for (var j = 0; j < locArray.length; j++) {
@@ -423,7 +423,7 @@ ccs.ActionNode = ccs.Class.extend(/** @lends ccs.ActionNode# */{
      * @returns {Boolean} that if the action is done once time
      */
     isActionDoneOnce: function () {
-        if (this._action === null)
+        if (!this._action)
             return true;
         return this._action.isDone();
     }

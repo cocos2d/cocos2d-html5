@@ -163,12 +163,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     //since 2.0 api
     _reorderChildDirty: false,
-    _shaderProgram: null,
     arrivalOrder: 0,
 
     _actionManager: null,
     _scheduler: null,
-    _eventDispatcher: null,
 
     _additionalTransformDirty: false,
     _additionalTransform: null,
@@ -190,32 +188,23 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
      * @function
      */
-    ctor: function(){
-        this._initNode();
-        this._initRendererCmd();
-    },
-
-    _initNode: function () {
+    ctor: function () {
         var _t = this;
         _t._anchorPoint = cc.p(0, 0);
         _t._contentSize = cc.size(0, 0);
         _t._position = cc.p(0, 0);
-        _t._normalizedPosition = cc.p(0,0);
+        _t._normalizedPosition = cc.p(0, 0);
         _t._children = [];
 
         var director = cc.director;
-        _t._actionManager = director.getActionManager();
-        _t._scheduler = director.getScheduler();
 
         _t._additionalTransform = cc.affineTransformMakeIdentity();
         if (cc.ComponentContainer) {
             _t._componentContainer = new cc.ComponentContainer(_t);
         }
-
-        this._realOpacity = 255;
         this._realColor = cc.color(255, 255, 255, 255);
-        this._cascadeColorEnabled = false;
-        this._cascadeOpacityEnabled = false;
+
+        this._renderCmd = this._createRenderCmd();
     },
 
     /**
@@ -224,70 +213,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @returns {boolean} Whether the initialization was successful.
      */
     init: function () {
-        //this._initNode();   //this has been called in ctor.
         return true;
-    },
-
-    _arrayMakeObjectsPerformSelector: function (array, callbackType) {
-        if (!array || array.length === 0)
-            return;
-
-        var i, len = array.length, node;
-        var nodeCallbackType = cc.Node._stateCallbackType;
-        switch (callbackType) {
-            case nodeCallbackType.onEnter:
-                for (i = 0; i < len; i++) {
-                    node = array[i];
-                    if (node)
-                        node.onEnter();
-                }
-                break;
-            case nodeCallbackType.onExit:
-                for (i = 0; i < len; i++) {
-                    node = array[i];
-                    if (node)
-                        node.onExit();
-                }
-                break;
-            case nodeCallbackType.onEnterTransitionDidFinish:
-                for (i = 0; i < len; i++) {
-                    node = array[i];
-                    if (node)
-                        node.onEnterTransitionDidFinish();
-                }
-                break;
-            case nodeCallbackType.cleanup:
-                for (i = 0; i < len; i++) {
-                    node = array[i];
-                    if (node)
-                        node.cleanup();
-                }
-                break;
-            case nodeCallbackType.updateTransform:
-                for (i = 0; i < len; i++) {
-                    node = array[i];
-                    if (node)
-                        node.updateTransform();
-                }
-                break;
-            case nodeCallbackType.onExitTransitionDidStart:
-                for (i = 0; i < len; i++) {
-                    node = array[i];
-                    if (node)
-                        node.onExitTransitionDidStart();
-                }
-                break;
-            case nodeCallbackType.sortAllChildren:
-                for (i = 0; i < len; i++) {
-                    node = array[i];
-                    if (node)
-                        node.sortAllChildren();
-                }
-                break;
-            default :
-                cc.assert(0, cc._LogInfos.Node__arrayMakeObjectsPerformSelector);
-                break;
-        }
     },
 
     /**
@@ -649,12 +575,12 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     setPosition: function (newPosOrxValue, yValue) {
         var locPosition = this._position;
         if (yValue === undefined) {
-            if(locPosition.x === newPosOrxValue.x && locPosition.y === newPosOrxValue.y)
+            if (locPosition.x === newPosOrxValue.x && locPosition.y === newPosOrxValue.y)
                 return;
             locPosition.x = newPosOrxValue.x;
             locPosition.y = newPosOrxValue.y;
         } else {
-            if(locPosition.x === newPosOrxValue && locPosition.y === yValue)
+            if (locPosition.x === newPosOrxValue && locPosition.y === yValue)
                 return;
             locPosition.x = newPosOrxValue;
             locPosition.y = yValue;
@@ -727,7 +653,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {Number}
      */
     getPositionY: function () {
-        return  this._position.y;
+        return this._position.y;
     },
 
     /**
@@ -782,7 +708,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {Boolean} visible Pass true to make the node visible, false to hide the node.
      */
     setVisible: function (visible) {
-        if(this._visible !== visible){
+        if (this._visible !== visible) {
             this._visible = visible;
             //if(visible)
             this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
@@ -1019,8 +945,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @function
      * @param {String} name
      */
-    setName: function(name){
-         this._name = name;
+    setName: function (name) {
+        this._name = name;
     },
 
     /**
@@ -1028,7 +954,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @function
      * @returns {string} A string that identifies the node.
      */
-    getName: function(){
+    getName: function () {
         return this._name;
     },
 
@@ -1114,9 +1040,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.ActionManager} A CCActionManager object.
      */
     getActionManager: function () {
-        if (!this._actionManager)
-            this._actionManager = cc.director.getActionManager();
-        return this._actionManager;
+        return this._actionManager || cc.director.getActionManager();
     },
 
     /**
@@ -1140,9 +1064,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Scheduler} A CCScheduler object.
      */
     getScheduler: function () {
-        if (!this._scheduler)
-            this._scheduler = cc.director.getScheduler();
-        return this._scheduler;
+        return this._scheduler || cc.director.getScheduler();
     },
 
     /**
@@ -1166,7 +1088,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @deprecated since v3.0, please use getBoundingBox instead
      * @return {cc.Rect}
      */
-    boundingBox: function(){
+    boundingBox: function () {
         cc.log(cc._LogInfos.Node_boundingBox);
         return this.getBoundingBox();
     },
@@ -1193,9 +1115,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
         // event
         cc.eventManager.removeListeners(this);
-
-        // timers
-        this._arrayMakeObjectsPerformSelector(this._children, cc.Node._stateCallbackType.cleanup);
     },
 
     // composition: GET
@@ -1223,16 +1142,16 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {String} name A name to find the child node.
      * @return {cc.Node} a CCNode object whose name equals to the input parameter
      */
-    getChildByName: function(name){
-        if(!name){
+    getChildByName: function (name) {
+        if (!name) {
             cc.log("Invalid name");
             return null;
         }
 
         var locChildren = this._children;
-        for(var i = 0, len = locChildren.length; i < len; i++){
-           if(locChildren[i]._name === name)
-            return locChildren[i];
+        for (var i = 0, len = locChildren.length; i < len; i++) {
+            if (locChildren[i]._name === name)
+                return locChildren[i];
         }
         return null;
     },
@@ -1250,13 +1169,12 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     addChild: function (child, localZOrder, tag) {
         localZOrder = localZOrder === undefined ? child._localZOrder : localZOrder;
         var name, setTag = false;
-        if(cc.isUndefined(tag)){
-            tag = undefined;
+        if (tag === undefined) {
             name = child._name;
-        } else if(cc.isString(tag)){
+        } else if (typeof tag === 'string') {
             name = tag;
             tag = undefined;
-        } else if(cc.isNumber(tag)){
+        } else if (typeof tag === 'number') {
             setTag = true;
             name = "";
         }
@@ -1267,12 +1185,12 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         this._addChildHelper(child, localZOrder, tag, name, setTag);
     },
 
-    _addChildHelper: function(child, localZOrder, tag, name, setTag){
-        if(!this._children)
+    _addChildHelper: function (child, localZOrder, tag, name, setTag) {
+        if (!this._children)
             this._children = [];
 
         this._insertChild(child, localZOrder);
-        if(setTag)
+        if (setTag)
             child.setTag(tag);
         else
             child.setName(name);
@@ -1280,11 +1198,11 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         child.setParent(this);
         child.setOrderOfArrival(cc.s_globalOrderOfArrival++);
 
-        if( this._running ){
-            child.onEnter();
+        if (this._running) {
+            child._performRecursive(cc.Node._stateCallbackType.onEnter);
             // prevent onEnterTransitionDidFinish to be called twice when a node is added in onEnter
             if (this._isTransitionFinished)
-                child.onEnterTransitionDidFinish();
+                child._performRecursive(cc.Node._stateCallbackType.onEnterTransitionDidFinish);
         }
         child._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
         if (this._cascadeColorEnabled)
@@ -1387,13 +1305,13 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
                 var node = __children[i];
                 if (node) {
                     if (this._running) {
-                        node.onExitTransitionDidStart();
-                        node.onExit();
+                        node._performRecursive(cc.Node._stateCallbackType.onExitTransitionDidStart);
+                        node._performRecursive(cc.Node._stateCallbackType.onExit);
                     }
 
                     // If you don't do cleanup, the node's actions will not get removed and the
                     if (cleanup)
-                        node.cleanup();
+                        node._performRecursive(cc.Node._stateCallbackType.cleanup);
 
                     // set parent nil at the end
                     node.parent = null;
@@ -1410,13 +1328,13 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         //  -1st do onExit
         //  -2nd cleanup
         if (this._running) {
-            child.onExitTransitionDidStart();
-            child.onExit();
+            child._performRecursive(cc.Node._stateCallbackType.onExitTransitionDidStart);
+            child._performRecursive(cc.Node._stateCallbackType.onExit);
         }
 
         // If you don't do cleanup, the child's actions will not get removed and the
         if (doCleanup)
-            child.cleanup();
+            child._performRecursive(cc.Node._stateCallbackType.cleanup);
 
         // set parent nil at the end
         child.parent = null;
@@ -1430,7 +1348,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         child._setLocalZOrder(z);
     },
 
-    setNodeDirty: function(){
+    setNodeDirty: function () {
         this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
     },
 
@@ -1463,22 +1381,22 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
             // insertion sort
             var len = _children.length, i, j, tmp;
-            for(i=1; i<len; i++){
+            for (i = 1; i < len; i++) {
                 tmp = _children[i];
                 j = i - 1;
 
                 //continue moving element downwards while zOrder is smaller or when zOrder is the same but mutatedIndex is smaller
-                while(j >= 0){
-                    if(tmp._localZOrder < _children[j]._localZOrder){
-                        _children[j+1] = _children[j];
-                    }else if(tmp._localZOrder === _children[j]._localZOrder && tmp.arrivalOrder < _children[j].arrivalOrder){
-                        _children[j+1] = _children[j];
-                    }else{
+                while (j >= 0) {
+                    if (tmp._localZOrder < _children[j]._localZOrder) {
+                        _children[j + 1] = _children[j];
+                    } else if (tmp._localZOrder === _children[j]._localZOrder && tmp.arrivalOrder < _children[j].arrivalOrder) {
+                        _children[j + 1] = _children[j];
+                    } else {
                         break;
                     }
                     j--;
                 }
-                _children[j+1] = tmp;
+                _children[j + 1] = tmp;
             }
 
             //don't need to check children recursively, that's done in visit of each child
@@ -1518,8 +1436,70 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     onEnter: function () {
         this._isTransitionFinished = false;
         this._running = true;//should be running before resumeSchedule
-        this._arrayMakeObjectsPerformSelector(this._children, cc.Node._stateCallbackType.onEnter);
         this.resume();
+    },
+
+    _performRecursive: function (callbackType) {
+        var nodeCallbackType = cc.Node._stateCallbackType;
+        if (callbackType >= nodeCallbackType.max) {
+            return;
+        }
+
+        var index = 0;
+        var children, child, curr, i, len;
+        var stack = cc.Node._performStacks[cc.Node._performing];
+        if (!stack) {
+            stack = [];
+            cc.Node._performStacks.push(stack);
+        }
+        stack.length = 0;
+        cc.Node._performing++;
+        curr = stack[0] = this;
+        while (curr) {
+            // Walk through children
+            children = curr._children;
+            if (children && children.length > 0) {
+                for (i = 0, len = children.length; i < len; ++i) {
+                    child = children[i];
+                    stack.push(child);
+                }
+            }
+            children = curr._protectedChildren;
+            if (children && children.length > 0) {
+                for (i = 0, len = children.length; i < len; ++i) {
+                    child = children[i];
+                    stack.push(child);
+                }
+            }
+
+            index++;
+            curr = stack[index];
+        }
+        for (i = stack.length - 1; i >= 0; --i) {
+            curr = stack[i];
+            stack[i] = null;
+            if (!curr) continue;
+
+            // Perform actual action
+            switch (callbackType) {
+            case nodeCallbackType.onEnter:
+                curr.onEnter();
+                break;
+            case nodeCallbackType.onExit:
+                curr.onExit();
+                break;
+            case nodeCallbackType.onEnterTransitionDidFinish:
+                curr.onEnterTransitionDidFinish();
+                break;
+            case nodeCallbackType.cleanup:
+                curr.cleanup();
+                break;
+            case nodeCallbackType.onExitTransitionDidStart:
+                curr.onExitTransitionDidStart();
+                break;
+            }
+        }
+        cc.Node._performing--;
     },
 
     /**
@@ -1532,7 +1512,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     onEnterTransitionDidFinish: function () {
         this._isTransitionFinished = true;
-        this._arrayMakeObjectsPerformSelector(this._children, cc.Node._stateCallbackType.onEnterTransitionDidFinish);
     },
 
     /**
@@ -1542,7 +1521,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @function
      */
     onExitTransitionDidStart: function () {
-        this._arrayMakeObjectsPerformSelector(this._children, cc.Node._stateCallbackType.onExitTransitionDidStart);
     },
 
     /**
@@ -1557,7 +1535,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     onExit: function () {
         this._running = false;
         this.pause();
-        this._arrayMakeObjectsPerformSelector(this._children, cc.Node._stateCallbackType.onExit);
         this.removeAllComponents();
     },
 
@@ -1681,49 +1658,49 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     schedule: function (callback, interval, repeat, delay, key) {
         var len = arguments.length;
-        if(typeof callback === "function"){
+        if (typeof callback === "function") {
             //callback, interval, repeat, delay, key
-            if(len === 1){
+            if (len === 1) {
                 //callback
                 interval = 0;
                 repeat = cc.REPEAT_FOREVER;
                 delay = 0;
                 key = this.__instanceId;
-            }else if(len === 2){
-                if(typeof interval === "number"){
+            } else if (len === 2) {
+                if (typeof interval === "number") {
                     //callback, interval
                     repeat = cc.REPEAT_FOREVER;
                     delay = 0;
                     key = this.__instanceId;
-                }else{
+                } else {
                     //callback, key
                     key = interval;
                     interval = 0;
                     repeat = cc.REPEAT_FOREVER;
                     delay = 0;
                 }
-            }else if(len === 3){
-                if(typeof repeat === "string"){
+            } else if (len === 3) {
+                if (typeof repeat === "string") {
                     //callback, interval, key
                     key = repeat;
                     repeat = cc.REPEAT_FOREVER;
-                }else{
+                } else {
                     //callback, interval, repeat
                     key = this.__instanceId;
                 }
                 delay = 0;
-            }else if(len === 4){
+            } else if (len === 4) {
                 key = this.__instanceId;
             }
-        }else{
+        } else {
             //selector
             //selector, interval
             //selector, interval, repeat, delay
-            if(len === 1){
+            if (len === 1) {
                 interval = 0;
                 repeat = cc.REPEAT_FOREVER;
                 delay = 0;
-            }else if(len === 2){
+            } else if (len === 2) {
                 repeat = cc.REPEAT_FOREVER;
                 delay = 0;
             }
@@ -1750,7 +1727,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     scheduleOnce: function (callback, delay, key) {
         //selector, delay
         //callback, delay, key
-        if(key === undefined)
+        if (key === undefined)
             key = this.__instanceId;
         this.schedule(callback, 0, 0, delay, key);
     },
@@ -1886,7 +1863,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.AffineTransform}
      */
     getParentToNodeTransform: function () {
-       return this._renderCmd.getParentToNodeTransform();
+        return this._renderCmd.getParentToNodeTransform();
     },
 
     /**
@@ -1913,7 +1890,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @function
      * @deprecated since v3.0, please use getNodeToWorldTransform instead
      */
-    nodeToWorldTransform: function(){
+    nodeToWorldTransform: function () {
         return this.getNodeToWorldTransform();
     },
 
@@ -1951,7 +1928,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Point}
      */
     convertToWorldSpace: function (nodePoint) {
-        nodePoint = nodePoint || cc.p(0,0);
+        nodePoint = nodePoint || cc.p(0, 0);
         return cc.pointApplyAffineTransform(nodePoint, this.getNodeToWorldTransform());
     },
 
@@ -1974,7 +1951,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Point}
      */
     convertToWorldSpaceAR: function (nodePoint) {
-        nodePoint = nodePoint || cc.p(0,0);
+        nodePoint = nodePoint || cc.p(0, 0);
         var pt = cc.pAdd(nodePoint, this._renderCmd.getAnchorPointInPoints());
         return this.convertToWorldSpace(pt);
     },
@@ -2028,8 +2005,12 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @function
      */
     updateTransform: function () {
-        // Recursively iterate over children
-        this._arrayMakeObjectsPerformSelector(this._children, cc.Node._stateCallbackType.updateTransform);
+        var children = this._children, node;
+        for (var i = 0; i < children.length; i++) {
+            varnode = children[i];
+            if (node)
+                node.updateTransform();
+        }
     },
 
     /**
@@ -2110,10 +2091,40 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     /**
      * Recursive method that visit its children and draw them
      * @function
-     * @param {cc.Node.RenderCmd} parentCmd
+     * @param {cc.Node} parent
      */
-    visit: function(parentCmd){
-        this._renderCmd.visit(parentCmd);
+    visit: function (parent) {
+        // quick return if not visible
+        if (!this._visible)
+            return;
+
+        var renderer = cc.renderer, cmd = this._renderCmd;
+        cmd.visit(parent && parent._renderCmd);
+
+        var i, children = this._children, len = children.length, child;
+        if (len > 0) {
+            if (this._reorderChildDirty) {
+                this.sortAllChildren();
+            }
+            // draw children zOrder < 0
+            for (i = 0; i < len; i++) {
+                child = children[i];
+                if (child._localZOrder < 0) {
+                    child.visit(this);
+                }
+                else {
+                    break;
+                }
+            }
+
+            renderer.pushRenderCommand(cmd);
+            for (; i < len; i++) {
+                children[i].visit(this);
+            }
+        } else {
+            renderer.pushRenderCommand(cmd);
+        }
+        cmd._dirtyFlag = 0;
     },
 
     /**
@@ -2122,7 +2133,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {cc.Node.RenderCmd} parentCmd parent's render command
      * @param {boolean} recursive whether call its children's transform
      */
-    transform: function(parentCmd, recursive){
+    transform: function (parentCmd, recursive) {
         this._renderCmd.transform(parentCmd, recursive);
     },
 
@@ -2133,7 +2144,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.AffineTransform}
      * @deprecated since v3.0, please use getNodeToParentTransform instead
      */
-    nodeToParentTransform: function(){
+    nodeToParentTransform: function () {
         return this.getNodeToParentTransform();
     },
 
@@ -2143,20 +2154,20 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @function
      * @return {cc.AffineTransform} The affine transform object
      */
-    getNodeToParentTransform: function(ancestor){
+    getNodeToParentTransform: function (ancestor) {
         var t = this._renderCmd.getNodeToParentTransform();
-        if(ancestor){
+        if (ancestor) {
             var T = {a: t.a, b: t.b, c: t.c, d: t.d, tx: t.tx, ty: t.ty};
-            for(var p = this._parent;  p != null && p != ancestor ; p = p.getParent()){
+            for (var p = this._parent; p != null && p != ancestor; p = p.getParent()) {
                 cc.affineTransformConcatIn(T, p.getNodeToParentTransform());
             }
             return T;
-        }else{
+        } else {
             return t;
         }
     },
 
-    getNodeToParentAffineTransform: function(ancestor){
+    getNodeToParentAffineTransform: function (ancestor) {
         return this.getNodeToParentTransform(ancestor);
     },
 
@@ -2426,12 +2437,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         return false;
     },
 
-    _initRendererCmd: function(){
-        this._renderCmd = cc.renderer.getRenderCmd(this);
-    },
-
-    _createRenderCmd: function(){
-        if(cc._renderType === cc.game.RENDER_TYPE_CANVAS)
+    _createRenderCmd: function () {
+        if (cc._renderType === cc.game.RENDER_TYPE_CANVAS)
             return new cc.Node.CanvasRenderCmd(this);
         else
             return new cc.Node.WebGLRenderCmd(this);
@@ -2463,7 +2470,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      *  And returns a boolean result. Your callback can return `true` to terminate the enumeration.
      *
      */
-    enumerateChildren: function(name, callback){
+    enumerateChildren: function (name, callback) {
         cc.assert(name && name.length != 0, "Invalid name");
         cc.assert(callback != null, "Invalid callback function");
 
@@ -2473,39 +2480,39 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
         // Starts with '//'?
         var searchRecursively = false;
-        if(length > 2 && name[0] === "/" && name[1] === "/"){
+        if (length > 2 && name[0] === "/" && name[1] === "/") {
             searchRecursively = true;
             subStrStartPos = 2;
             subStrlength -= 2;
         }
 
         var searchFromParent = false;
-        if(length > 3 && name[length-3] === "/" && name[length-2] === "." && name[length-1] === "."){
+        if (length > 3 && name[length - 3] === "/" && name[length - 2] === "." && name[length - 1] === ".") {
             searchFromParent = true;
             subStrlength -= 3;
         }
 
         var newName = name.substr(subStrStartPos, subStrlength);
 
-        if(searchFromParent)
+        if (searchFromParent)
             newName = "[[:alnum:]]+/" + newName;
 
-        if(searchRecursively)
+        if (searchRecursively)
             this.doEnumerateRecursive(this, newName, callback);
         else
             this.doEnumerate(newName, callback);
     },
 
-    doEnumerateRecursive: function(node, name, callback){
+    doEnumerateRecursive: function (node, name, callback) {
         var ret = false;
-        if(node.doEnumerate(name,callback)){
+        if (node.doEnumerate(name, callback)) {
             ret = true;
-        }else{
+        } else {
             var child,
                 children = node.getChildren(),
                 length = children.length;
             // search its children
-            for (var i=0; i<length; i++) {
+            for (var i = 0; i < length; i++) {
                 child = children[i];
                 if (this.doEnumerateRecursive(child, name, callback)) {
                     ret = true;
@@ -2516,12 +2523,12 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         return ret;
     },
 
-    doEnumerate: function(name, callback){
+    doEnumerate: function (name, callback) {
         // name may be xxx/yyy, should find its parent
         var pos = name.indexOf('/');
         var searchName = name;
         var needRecursive = false;
-        if (pos !== -1){
+        if (pos !== -1) {
             searchName = name.substr(0, pos);
             //name.erase(0, pos+1);
             needRecursive = true;
@@ -2531,16 +2538,16 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         var child,
             children = this._children,
             length = children.length;
-        for (var i=0; i<length; i++){
+        for (var i = 0; i < length; i++) {
             child = children[i];
-            if (child._name.indexOf(searchName) !== -1){
-                if (!needRecursive){
+            if (child._name.indexOf(searchName) !== -1) {
+                if (!needRecursive) {
                     // terminate enumeration if callback return true
-                    if (callback(child)){
+                    if (callback(child)) {
                         ret = true;
                         break;
                     }
-                }else{
+                } else {
                     ret = child.doEnumerate(name, callback);
                     if (ret)
                         break;
@@ -2562,7 +2569,16 @@ cc.Node.create = function () {
     return new cc.Node();
 };
 
-cc.Node._stateCallbackType = {onEnter: 1, onExit: 2, cleanup: 3, onEnterTransitionDidFinish: 4, updateTransform: 5, onExitTransitionDidStart: 6, sortAllChildren: 7};
+cc.Node._stateCallbackType = {
+    onEnter: 1,
+    onExit: 2,
+    cleanup: 3,
+    onEnterTransitionDidFinish: 4,
+    onExitTransitionDidStart: 5,
+    max: 6
+};
+cc.Node._performStacks = [[]];
+cc.Node._performing = 0;
 
 cc.assert(cc.isFunction(cc._tmp.PrototypeCCNode), cc._LogInfos.MissingFile, "BaseNodesPropertyDefine.js");
 cc._tmp.PrototypeCCNode();

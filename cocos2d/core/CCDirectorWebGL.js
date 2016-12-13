@@ -98,13 +98,14 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
 
                 cc.kmGLMultMatrix(matrixPerspective);
 
-                cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
-                cc.kmGLLoadIdentity();
                 var eye = new cc.math.Vec3(-ox + size.width / 2, -oy + size.height / 2, zeye);
                 var center = new cc.math.Vec3( -ox + size.width / 2, -oy + size.height / 2, 0.0);
                 var up = new cc.math.Vec3( 0.0, 1.0, 0.0);
                 matrixLookup.lookAt(eye, center, up);
                 cc.kmGLMultMatrix(matrixLookup);
+                
+                cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
+                cc.kmGLLoadIdentity();
                 break;
             case cc.Director.PROJECTION_CUSTOM:
                 if (_t._projectionDelegate)

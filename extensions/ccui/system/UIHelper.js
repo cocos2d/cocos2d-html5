@@ -32,71 +32,71 @@
  * @name ccui.helper
  */
 ccui.helper = {
-	/**
-	 * Finds a widget whose tag equals to param tag from root widget.
-	 * @param {ccui.Widget} root
-	 * @param {number} tag
-	 * @returns {ccui.Widget}
-	 */
-	seekWidgetByTag: function (root, tag) {
-	    if (!root)
-	        return null;
-	    if (root.getTag() === tag)
-	        return root;
+    /**
+     * Finds a widget whose tag equals to param tag from root widget.
+     * @param {ccui.Widget} root
+     * @param {number} tag
+     * @returns {ccui.Widget}
+     */
+    seekWidgetByTag: function (root, tag) {
+        if (!root)
+            return null;
+        if (root.getTag() === tag)
+            return root;
 
-	    var arrayRootChildren = root.getChildren();
-	    var length = arrayRootChildren.length;
-	    for (var i = 0; i < length; i++) {
-	        var child = arrayRootChildren[i];
-	        var res = ccui.helper.seekWidgetByTag(child, tag);
-	        if (res !== null)
-	            return res;
-	    }
-	    return null;
-	},
+        var arrayRootChildren = root.getChildren();
+        var length = arrayRootChildren.length;
+        for (var i = 0; i < length; i++) {
+            var child = arrayRootChildren[i];
+            var res = ccui.helper.seekWidgetByTag(child, tag);
+            if (res !== null)
+                return res;
+        }
+        return null;
+    },
 
-	/**
-	 * Finds a widget whose name equals to param name from root widget.
-	 * @param {ccui.Widget} root
-	 * @param {String} name
-	 * @returns {ccui.Widget}
-	 */
-	seekWidgetByName: function (root, name) {
-	    if (!root)
-	        return null;
-	    if (root.getName() === name)
-	        return root;
-	    var arrayRootChildren = root.getChildren();
-	    var length = arrayRootChildren.length;
-	    for (var i = 0; i < length; i++) {
-	        var child = arrayRootChildren[i];
-	        var res = ccui.helper.seekWidgetByName(child, name);
-	        if (res !== null)
-	            return res;
-	    }
-	    return null;
-	},
+    /**
+     * Finds a widget whose name equals to param name from root widget.
+     * @param {ccui.Widget} root
+     * @param {String} name
+     * @returns {ccui.Widget}
+     */
+    seekWidgetByName: function (root, name) {
+        if (!root)
+            return null;
+        if (root.getName() === name)
+            return root;
+        var arrayRootChildren = root.getChildren();
+        var length = arrayRootChildren.length;
+        for (var i = 0; i < length; i++) {
+            var child = arrayRootChildren[i];
+            var res = ccui.helper.seekWidgetByName(child, name);
+            if (res !== null)
+                return res;
+        }
+        return null;
+    },
 
-	/**
-	 * Finds a widget whose name equals to param name from root widget.
-	 * RelativeLayout will call this method to find the widget witch is needed.
-	 * @param {ccui.Widget} root
-	 * @param {String} name
-	 * @returns {ccui.Widget}
-	 */
-	seekWidgetByRelativeName: function (root, name) {
-	    if (!root)
-	        return null;
-	    var arrayRootChildren = root.getChildren();
-	    var length = arrayRootChildren.length;
-	    for (var i = 0; i < length; i++) {
-	        var child = arrayRootChildren[i];
-	        var layoutParameter = child.getLayoutParameter(ccui.LayoutParameter.RELATIVE);
-	        if (layoutParameter && layoutParameter.getRelativeName() === name)
-	            return child;
-	    }
-	    return null;
-	},
+    /**
+     * Finds a widget whose name equals to param name from root widget.
+     * RelativeLayout will call this method to find the widget witch is needed.
+     * @param {ccui.Widget} root
+     * @param {String} name
+     * @returns {ccui.Widget}
+     */
+    seekWidgetByRelativeName: function (root, name) {
+        if (!root)
+            return null;
+        var arrayRootChildren = root.getChildren();
+        var length = arrayRootChildren.length;
+        for (var i = 0; i < length; i++) {
+            var child = arrayRootChildren[i];
+            var layoutParameter = child.getLayoutParameter(ccui.LayoutParameter.RELATIVE);
+            if (layoutParameter && layoutParameter.getRelativeName() === name)
+                return child;
+        }
+        return null;
+    },
 
     /**
      * Finds a widget whose action tag equals to param name from root widget.
@@ -104,28 +104,28 @@ ccui.helper = {
      * @param {Number} tag
      * @returns {ccui.Widget}
      */
-	seekActionWidgetByActionTag: function (root, tag) {
-	    if (!root)
-	        return null;
-	    if (root.getActionTag() === tag)
-	        return root;
-	    var arrayRootChildren = root.getChildren();
-	    for (var i = 0; i < arrayRootChildren.length; i++) {
-	        var child = arrayRootChildren[i];
-	        var res = ccui.helper.seekActionWidgetByActionTag(child, tag);
-	        if (res !== null)
-	            return res;
-	    }
-	    return null;
-	} ,
+    seekActionWidgetByActionTag: function (root, tag) {
+        if (!root)
+            return null;
+        if (root.getActionTag() === tag)
+            return root;
+        var arrayRootChildren = root.getChildren();
+        for (var i = 0; i < arrayRootChildren.length; i++) {
+            var child = arrayRootChildren[i];
+            var res = ccui.helper.seekActionWidgetByActionTag(child, tag);
+            if (res !== null)
+                return res;
+        }
+        return null;
+    },
 
     _activeLayout: true,
     /**
      * Refresh object and it's children layout state
      * @param {cc.Node} rootNode
      */
-    doLayout: function(rootNode){
-        if(!this._activeLayout)
+    doLayout: function (rootNode) {
+        if (!this._activeLayout)
             return;
         var children = rootNode.getChildren(), node;
         for(var i = 0, len = children.length;i < len; i++) {
@@ -137,7 +137,7 @@ ccui.helper = {
         }
     },
 
-    changeLayoutSystemActiveState: function(active){
+    changeLayoutSystemActiveState: function (active) {
         this._activeLayout = active;
     },
 
@@ -162,10 +162,10 @@ ccui.helper = {
         return cc.rect(x, y, width, height);
     },
 
-    _createSpriteFromBase64: function(base64String, key) {
+    _createSpriteFromBase64: function (base64String, key) {
         var texture2D = cc.textureCache.getTextureForKey(key);
 
-        if(!texture2D) {
+        if (!texture2D) {
             var image = new Image();
             image.src = base64String;
             cc.textureCache.cacheImage(key, image);

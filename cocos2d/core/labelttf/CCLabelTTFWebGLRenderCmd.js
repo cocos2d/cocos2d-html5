@@ -23,14 +23,15 @@
  ****************************************************************************/
 
 // ----------------------------------- LabelTTF WebGL render cmd ----------------------------
-(function() {
+(function () {
     cc.LabelTTF.WebGLRenderCmd = function (renderable) {
-        cc.Sprite.WebGLRenderCmd.call(this, renderable);
-        cc.LabelTTF.CacheRenderCmd.call(this);
+        this._spriteCmdCtor(renderable);
+        this._cacheCmdCtor();
     };
     var proto = cc.LabelTTF.WebGLRenderCmd.prototype = Object.create(cc.Sprite.WebGLRenderCmd.prototype);
 
     cc.inject(cc.LabelTTF.CacheRenderCmd.prototype, proto);
     proto.constructor = cc.LabelTTF.WebGLRenderCmd;
-    proto._updateColor = function () {};
+    proto._updateColor = function () {
+    };
 })();

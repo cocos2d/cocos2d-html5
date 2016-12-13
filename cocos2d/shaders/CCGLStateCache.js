@@ -36,60 +36,6 @@ if (cc.ENABLE_GL_STATE_CACHE) {
     cc._GLServerState = 0;
     if(cc.TEXTURE_ATLAS_USE_VAO)
         cc._uVAO = 0;
-
-    var _currBuffers = {};
-
-    WebGLRenderingContext.prototype.glBindBuffer = WebGLRenderingContext.prototype.bindBuffer;
-    WebGLRenderingContext.prototype.bindBuffer = function (target, buffer) {
-        if (_currBuffers[target] !== buffer) {
-            this.glBindBuffer(target, buffer);
-            _currBuffers[target] = buffer;
-        }
-    };
-
-    WebGLRenderingContext.prototype.glEnableVertexAttribArray = WebGLRenderingContext.prototype.enableVertexAttribArray;
-    WebGLRenderingContext.prototype.enableVertexAttribArray = function (index) {
-        if (index === cc.VERTEX_ATTRIB_FLAG_POSITION) {
-            if (!this._vertexAttribPosition) {
-                this.glEnableVertexAttribArray(index);
-                this._vertexAttribPosition = true;
-            }
-        }
-        else if (index === cc.VERTEX_ATTRIB_FLAG_COLOR) {
-            if (!this._vertexAttribColor) {
-                this.glEnableVertexAttribArray(index);
-                this._vertexAttribColor = true;
-            }
-        }
-        else if (index === cc.VERTEX_ATTRIB_FLAG_TEX_COORDS) {
-            if (!this._vertexAttribTexCoords) {
-                this.glEnableVertexAttribArray(index);
-                this._vertexAttribTexCoords = true;
-            }
-        }
-        else {
-            this.glEnableVertexAttribArray(index);
-        }
-    };
-
-    WebGLRenderingContext.prototype.glDisableVertexAttribArray = WebGLRenderingContext.prototype.disableVertexAttribArray;
-    WebGLRenderingContext.prototype.disableVertexAttribArray = function (index) {
-        if (index === cc.VERTEX_ATTRIB_FLAG_COLOR) {
-            if (this._vertexAttribColor) {
-                this.glDisableVertexAttribArray(index);
-                this._vertexAttribColor = false;
-            }
-        }
-        else if (index === cc.VERTEX_ATTRIB_FLAG_TEX_COORDS) {
-            if (this._vertexAttribTexCoords) {
-                this.glDisableVertexAttribArray(index);
-                this._vertexAttribTexCoords = false;
-            }
-        }
-        else if (index !== 0) {
-            this.glDisableVertexAttribArray(index);
-        }
-    };
 }
 
 // GL State Cache functions

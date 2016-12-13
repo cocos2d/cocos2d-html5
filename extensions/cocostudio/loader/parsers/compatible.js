@@ -28,7 +28,7 @@
  todo: deprecated all
  */
 
-(function(){
+(function () {
 
     ccs.uiReader = {
 
@@ -40,14 +40,14 @@
          * @param file
          * @returns {*}
          */
-        widgetFromJsonFile: function(file){
+        widgetFromJsonFile: function (file) {
             var json = cc.loader.getRes(file);
-            if(json)
-                this._fileDesignSizes[file] = cc.size(json["designWidth"]||0, json["designHeight"]||0);
+            if (json)
+                this._fileDesignSizes[file] = cc.size(json["designWidth"] || 0, json["designHeight"] || 0);
 
             var version = json["Version"] || json["version"];
             var versionNum = ccs.uiReader.getVersionInteger(version);
-            if(!version || versionNum >= 1700){
+            if (!version || versionNum >= 1700) {
                 cc.warn("Not supported file types, Please try use the ccs.load");
                 return null;
             }
@@ -63,16 +63,16 @@
          * @param callback
          * @deprecated This function will be deprecated sooner or later please use parser.registerParser
          */
-        registerTypeAndCallBack: function(classType, ins, object, callback){
+        registerTypeAndCallBack: function (classType, ins, object, callback) {
             var parser = ccs._load.getParser("ccui")["*"];
             var func = callback.bind(object);
-            parser.registerParser(classType, function(options, resourcePath){
+            parser.registerParser(classType, function (options, resourcePath) {
                 var widget = new ins();
                 var uiOptions = options["options"];
                 object.setPropsFromJsonDictionary && object.setPropsFromJsonDictionary(widget, uiOptions);
                 this.generalAttributes(widget, uiOptions);
                 var customProperty = uiOptions["customProperty"];
-                if(customProperty)
+                if (customProperty)
                     customProperty = JSON.parse(customProperty);
                 else
                     customProperty = {};
@@ -90,13 +90,13 @@
          * @param {String} version version string.
          * @returns {Number}
          */
-        getVersionInteger: function(version){
-            if(!version || typeof version !== "string") return 0;
+        getVersionInteger: function (version) {
+            if (!version || typeof version !== "string") return 0;
             var arr = version.split(".");
             if (arr.length !== 4)
                 return 0;
             var num = 0;
-            arr.forEach(function(n, i){
+            arr.forEach(function (n, i) {
                 num += n * Math.pow(10, 3 - i);
             });
             return num;
@@ -127,12 +127,12 @@
          * Returns the file path
          * @returns {string}
          */
-        getFilePath: function(){
+        getFilePath: function () {
             return this._filePath;
         },
 
         //@deprecated This function will be deprecated sooner or later
-        setFilePath: function(path){
+        setFilePath: function (path) {
             this._filePath = path;
         },
 
@@ -141,7 +141,7 @@
          * Returns the parsed object map. (analytic function)
          * @returns {Object}
          */
-        getParseObjectMap: function(){
+        getParseObjectMap: function () {
             return ccs._load.getParser("ccui")["*"]["parsers"];
         },
 
@@ -150,31 +150,32 @@
          * Returns the parsed callback map. (analytic function)
          * @returns {*}
          */
-        getParseCallBackMap: function(){
+        getParseCallBackMap: function () {
             return ccs._load.getParser("ccui")["*"]["parsers"];
         },
 
         //@deprecated This function will be deprecated sooner or later
-        clear: function(){}
+        clear: function () {
+        }
     };
 
     var parser = ccs._load.getParser("ccui")["*"];
-    ccs.imageViewReader  = {setPropsFromJsonDictionary: parser.ImageViewAttributes};
-    ccs.buttonReader     = {setPropsFromJsonDictionary: parser.ButtonAttributes};
-    ccs.checkBoxReader   = {setPropsFromJsonDictionary: parser.CheckBoxAttributes};
+    ccs.imageViewReader = {setPropsFromJsonDictionary: parser.ImageViewAttributes};
+    ccs.buttonReader = {setPropsFromJsonDictionary: parser.ButtonAttributes};
+    ccs.checkBoxReader = {setPropsFromJsonDictionary: parser.CheckBoxAttributes};
     ccs.labelAtlasReader = {setPropsFromJsonDictionary: parser.TextAtlasAttributes};
-    ccs.labelBMFontReader= {setPropsFromJsonDictionary: parser.TextBMFontAttributes};
-    ccs.labelReader      = {setPropsFromJsonDictionary: parser.TextAttributes};
-    ccs.layoutReader     = {setPropsFromJsonDictionary: parser.LayoutAttributes};
-    ccs.listViewReader   = {setPropsFromJsonDictionary: parser.ListViewAttributes};
+    ccs.labelBMFontReader = {setPropsFromJsonDictionary: parser.TextBMFontAttributes};
+    ccs.labelReader = {setPropsFromJsonDictionary: parser.TextAttributes};
+    ccs.layoutReader = {setPropsFromJsonDictionary: parser.LayoutAttributes};
+    ccs.listViewReader = {setPropsFromJsonDictionary: parser.ListViewAttributes};
     ccs.loadingBarReader = {setPropsFromJsonDictionary: parser.LoadingBarAttributes};
-    ccs.pageViewReader   = {setPropsFromJsonDictionary: parser.PageViewAttributes};
+    ccs.pageViewReader = {setPropsFromJsonDictionary: parser.PageViewAttributes};
     ccs.scrollViewReader = {setPropsFromJsonDictionary: parser.ScrollViewAttributes};
-    ccs.sliderReader     = {setPropsFromJsonDictionary: parser.SliderAttributes};
-    ccs.textFieldReader  = {setPropsFromJsonDictionary: parser.TextFieldAttributes};
+    ccs.sliderReader = {setPropsFromJsonDictionary: parser.SliderAttributes};
+    ccs.textFieldReader = {setPropsFromJsonDictionary: parser.TextFieldAttributes};
 })();
 
-(function(){
+(function () {
     ccs.sceneReader = {
 
         _node: null,
@@ -185,7 +186,7 @@
          * @param file
          * @returns {*}
          */
-        createNodeWithSceneFile: function(file){
+        createNodeWithSceneFile: function (file) {
             var node = ccs._load(file, "scene");
             this._node = node;
             return node;
@@ -196,7 +197,7 @@
          * @param {Number} tag
          * @returns {cc.Node|null}
          */
-        getNodeByTag: function(tag){
+        getNodeByTag: function (tag) {
             if (this._node == null)
                 return null;
             if (this._node.getTag() === tag)
@@ -228,7 +229,7 @@
          * Returns the version of ccs.SceneReader.
          * @returns {string}
          */
-        version: function(){
+        version: function () {
             return "*";
         },
 
@@ -237,13 +238,14 @@
          * Sets the listener to reader.
          * Cannot use
          */
-        setTarget: function(){},
+        setTarget: function () {
+        },
 
         //@deprecated This function will be deprecated sooner or later
         /**
          * Clear all triggers and stops all sounds.
          */
-        clear: function(){
+        clear: function () {
             ccs.triggerManager.removeAll();
             cc.audioEngine.end();
         }

@@ -23,10 +23,15 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-(function(){
+(function () {
     ccs.Skin.RenderCmd = {
         _realWorldTM: null,
         transform: function (parentCmd, recursive) {
+            if (!this._transform) {
+                this._transform = {a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0};
+                this._worldTransform = {a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0};
+            }
+
             var node = this._node,
                 pt = parentCmd ? parentCmd._worldTransform : null,
                 t = this._transform,
@@ -35,15 +40,15 @@
 
             if (dirty || pt) {
                 this.originTransform();
-                cc.affineTransformConcatIn(t, node.bone.getNodeToArmatureTransform());
-                this._dirtyFlag = this._dirtyFlag & cc.Node._dirtyFlags.transformDirty ^ this._dirtyFlag;
+                cc.affineTransformConcatIn(this._transform, node.bone.getNodeToArmatureTransform());
+                this._dirtyFlag &= ~cc.Node._dirtyFlags.transformDirty;
             }
 
             if (pt) {
-                wt.a  = t.a  * pt.a + t.b  * pt.c;
-                wt.b  = t.a  * pt.b + t.b  * pt.d;
-                wt.c  = t.c  * pt.a + t.d  * pt.c;
-                wt.d  = t.c  * pt.b + t.d  * pt.d;
+                wt.a = t.a * pt.a + t.b * pt.c;
+                wt.b = t.a * pt.b + t.b * pt.d;
+                wt.c = t.c * pt.a + t.d * pt.c;
+                wt.d = t.c * pt.b + t.d * pt.d;
                 wt.tx = t.tx * pt.a + t.ty * pt.c + pt.tx;
                 wt.ty = t.tx * pt.b + t.ty * pt.d + pt.ty;
 
@@ -63,16 +68,16 @@
                 }
             }
             else {
-                wt.a  = t.a;
-                wt.b  = t.b;
-                wt.c  = t.c;
-                wt.d  = t.d;
+                wt.a = t.a;
+                wt.b = t.b;
+                wt.c = t.c;
+                wt.d = t.d;
                 wt.tx = t.tx;
                 wt.ty = t.ty;
             }
             var rwtm = this._realWorldTM;
-            if(rwtm) {
-                rwtm.a = t.a; rwtm.b = t.b; rwtm.c = t.c; rwtm.d = t.d; rwtm.tx= t.tx; rwtm.ty = t.ty;
+            if (rwtm) {
+                rwtm.a = t.a; rwtm.b = t.b; rwtm.c = t.c; rwtm.d = t.d; rwtm.tx = t.tx; rwtm.ty = t.ty;
                 cc.affineTransformConcatIn(rwtm, this._node.bone.getArmature()._renderCmd._worldTransform);
             }
         },
@@ -90,8 +95,8 @@
         }
     };
 
-    ccs.Skin.CanvasRenderCmd = function(renderable){
-        cc.Sprite.CanvasRenderCmd.call(this, renderable);
+    ccs.Skin.CanvasRenderCmd = function (renderable) {
+        this._spriteCmdCtor(renderable);
         this._realWorldTM = {a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0};
     };
 
@@ -111,8 +116,8 @@
         this._currentRegion.updateRegion(this.getLocalBB(), this._realWorldTM);
     };
 
-    ccs.Skin.WebGLRenderCmd = function(renderable){
-        cc.Sprite.WebGLRenderCmd.call(this, renderable);
+    ccs.Skin.WebGLRenderCmd = function (renderable) {
+        this._spriteCmdCtor(renderable);
     };
 
     proto = ccs.Skin.WebGLRenderCmd.prototype = Object.create(cc.Sprite.WebGLRenderCmd.prototype);

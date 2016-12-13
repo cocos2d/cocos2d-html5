@@ -22,9 +22,9 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-(function(){
-    cc.RenderTexture.CanvasRenderCmd = function(renderableObject){
-        cc.Node.CanvasRenderCmd.call(this, renderableObject);
+(function () {
+    cc.RenderTexture.CanvasRenderCmd = function (renderableObject) {
+        this._rootCtor(renderableObject);
         this._needDraw = true;
         this._clearColorStr = "rgba(255,255,255,1)";
 
@@ -35,20 +35,22 @@
     var proto = cc.RenderTexture.CanvasRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
     proto.constructor = cc.RenderTexture.CanvasRenderCmd;
 
-    proto.cleanup = function(){
+    proto.cleanup = function () {
         this._cacheContext = null;
         this._cacheCanvas = null;
     };
 
-    proto.clearStencil = function (stencilValue) { };
+    proto.clearStencil = function (stencilValue) {
+    };
 
-    proto.setVirtualViewport = function(rtBegin, fullRect, fullViewport) {};
+    proto.setVirtualViewport = function (rtBegin, fullRect, fullViewport) {
+    };
 
-    proto.updateClearColor = function(clearColor){
+    proto.updateClearColor = function (clearColor) {
         this._clearColorStr = "rgba(" + (0 | clearColor.r) + "," + (0 | clearColor.g) + "," + (0 | clearColor.b) + "," + clearColor.a / 255 + ")";
     };
 
-    proto.initWithWidthAndHeight = function(width, height, format, depthStencilFormat){
+    proto.initWithWidthAndHeight = function (width, height, format, depthStencilFormat) {
         var node = this._node;
         var locCacheCanvas = this._cacheCanvas, locScaleFactor = cc.contentScaleFactor();
         locCacheCanvas.width = 0 | (width * locScaleFactor);
@@ -67,9 +69,10 @@
         return true;
     };
 
-    proto.begin = function(){};
+    proto.begin = function () {
+    };
 
-    proto._beginWithClear = function(r, g, b, a, depthValue, stencilValue, flags){
+    proto._beginWithClear = function (r, g, b, a, depthValue, stencilValue, flags) {
         r = r || 0;
         g = g || 0;
         b = b || 0;
@@ -77,13 +80,13 @@
 
         var context = this._cacheContext.getContext();
         var locCanvas = this._cacheCanvas;
-        context.setTransform(1,0,0,1,0,0);
+        context.setTransform(1, 0, 0, 1, 0, 0);
         this._cacheContext.setFillStyle("rgba(" + (0 | r) + "," + (0 | g) + "," + (0 | b) + "," + a / 255 + ")");
         context.clearRect(0, 0, locCanvas.width, locCanvas.height);
         context.fillRect(0, 0, locCanvas.width, locCanvas.height);
     };
 
-    proto.end = function(){
+    proto.end = function () {
         var node = this._node;
 
         var scale = cc.contentScaleFactor();
@@ -92,18 +95,11 @@
         spriteRenderCmd._notifyRegionStatus && spriteRenderCmd._notifyRegionStatus(cc.Node.CanvasRenderCmd.RegionStatus.Dirty);
     };
 
-    proto.clearRect = function(x, y, width, height){
+    proto.clearRect = function (x, y, width, height) {
         this._cacheContext.clearRect(x, y, width, -height);
     };
 
-    proto.clearDepth = function(depthValue){
+    proto.clearDepth = function (depthValue) {
         cc.log("clearDepth isn't supported on Cocos2d-Html5");
-    };
-
-    proto.visit = function(parentCmd){
-        var node = this._node;
-        this._syncStatus(parentCmd);
-        node.sprite.visit(this);
-        this._dirtyFlag = 0;
     };
 })();

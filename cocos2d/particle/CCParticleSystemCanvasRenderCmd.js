@@ -25,37 +25,37 @@
 /**
  * ParticleSystem's canvas render command
  */
-(function(){
-    cc.ParticleSystem.CanvasRenderCmd = function(renderable){
-        cc.Node.CanvasRenderCmd.call(this, renderable);
+(function () {
+    cc.ParticleSystem.CanvasRenderCmd = function (renderable) {
+        this._rootCtor(renderable);
         this._needDraw = true;
 
         this._drawMode = cc.ParticleSystem.TEXTURE_MODE;
         this._shapeType = cc.ParticleSystem.BALL_SHAPE;
 
         this._pointRect = cc.rect(0, 0, 0, 0);
-        this._tintCache = document.createElement("canvas");
+        this._tintCache = null;
     };
     var proto = cc.ParticleSystem.CanvasRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
     proto.constructor = cc.ParticleSystem.CanvasRenderCmd;
 
-    proto.getDrawMode = function(){
+    proto.getDrawMode = function () {
         return this._drawMode;
     };
 
-    proto.setDrawMode = function(drawMode){
+    proto.setDrawMode = function (drawMode) {
         this._drawMode = drawMode;
     };
 
-    proto.getShapeType = function(){
+    proto.getShapeType = function () {
         return this._shapeType;
     };
 
-    proto.setShapeType = function(shapeType){
+    proto.setShapeType = function (shapeType) {
         this._shapeType = shapeType;
     };
 
-    proto.setBatchNode = function(batchNode){
+    proto.setBatchNode = function (batchNode) {
         if (this._batchNode !== batchNode) {
             this._node._batchNode = batchNode;
         }
@@ -65,7 +65,7 @@
         //do nothing
     };
 
-    proto.updateParticlePosition = function(particle, position){
+    proto.updateParticlePosition = function (particle, position) {
         cc.pIn(particle.drawPos, position);
     };
 
@@ -143,7 +143,10 @@
         cc.g_NumberOfDraws++;
     };
 
-    proto._changeTextureColor = function(texture, color, rect){
+    proto._changeTextureColor = function (texture, color, rect) {
+        if (!this._tintCache) {
+            this._tintCache = document.createElement("canvas");
+        }
         var tintCache = this._tintCache;
         var textureContentSize = texture.getContentSize();
         tintCache.width = textureContentSize.width;
@@ -151,16 +154,16 @@
         return texture._generateColorTexture(color.r, color.g, color.b, rect, tintCache);
     };
 
-    proto.initTexCoordsWithRect = function(pointRect){
+    proto.initTexCoordsWithRect = function (pointRect) {
         this._pointRect = pointRect;
     };
 
-    proto.setTotalParticles = function(tp){
+    proto.setTotalParticles = function (tp) {
         //cc.assert(tp <= this._allocatedParticles, "Particle: resizing particle array only supported for quads");
         this._node._totalParticles = (tp < 200) ? tp : 200;
     };
 
-    proto.addParticle = function(){
+    proto.addParticle = function () {
         var node = this._node,
             particles = node._particles,
             particle;
@@ -173,21 +176,24 @@
         return particle;
     };
 
-    proto._setupVBO = function(){};
-    proto._allocMemory = function(){
+    proto._setupVBO = function () {
+    };
+    proto._allocMemory = function () {
         return true;
     };
 
-    proto.postStep = function(){};
+    proto.postStep = function () {
+    };
 
-    proto._setBlendAdditive = function(){
+    proto._setBlendAdditive = function () {
         var locBlendFunc = this._node._blendFunc;
         locBlendFunc.src = cc.BLEND_SRC;
         locBlendFunc.dst = cc.BLEND_DST;
     };
 
-    proto._initWithTotalParticles = function(totalParticles){};
-    proto._updateDeltaColor = function(selParticle, dt){
+    proto._initWithTotalParticles = function (totalParticles) {
+    };
+    proto._updateDeltaColor = function (selParticle, dt) {
         if (!this._node._dontTint) {
             selParticle.color.r += selParticle.deltaColor.r * dt;
             selParticle.color.g += selParticle.deltaColor.g * dt;

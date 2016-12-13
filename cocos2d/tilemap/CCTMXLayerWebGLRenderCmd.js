@@ -22,15 +22,15 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-(function(){
-    cc.TMXLayer.WebGLRenderCmd = function(renderableObject){
-        cc.Node.WebGLRenderCmd.call(this, renderableObject);
+(function () {
+    cc.TMXLayer.WebGLRenderCmd = function (renderableObject) {
+        this._rootCtor(renderableObject);
         this._needDraw = true;
         this._vertices = [
-            {x:0, y:0},
-            {x:0, y:0},
-            {x:0, y:0},
-            {x:0, y:0}
+            {x: 0, y: 0},
+            {x: 0, y: 0},
+            {x: 0, y: 0},
+            {x: 0, y: 0}
         ];
         this._color = new Uint32Array(1);
         this._shaderProgram = cc.shaderCache.programForKey(cc.SHADER_SPRITE_POSITION_TEXTURECOLORALPHATEST);
@@ -86,7 +86,7 @@
             cg *= ca;
             cb *= ca;
         }
-        this._color[0] = ((opacity<<24) | (cb<<16) | (cg<<8) | cr);
+        this._color[0] = ((opacity << 24) | (cb << 16) | (cg << 8) | cr);
 
         // Culling
         var startCol = 0, startRow = 0,
@@ -107,7 +107,7 @@
             offset = vertexDataOffset,
             colOffset = startRow * cols, z, gid, grid,
             mask = cc.TMX_TILE_FLIPPED_MASK,
-            i, top, left, bottom, right, 
+            i, top, left, bottom, right,
             w = tilew * a, h = tileh * d, gt, gl, gb, gr,
             wa = a, wb = b, wc = c, wd = d, wtx = tx, wty = ty, // world
             flagged = false, flippedX = false, flippedY = false,
@@ -156,18 +156,18 @@
                 top = bottom + tileh;
                 // TMX_ORIENTATION_ISO trim
                 if (!hasRotation && layerOrientation === cc.TMX_ORIENTATION_ISO) {
-                    gb = mapy + bottom*d;
-                    if (gb > winh+h) {
-                        col += Math.floor((gb-winh)*2/h) - 1;
+                    gb = mapy + bottom * d;
+                    if (gb > winh + h) {
+                        col += Math.floor((gb - winh) * 2 / h) - 1;
                         continue;
                     }
-                    gr = mapx + right*a;
+                    gr = mapx + right * a;
                     if (gr < -w) {
-                        col += Math.floor((-gr)*2/w) - 1;
+                        col += Math.floor((-gr) * 2 / w) - 1;
                         continue;
                     }
-                    gl = mapx + left*a;
-                    gt = mapy + top*d;
+                    gl = mapx + left * a;
+                    gt = mapy + top * d;
                     if (gl > winw || gt < 0) {
                         col = maxCol;
                         continue;
@@ -221,21 +221,21 @@
                     ui32buffer[offset + 3] = this._color[0];
                     switch (i) {
                     case 0: // tl
-                    f32buffer[offset + 4] = flippedX ? grid.r : grid.l;
-                    f32buffer[offset + 5] = flippedY ? grid.b : grid.t;
-                    break;
+                        f32buffer[offset + 4] = flippedX ? grid.r : grid.l;
+                        f32buffer[offset + 5] = flippedY ? grid.b : grid.t;
+                        break;
                     case 1: // bl
-                    f32buffer[offset + 4] = flippedX ? grid.r : grid.l;
-                    f32buffer[offset + 5] = flippedY ? grid.t : grid.b;
-                    break;
+                        f32buffer[offset + 4] = flippedX ? grid.r : grid.l;
+                        f32buffer[offset + 5] = flippedY ? grid.t : grid.b;
+                        break;
                     case 2: // tr
-                    f32buffer[offset + 4] = flippedX ? grid.l : grid.r;
-                    f32buffer[offset + 5] = flippedY ? grid.b : grid.t;
-                    break;
+                        f32buffer[offset + 4] = flippedX ? grid.l : grid.r;
+                        f32buffer[offset + 5] = flippedY ? grid.b : grid.t;
+                        break;
                     case 3: // br
-                    f32buffer[offset + 4] = flippedX ? grid.l : grid.r;
-                    f32buffer[offset + 5] = flippedY ? grid.t : grid.b;
-                    break;
+                        f32buffer[offset + 4] = flippedX ? grid.l : grid.r;
+                        f32buffer[offset + 5] = flippedY ? grid.t : grid.b;
+                        break;
                     }
 
                     offset += 6;

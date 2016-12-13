@@ -77,6 +77,7 @@ cc.loader._str2Uint8Array = function (strData) {
 cc.loader.loadBinarySync = function (url) {
     var self = this;
     var req = this.getXMLHttpRequest();
+    req.timeout = 0;
     var errInfo = "load " + url + " failed!";
     req.open('GET', url, false);
     var arrayInfo = null;

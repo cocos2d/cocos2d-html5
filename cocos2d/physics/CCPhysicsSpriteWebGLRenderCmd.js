@@ -25,9 +25,9 @@
 /**
  * cc.PhysicsSprite's rendering objects of WebGL
  */
-(function(){
-    cc.PhysicsSprite.WebGLRenderCmd = function(renderableObject){
-        cc.Sprite.WebGLRenderCmd.call(this, renderableObject);
+(function () {
+    cc.PhysicsSprite.WebGLRenderCmd = function (renderableObject) {
+        this._spriteCmdCtor(renderableObject);
         this._needDraw = true;
     };
 
@@ -40,9 +40,9 @@
         //  This is a special class
         //  Sprite can not obtain sign
         //  So here must to calculate of each frame
-        var node  = this._node;
+        var node = this._node;
         node._syncPosition();
-        if(!node._ignoreBodyRotation)
+        if (!node._ignoreBodyRotation)
             node._syncRotation();
         this.transform(this.getParentRenderCmd(), true);
 

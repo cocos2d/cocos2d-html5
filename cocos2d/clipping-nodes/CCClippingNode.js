@@ -67,19 +67,6 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
     },
 
     /**
-     * Initialization of the node, please do not call this function by yourself, you should pass the parameters to constructor to initialize it .
-     * @function
-     * @param {cc.Node} [stencil=null]
-     */
-    init: function (stencil) {
-        this._stencil = stencil;
-        this.alphaThreshold = 1;
-        this.inverted = false;
-        this._renderCmd.initStencilBits();
-        return true;
-    },
-
-    /**
      * <p>
      *     Event callback that is invoked every time when node enters the 'stage'.                                   <br/>
      *     If the CCNode enters the 'stage' with a transition, this event is called when the transition starts.        <br/>
@@ -90,7 +77,8 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
      */
     onEnter: function () {
         cc.Node.prototype.onEnter.call(this);
-        this._stencil.onEnter();
+        if (this._stencil)
+            this._stencil._performRecursive(cc.Node._stateCallbackType.onEnter);
     },
 
     /**
@@ -103,7 +91,8 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
      */
     onEnterTransitionDidFinish: function () {
         cc.Node.prototype.onEnterTransitionDidFinish.call(this);
-        this._stencil.onEnterTransitionDidFinish();
+        if (this._stencil)
+            this._stencil._performRecursive(cc.Node._stateCallbackType.onEnterTransitionDidFinish);
     },
 
     /**
@@ -115,7 +104,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
      * @function
      */
     onExitTransitionDidStart: function () {
-        this._stencil.onExitTransitionDidStart();
+        this._stencil._performRecursive(cc.Node._stateCallbackType.onExitTransitionDidStart);
         cc.Node.prototype.onExitTransitionDidStart.call(this);
     },
 
@@ -129,8 +118,30 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
      * @function
      */
     onExit: function () {
-        this._stencil.onExit();
+        this._stencil._performRecursive(cc.Node._stateCallbackType.onExit);
         cc.Node.prototype.onExit.call(this);
+    },
+
+    visit: function (parent) {
+        if (!this._visible)
+            return;
+
+        this._renderCmd.clippingVisit(parent && parent._renderCmd);
+    },
+
+    _visitChildren: function () {
+        var renderer = cc.renderer;
+        if (this._reorderChildDirty) {
+            this.sortAllChildren();
+        }
+        var children = this._children, child;
+        for (var i = 0, len = children.length; i < len; i++) {
+            child = children[i];
+            if (child && child._visible) {
+                child.visit(this);
+            }
+        }
+        this._renderCmd._dirtyFlag = 0;
     },
 
     /**
@@ -189,13 +200,13 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
      * @param {cc.Node} stencil
      */
     setStencil: function (stencil) {
-        if(this._stencil === stencil)
+        if (this._stencil === stencil)
             return;
         this._renderCmd.setStencil(stencil);
     },
 
-    _createRenderCmd: function(){
-        if(cc._renderType === cc.game.RENDER_TYPE_CANVAS)
+    _createRenderCmd: function () {
+        if (cc._renderType === cc.game.RENDER_TYPE_CANVAS)
             return new cc.ClippingNode.CanvasRenderCmd(this);
         else
             return new cc.ClippingNode.WebGLRenderCmd(this);
@@ -205,9 +216,10 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
 var _p = cc.ClippingNode.prototype;
 
 // Extended properties
-cc.defineGetterSetter(_p, "stencil", _p.getStencil, _p.setStencil);
 /** @expose */
 _p.stencil;
+cc.defineGetterSetter(_p, "stencil", _p.getStencil, _p.setStencil);
+
 
 /**
  * Creates and initializes a clipping node with an other node as its stencil. <br/>

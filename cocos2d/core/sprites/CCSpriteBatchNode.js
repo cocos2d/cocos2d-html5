@@ -69,7 +69,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
             texture2D = cc.textureCache.getTextureForKey(fileImage);
             if (!texture2D)
                 texture2D = cc.textureCache.addImage(fileImage);
-        }else if (fileImage instanceof cc.Texture2D)
+        } else if (fileImage instanceof cc.Texture2D)
             texture2D = fileImage;
 
         texture2D && this.initWithTexture(texture2D);
@@ -105,7 +105,8 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
      * @param {cc.TextureAtlas} textureAtlas
      * @deprecated since v3.12
      */
-    setTextureAtlas: function (textureAtlas) {},
+    setTextureAtlas: function (textureAtlas) {
+    },
 
     /**
      * Return Descendants of cc.SpriteBatchNode
@@ -156,7 +157,8 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
      * Do nothing
      * @deprecated since v3.12
      */
-    increaseAtlasCapacity: function () {},
+    increaseAtlasCapacity: function () {
+    },
 
     /**
      * Removes a child given a certain index. It will also cleanup the running actions depending on the cleanup parameter.
@@ -243,7 +245,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
      * @return {cc.BlendFunc}
      */
     getBlendFunc: function () {
-        return new cc.BlendFunc(this._blendFunc.src,this._blendFunc.dst);
+        return new cc.BlendFunc(this._blendFunc.src, this._blendFunc.dst);
     },
 
     /**
@@ -301,8 +303,8 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
      */
     appendChild: function (sprite) {
         this.sortAllChildren();
-        var lastLocalZOrder = this._children[this._children.length-1]._localZOrder;
-        this.addChild(sprite. lastLocalZOrder + 1);
+        var lastLocalZOrder = this._children[this._children.length - 1]._localZOrder;
+        this.addChild(sprite.lastLocalZOrder + 1);
     },
 
     /**
@@ -342,18 +344,18 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
      * @function
      * @param {cc.Texture2D} texture
      */
-    setTexture: function(texture){
+    setTexture: function (texture) {
         this._texture = texture;
 
         if (texture._textureLoaded) {
-            var children = this._children, i, len = children.length;
+            var i, children = this._children, len = children.length;
             for (i = 0; i < len; ++i) {
                 children[i].setTexture(texture);
             }
         }
         else {
-            texture.addEventListener("load", function(){
-                var children = this._children, i, len = children.length;
+            texture.addEventListener("load", function () {
+                var i, children = this._children, len = children.length;
                 for (i = 0; i < len; ++i) {
                     children[i].setTexture(texture);
                 }
@@ -363,7 +365,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
 
     setShaderProgram: function (newShaderProgram) {
         this._renderCmd.setShaderProgram(newShaderProgram);
-        var children = this._children, i, len = children.length;
+        var i, children = this._children, len = children.length;
         for (i = 0; i < len; ++i) {
             children[i].setShaderProgram(newShaderProgram);
         }
@@ -380,7 +382,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
     addChild: function (child, zOrder, tag) {
         cc.assert(child !== undefined, cc._LogInfos.CCSpriteBatchNode_addChild_3);
 
-        if(!this._isValidChild(child))
+        if (!this._isValidChild(child))
             return;
 
         zOrder = (zOrder === undefined) ? child.zIndex : zOrder;

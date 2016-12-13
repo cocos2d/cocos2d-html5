@@ -98,7 +98,7 @@ cc.PVRHaveAlphaPremultiplied_ = false;
 
 cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
 
-    if(cc._renderType === cc.game.RENDER_TYPE_CANVAS) {
+    if (cc._renderType === cc.game.RENDER_TYPE_CANVAS) {
 
         var proto = {
             _contentSize: null,
@@ -112,6 +112,8 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
                 this._textureLoaded = false;
                 this._htmlElementObj = null;
                 this._pattern = "";
+                this._pixelsWide = 0;
+                this._pixelsHigh = 0;
             },
 
             /**
@@ -119,7 +121,7 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
              * @return {Number}
              */
             getPixelsWide: function () {
-                return this._contentSize.width;
+                return this._pixelsWide;
             },
 
             /**
@@ -127,7 +129,7 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
              * @return {Number}
              */
             getPixelsHigh: function () {
-                return this._contentSize.height;
+                return this._pixelsHigh;
             },
 
             /**
@@ -162,8 +164,8 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
                 if (!element)
                     return;
                 this._htmlElementObj = element;
-                this._contentSize.width = element.width;
-                this._contentSize.height = element.height;
+                this._pixelsWide = this._contentSize.width = element.width;
+                this._pixelsHigh = this._contentSize.height = element.height;
                 this._textureLoaded = true;
             },
 
@@ -196,8 +198,8 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
                 }
 
                 var locElement = self._htmlElementObj;
-                self._contentSize.width = locElement.width;
-                self._contentSize.height = locElement.height;
+                self._pixelsWide = self._contentSize.width = locElement.width;
+                self._pixelsHigh = self._contentSize.height = locElement.height;
 
                 //dispatch load event to listener.
                 self.dispatchEvent("load");
@@ -322,20 +324,20 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
             },
 
             setTexParameters: function (texParams, magFilter, wrapS, wrapT) {
-                if(magFilter !== undefined)
+                if (magFilter !== undefined)
                     texParams = {minFilter: texParams, magFilter: magFilter, wrapS: wrapS, wrapT: wrapT};
 
-                if(texParams.wrapS === cc.REPEAT && texParams.wrapT === cc.REPEAT){
+                if (texParams.wrapS === cc.REPEAT && texParams.wrapT === cc.REPEAT) {
                     this._pattern = "repeat";
                     return;
                 }
 
-                if(texParams.wrapS === cc.REPEAT ){
+                if (texParams.wrapS === cc.REPEAT) {
                     this._pattern = "repeat-x";
                     return;
                 }
 
-                if(texParams.wrapT === cc.REPEAT){
+                if (texParams.wrapT === cc.REPEAT) {
                     this._pattern = "repeat-y";
                     return;
                 }
@@ -383,8 +385,9 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
                 this.removeEventTarget("load", target);
             },
 
-            _generateColorTexture: function(){/*overide*/},
-            _generateTextureCacheForColor: function(){
+            _generateColorTexture: function () {/*overide*/
+            },
+            _generateTextureCacheForColor: function () {
                 if (this.channelCache)
                     return this.channelCache;
 
@@ -403,23 +406,23 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
             _grayElementObj: null,
             _backupElement: null,
             _isGray: false,
-            _switchToGray: function(toGray){
-                if(!this._textureLoaded || this._isGray === toGray)
+            _switchToGray: function (toGray) {
+                if (!this._textureLoaded || this._isGray === toGray)
                     return;
                 this._isGray = toGray;
-                if(this._isGray){
+                if (this._isGray) {
                     this._backupElement = this._htmlElementObj;
-                    if(!this._grayElementObj)
+                    if (!this._grayElementObj)
                         this._grayElementObj = cc.Texture2D._generateGrayTexture(this._htmlElementObj);
                     this._htmlElementObj = this._grayElementObj;
                 } else {
-                    if(this._backupElement !== null)
+                    if (this._backupElement !== null)
                         this._htmlElementObj = this._backupElement;
                 }
             }
         };
 
-        var renderToCache = function(image, cache){
+        var renderToCache = function (image, cache) {
             var w = image.width;
             var h = image.height;
 
@@ -443,7 +446,7 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
                 var to = ctx.getImageData(0, 0, w, h);
                 var data = to.data;
                 for (var i = 0; i < pixels.length; i += 4) {
-                    data[i  ] = (rgbI === 0) ? pixels[i  ] : 0;
+                    data[i] = (rgbI === 0) ? pixels[i] : 0;
                     data[i + 1] = (rgbI === 1) ? pixels[i + 1] : 0;
                     data[i + 2] = (rgbI === 2) ? pixels[i + 2] : 0;
                     data[i + 3] = pixels[i + 3];
@@ -454,17 +457,17 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
         };
 
         //change color function
-        if(cc.sys._supportCanvasNewBlendModes){
+        if (cc.sys._supportCanvasNewBlendModes) {
             //multiply mode
             //Primary afferent, Draw a new texture based on rect
-            proto._generateColorTexture = function(r, g, b, rect, canvas){
+            proto._generateColorTexture = function (r, g, b, rect, canvas) {
                 var onlyCanvas = false;
-                if(canvas)
+                if (canvas)
                     onlyCanvas = true;
                 else
                     canvas = document.createElement("canvas");
                 var textureImage = this._htmlElementObj;
-                if(!rect)
+                if (!rect)
                     rect = cc.rect(0, 0, textureImage.width, textureImage.height);
 
                 canvas.width = rect.width;
@@ -472,7 +475,7 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
 
                 var context = canvas.getContext("2d");
                 context.globalCompositeOperation = "source-over";
-                context.fillStyle = "rgb(" + (r|0) + "," + (g|0) + "," + (b|0) + ")";
+                context.fillStyle = "rgb(" + (r | 0) + "," + (g | 0) + "," + (b | 0) + ")";
                 context.fillRect(0, 0, rect.width, rect.height);
                 context.globalCompositeOperation = "multiply";
                 context.drawImage(
@@ -486,28 +489,28 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
                     rect.x, rect.y, rect.width, rect.height,
                     0, 0, rect.width, rect.height
                 );
-                if(onlyCanvas)
+                if (onlyCanvas)
                     return canvas;
                 var newTexture = new cc.Texture2D();
                 newTexture.initWithElement(canvas);
                 newTexture.handleLoadedTexture();
                 return newTexture;
             };
-        }else{
+        } else {
             //Four color map overlay
-            proto._generateColorTexture = function(r, g, b, rect, canvas){
+            proto._generateColorTexture = function (r, g, b, rect, canvas) {
                 var onlyCanvas = false;
-                if(canvas)
+                if (canvas)
                     onlyCanvas = true;
                 else
                     canvas = document.createElement("canvas");
 
                 var textureImage = this._htmlElementObj;
-                if(!rect)
+                if (!rect)
                     rect = cc.rect(0, 0, textureImage.width, textureImage.height);
                 var x, y, w, h;
                 x = rect.x; y = rect.y; w = rect.width; h = rect.height;
-                if(!w || !h)
+                if (!w || !h)
                     return;
 
                 canvas.width = w;
@@ -545,7 +548,7 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
                         0, 0, w, h
                     );
                 }
-                if(onlyCanvas)
+                if (onlyCanvas)
                     return canvas;
 
                 var newTexture = new cc.Texture2D();
@@ -578,7 +581,7 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
          */
         cc.Texture2D = cc.Class.extend(/** @lends cc.Texture2D# */proto);
 
-        cc.Texture2D._generateGrayTexture = function(texture, rect, renderCanvas){
+        cc.Texture2D._generateGrayTexture = function (texture, rect, renderCanvas) {
             if (texture === null)
                 return null;
             renderCanvas = renderCanvas || document.createElement("canvas");

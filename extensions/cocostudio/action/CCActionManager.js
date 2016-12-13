@@ -84,8 +84,8 @@ ccs.actionManager = /** @lends ccs.actionManager# */{
         if (action)
             action.play(fun);
     },
-    
-     /**
+
+    /**
      * Stop an Action with a name.
      * @param {String} jsonName
      * @param {String} actionName
@@ -103,10 +103,10 @@ ccs.actionManager = /** @lends ccs.actionManager# */{
         this._actionDic = {};
     },
 
-	/**
-	 * Clear data: Release all actions.
-	 */
-	clear: function() {
-		this._actionDic = {};
-	}
+    /**
+     * Clear data: Release all actions.
+     */
+    clear: function () {
+        this._actionDic = {};
+    }
 };
