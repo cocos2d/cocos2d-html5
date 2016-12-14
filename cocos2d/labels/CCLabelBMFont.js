@@ -114,8 +114,11 @@ cc.LabelBMFont = cc.Node.extend(/** @lends cc.LabelBMFont# */{
     },
 
     _setString: function (newString, needUpdateLabel) {
-        this._initialString = newString;
-        this._string = newString;
+        if (!needUpdateLabel) {
+            this._string = newString;
+        } else {
+            this._initialString = newString;
+        }
 
         var locChildren = this._children;
         if (locChildren) {
@@ -561,7 +564,8 @@ cc.LabelBMFont = cc.Node.extend(/** @lends cc.LabelBMFont# */{
      */
     updateLabel: function () {
         var self = this;
-        self._string = self._initialString;
+        self.string = self._initialString;
+
         var i, j, characterSprite;
         // process string
         // Step 1: Make multiline
