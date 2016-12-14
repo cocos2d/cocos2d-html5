@@ -27,7 +27,7 @@
 /**
  * using image file to print text label on the screen, might be a bit slower than cc.Label, similar to cc.LabelBMFont
  * @class
- * @extends cc.AtlasNode
+ * @extends cc.LabelBMFont
  *
  * @property {String}   string  - Content string of label
  *
@@ -43,14 +43,7 @@
  * //creates the cc.LabelAtlas with a string, a fnt file
  * var myLabel = new cc.LabelAtlas('Text to display', 'CharMapFile.plist‘);
  */
-cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
-    //property String is Getter and Setter
-    // string to render
-    _string: null,
-    // the first char in the charmap
-    _mapStartChar: null,
-
-    _textureLoaded: false,
+cc.LabelAtlas = cc.LabelBMFont.extend(/** @lends cc.LabelBMFont# */{
     _className: "LabelAtlas",
 
     /**
@@ -68,35 +61,47 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
      * @param {Number} [startCharMap=""]
      */
     ctor: function (strText, charMapFile, itemWidth, itemHeight, startCharMap) {
-        cc.AtlasNode.prototype.ctor.call(this);
+        cc.SpriteBatchNode.prototype.ctor.call(this);
+        this._imageOffset = cc.p(0, 0);
+        this._cascadeColorEnabled = true;
+        this._cascadeOpacityEnabled = true;
 
-        this._renderCmd.setCascade();
         charMapFile && cc.LabelAtlas.prototype.initWithString.call(this, strText, charMapFile, itemWidth, itemHeight, startCharMap);
     },
 
-    _createRenderCmd: function(){
-        if(cc._renderType === cc.game.RENDER_TYPE_WEBGL)
-            return new cc.LabelAtlas.WebGLRenderCmd(this);
+    _createRenderCmd: function () {
+        if (cc._renderType === cc.game.RENDER_TYPE_WEBGL)
+            return new cc.LabelBMFont.WebGLRenderCmd(this);
         else
-            return new cc.LabelAtlas.CanvasRenderCmd(this);
+            return new cc.LabelBMFont.CanvasRenderCmd(this);
     },
 
-    /**
-     * Return  texture is loaded.
-     * @returns {boolean}
-     */
-    textureLoaded: function () {
-        return this._textureLoaded;
-    },
+    _createFntConfig: function (texture, itemWidth, itemHeight, startCharMap) {
+        var fnt = {};
+        fnt.commonHeight = itemHeight;
 
-    /**
-     * Add texture loaded event listener.
-     * @param {Function} callback
-     * @param {cc.Node} target
-     * @deprecated since 3.1, please use addEventListener instead
-     */
-    addLoadedEventListener: function (callback, target) {
-        this.addEventListener("load", callback, target);
+        var fontDefDictionary = fnt.fontDefDictionary = {};
+
+        var textureWidth = texture.pixelsWidth;
+        var textureHeight = texture.pixelsHeight;
+
+        var startCharCode = startCharMap.charCodeAt(0);
+        var i = 0;
+        for (var col = itemHeight; col <= textureHeight; col += itemHeight) {
+            for (var row = 0; row < textureWidth; row += itemWidth) {
+                fontDefDictionary[startCharCode+i] = {
+                    rect: {x: row, y: col - itemHeight, width:itemWidth, height: itemHeight },
+                    xOffset: 0,
+                    yOffset: 0,
+                    xAdvance: itemWidth
+                };
+                ++i;
+            }
+        }
+
+        fnt.kerningDict = {};
+
+        return fnt;
     },
 
     /**
@@ -116,6 +121,10 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
      */
     initWithString: function (strText, charMapFile, itemWidth, itemHeight, startCharMap) {
         var label = strText + "", textureFilename, width, height, startChar;
+        var self = this, theString = label || "";
+        this._initialString = theString;
+        self._string = theString;
+
         if (itemWidth === undefined) {
             var dict = cc.loader.getRes(charMapFile);
             if (parseInt(dict["version"], 10) !== 1) {
@@ -135,88 +144,60 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
             startChar = startCharMap || " ";
         }
 
-        var texture = null;
-        if (textureFilename instanceof cc.Texture2D)
-            texture = textureFilename;
-        else
-            texture = cc.textureCache.addImage(textureFilename);
-        var locLoaded = texture.isLoaded();
-        this._textureLoaded = locLoaded;
-        if (!locLoaded) {
-            this._string = label;
-            texture.addEventListener("load", function (sender) {
-                this.initWithTexture(texture, width, height, label.length);
-                this.string = this._string;
-                this.setColor(this._renderCmd._displayedColor);
-                this.dispatchEvent("load");
-            }, this);
+        var texture;
+        if (charMapFile) {
+            self._fntFile = "dummy_fnt_file:" + textureFilename;
+            var spriteFrameBaseName = textureFilename;
+            var spriteFrame = cc.spriteFrameCache.getSpriteFrame(spriteFrameBaseName) || cc.spriteFrameCache.getSpriteFrame(cc.path.basename(spriteFrameBaseName));
+            if(spriteFrame) {
+                texture = spriteFrame.getTexture();
+                this._spriteFrame = spriteFrame;
+            } else {
+                texture = cc.textureCache.addImage(textureFilename);
+            }
+
+            var newConf = this._createFntConfig(texture, width, height, startChar);
+            newConf.atlasName = textureFilename;
+            self._config = newConf;
+
+            var locIsLoaded = texture.isLoaded();
+            self._textureLoaded = locIsLoaded;
+            if (!locIsLoaded) {
+                texture.addEventListener("load", function () {
+                    var self1 = this;
+                    self1._textureLoaded = true;
+                    //reset the LabelBMFont
+                    self1.setString(self1._initialString, true);
+                    self1.dispatchEvent("load");
+                }, self);
+            }
+        } else {
+            texture = new cc.Texture2D();
+            var image = new Image();
+            texture.initWithElement(image);
+            self._textureLoaded = false;
         }
-        if (this.initWithTexture(texture, width, height, label.length)) {
-            this._mapStartChar = startChar;
-            this.string = label;
-            return true;
-        }
-        return false;
+        this._texture = texture;
+
+        self._alignment = cc.TEXT_ALIGNMENT_LEFT;
+        self._imageOffset = cc.p(0, 0);
+        self._width = -1;
+
+        self._realOpacity = 255;
+        self._realColor = cc.color(255, 255, 255, 255);
+
+        self._contentSize.width = 0;
+        self._contentSize.height = 0;
+
+        self.setString(theString, true);
+        return true;
     },
 
-    /**
-     * Set the color.
-     * @param {cc.Color} color3
-     */
-    setColor: function (color3) {
-        cc.AtlasNode.prototype.setColor.call(this, color3);
-        this._renderCmd.updateAtlasValues();
-    },
-
-    /**
-     * return the text of this label
-     * @return {String}
-     */
-    getString: function () {
-        return this._string;
-    },
-
-    addChild: function(child, localZOrder, tag){
-        this._renderCmd._addChild(child);
-        cc.Node.prototype.addChild.call(this, child, localZOrder, tag);
-    },
-
-    /**
-     * Atlas generation
-     * @function
-     */
-    updateAtlasValues: function(){
-        this._renderCmd.updateAtlasValues();
-    },
-
-    /**
-     * set the display string
-     * @function
-     * @param {String} label
-     */
-    setString: function(label){
-        label = String(label);
-        var len = label.length;
-        this._string = label;
-        this.setContentSize(len * this._itemWidth, this._itemHeight);
-        this._renderCmd.setString(label);
-
-        this._renderCmd.updateAtlasValues();
-        this.quadsToDraw = len;
+    setFntFile: function () {
+        cc.warn("setFntFile doesn't support with LabelAtlas.");
     }
+
 });
-
-(function(){
-    var proto = cc.LabelAtlas.prototype;
-    // Override properties
-    cc.defineGetterSetter(proto, "opacity", proto.getOpacity, proto.setOpacity);
-    cc.defineGetterSetter(proto, "color", proto.getColor, proto.setColor);
-
-    // Extended properties
-    /** @expose */
-    proto.string;
-    cc.defineGetterSetter(proto, "string", proto.getString, proto.setString);
-})();
 
 /**
  * <p>
