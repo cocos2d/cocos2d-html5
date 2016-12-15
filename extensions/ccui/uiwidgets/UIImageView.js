@@ -63,8 +63,8 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
     },
 
     _initRenderer: function () {
-        //todo create Scale9Sprite and setScale9Enabled(false)
-        this._imageRenderer = new cc.Sprite();
+        this._imageRenderer = new ccui.Scale9Sprite();
+        this._imageRenderer.setRenderingType(ccui.Scale9Sprite.RenderingType.SIMPLE);
         this.addProtectedChild(this._imageRenderer, ccui.ImageView.RENDERER_ZORDER, -1);
     },
 
@@ -74,9 +74,7 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
      * @param {ccui.Widget.LOCAL_TEXTURE|ccui.Widget.PLIST_TEXTURE} texType
      */
     loadTexture: function (fileName, texType) {
-        //todo use this code when _initRenderer use Scale9Sprite
-        //if (!fileName || (this._textureFile == fileName && this._imageTexType == texType)) {
-        if (!fileName) {
+        if (!fileName || (this._textureFile == fileName && this._imageTexType == texType)) {
             return;
         }
         var self = this;
@@ -87,7 +85,15 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
 
         if(!imageRenderer._textureLoaded){
             imageRenderer.addEventListener("load", function(){
-                self.loadTexture(self._textureFile, self._imageTexType);
+                if(!self._ignoreSize && cc.sizeEqualToSize(self._customSize, cc.size(0, 0))) {
+                    self._customSize = self._imageRenderer.getContentSize();
+                }
+
+                self._imageTextureSize = imageRenderer.getContentSize();
+
+                self._updateChildrenDisplayedRGBA();
+
+                self._updateContentSizeWithTextureSize(self._imageTextureSize);
             });
         }
 
@@ -114,6 +120,10 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
                 break;
         }
 
+        if(!this._ignoreSize && cc.sizeEqualToSize(this._customSize, cc.size(0, 0))) {
+            this._customSize = this._imageRenderer.getContentSize();
+        }
+
         self._imageTextureSize = imageRenderer.getContentSize();
 
         this._updateChildrenDisplayedRGBA();
@@ -128,9 +138,8 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
      * Sets texture rect
      * @param {cc.Rect} rect
      */
-    setTextureRect: function (rect) {
-        if (!this._scale9Enabled)
-            this._imageRenderer.setTextureRect(rect);
+    setTextureRect: function () {
+        cc.warn('ImageView.setTextureRect  is deprecated!');
     },
 
     /**
@@ -138,20 +147,17 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
      * @param {Boolean} able
      */
     setScale9Enabled: function (able) {
-        //todo setScale9Enabled
         if (this._scale9Enabled === able)
             return;
 
         this._scale9Enabled = able;
-        this.removeProtectedChild(this._imageRenderer);
-        this._imageRenderer = null;
+
         if (this._scale9Enabled) {
-            this._imageRenderer = new ccui.Scale9Sprite();
+            this._imageRenderer.setRenderingType(ccui.Scale9Sprite.RenderingType.SLICED);
         } else {
-            this._imageRenderer = new cc.Sprite();
+            this._imageRenderer.setRenderingType(ccui.Scale9Sprite.RenderingType.SIMPLE);
         }
-        this.loadTexture(this._textureFile, this._imageTexType);
-        this.addProtectedChild(this._imageRenderer, ccui.ImageView.RENDERER_ZORDER, -1);
+
         if (this._scale9Enabled) {
             var ignoreBefore = this._ignoreSize;
             this.ignoreContentAdaptWithSize(false);
@@ -187,16 +193,15 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
      * @param {cc.Rect} capInsets
      */
     setCapInsets: function (capInsets) {
-        if(!capInsets)
-            return;
+        if(!capInsets) return;
+
         var locInsets = this._capInsets;
         locInsets.x = capInsets.x;
         locInsets.y = capInsets.y;
         locInsets.width = capInsets.width;
         locInsets.height = capInsets.height;
 
-        if (!this._scale9Enabled)
-            return;
+        if (!this._scale9Enabled) return;
         this._imageRenderer.setCapInsets(capInsets);
     },
 
@@ -238,23 +243,7 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
     },
 
     _imageTextureScaleChangedWithSize: function () {
-        if (this._ignoreSize) {
-            if (!this._scale9Enabled)
-                this._imageRenderer.setScale(1.0);
-        } else {
-            if (this._scale9Enabled){
-                this._imageRenderer.setPreferredSize(this._contentSize);
-                this._imageRenderer.setScale(1);
-            } else {
-                var textureSize = this._imageTextureSize;
-                if (textureSize.width <= 0.0 || textureSize.height <= 0.0) {
-                    this._imageRenderer.setScale(1.0);
-                    return;
-                }
-                this._imageRenderer.setScaleX(this._contentSize.width / textureSize.width);
-                this._imageRenderer.setScaleY(this._contentSize.height / textureSize.height);
-            }
-        }
+        this._imageRenderer.setContentSize(this._contentSize);
         this._imageRenderer.setPosition(this._contentSize.width / 2.0, this._contentSize.height / 2.0);
     },
 
@@ -274,9 +263,9 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
     _copySpecialProperties: function (imageView) {
         if(imageView instanceof ccui.ImageView){
             this._prevIgnoreSize = imageView._prevIgnoreSize;
-            this.setScale9Enabled(imageView._scale9Enabled);
+            this._capInsets = imageView._capInsets;
             this.loadTexture(imageView._textureFile, imageView._imageTexType);
-            this.setCapInsets(imageView._capInsets);
+            this.setScale9Enabled(imageView._scale9Enabled);
         }
     },
     /**
@@ -287,17 +276,12 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
      * @override
      */
     setContentSize: function(contentSize, height){
-        if(height != null)
+        if (height) {
             contentSize = cc.size(contentSize, height);
-        ccui.Widget.prototype.setContentSize.call(this, contentSize);
-        if(!this._scale9Enabled){
-            var iContentSize = this._imageRenderer.getContentSize();
-            this._imageRenderer.setScaleX(contentSize.width / iContentSize.width);
-            this._imageRenderer.setScaleY(contentSize.height / iContentSize.height);
-        }else{
-            this._imageRenderer.setContentSize(contentSize);
         }
 
+        ccui.Widget.prototype.setContentSize.call(this, contentSize);
+        this._imageRenderer.setContentSize(contentSize);
     }
 
 });

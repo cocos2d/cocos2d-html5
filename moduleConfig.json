@@ -153,13 +153,12 @@
         ],
         "labels" : [
             "core",
-
-            "cocos2d/labels/CCLabelAtlas.js",
-            "cocos2d/labels/CCLabelAtlasCanvasRenderCmd.js",
-            "cocos2d/labels/CCLabelAtlasWebGLRenderCmd.js",
             "cocos2d/labels/CCLabelBMFont.js",
             "cocos2d/labels/CCLabelBMFontCanvasRenderCmd.js",
-            "cocos2d/labels/CCLabelBMFontWebGLRenderCmd.js"
+            "cocos2d/labels/CCLabelBMFontWebGLRenderCmd.js",
+            "cocos2d/labels/CCLabelAtlas.js",
+            "cocos2d/labels/CCLabelAtlasCanvasRenderCmd.js",
+            "cocos2d/labels/CCLabelAtlasWebGLRenderCmd.js"
         ],
         "menus" : [
             "core", "actions",

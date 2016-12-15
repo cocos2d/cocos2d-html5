@@ -42,9 +42,9 @@
         this._node.setOpacityModifyRGB(this._node._texture.hasPremultipliedAlpha());
     };
 
-    proto._updateCharTexture = function (fontChar, rect, key) {
+    proto._updateCharTexture = function(fontChar, rect, key, isRotated){
         // updating previous sprite
-        fontChar.setTextureRect(rect, false);
+        fontChar.setTextureRect(rect, isRotated);
         // restore to default in case they were modified
         fontChar.visible = true;
     };
