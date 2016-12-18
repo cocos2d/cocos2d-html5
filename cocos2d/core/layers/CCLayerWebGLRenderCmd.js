@@ -55,64 +55,28 @@
  * cc.LayerColor's rendering objects of WebGL
  */
 (function () {
+    var FLOAT_PER_VERTEX = 4;
+
     cc.LayerColor.WebGLRenderCmd = function (renderable) {
         this._layerCmdCtor(renderable);
         this._needDraw = true;
 
-        this._matrix = new cc.math.Matrix4();
-        this._matrix.identity();
+        this._matrix = null;
 
-        //
-        var _t = this;
-        _t._squareVerticesAB = new ArrayBuffer(48);
-        _t._squareColorsAB = new ArrayBuffer(16);
-
-        var locSquareVerticesAB = _t._squareVerticesAB, locSquareColorsAB = _t._squareColorsAB;
-        var locVertex3FLen = cc.Vertex3F.BYTES_PER_ELEMENT, locColorLen = cc._WebGLColor.BYTES_PER_ELEMENT;
-        _t._squareVertices = [new cc.Vertex3F(0, 0, 0, locSquareVerticesAB, 0),
-            new cc.Vertex3F(0, 0, 0, locSquareVerticesAB, locVertex3FLen),
-            new cc.Vertex3F(0, 0, 0, locSquareVerticesAB, locVertex3FLen * 2),
-            new cc.Vertex3F(0, 0, 0, locSquareVerticesAB, locVertex3FLen * 3)];
-        _t._squareColors = [new cc._WebGLColor(0, 0, 0, 255, locSquareColorsAB, 0),
-            new cc._WebGLColor(0, 0, 0, 255, locSquareColorsAB, locColorLen),
-            new cc._WebGLColor(0, 0, 0, 255, locSquareColorsAB, locColorLen * 2),
-            new cc._WebGLColor(0, 0, 0, 255, locSquareColorsAB, locColorLen * 3)];
-        _t._verticesFloat32Buffer = cc._renderContext.createBuffer();
-        _t._colorsUint8Buffer = cc._renderContext.createBuffer();
+        this.initData(4);
+        this._color = new Uint32Array(1);
+        this._vertexBuffer = null;
 
         this._shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_COLOR);
     };
     var proto = cc.LayerColor.WebGLRenderCmd.prototype = Object.create(cc.Layer.WebGLRenderCmd.prototype);
     proto.constructor = cc.LayerColor.WebGLRenderCmd;
 
-    proto.rendering = function (ctx) {
-        var context = ctx || cc._renderContext;
-        var node = this._node;
-
-        var wt = this._worldTransform;
-        this._matrix.mat[0] = wt.a;
-        this._matrix.mat[4] = wt.c;
-        this._matrix.mat[12] = wt.tx;
-        this._matrix.mat[1] = wt.b;
-        this._matrix.mat[5] = wt.d;
-        this._matrix.mat[13] = wt.ty;
-
-        this._shaderProgram.use();
-        this._shaderProgram._setUniformForMVPMatrixWithMat4(this._matrix);
-        context.enableVertexAttribArray(cc.VERTEX_ATTRIB_POSITION);
-        context.enableVertexAttribArray(cc.VERTEX_ATTRIB_COLOR);
-        cc.glBlendFunc(node._blendFunc.src, node._blendFunc.dst);
-
-        //
-        // Attributes
-        //
-        context.bindBuffer(context.ARRAY_BUFFER, this._verticesFloat32Buffer);
-        context.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, context.FLOAT, false, 0, 0);
-
-        context.bindBuffer(context.ARRAY_BUFFER, this._colorsUint8Buffer);
-        context.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, context.UNSIGNED_BYTE, true, 0, 0);
-
-        context.drawArrays(context.TRIANGLE_STRIP, 0, this._squareVertices.length);
+    proto.initData = function (vertexCount) {
+        this._data = new ArrayBuffer(16 * vertexCount);
+        this._positionView = new Float32Array(this._data);
+        this._colorView = new Uint32Array(this._data);
+        this._dataDirty = true;
     };
 
     proto.transform = function (parentCmd, recursive) {
@@ -122,41 +86,68 @@
             width = node._contentSize.width,
             height = node._contentSize.height;
 
-        var locSquareVertices = this._squareVertices;
-        locSquareVertices[1].x = width;
-        locSquareVertices[2].y = height;
-        locSquareVertices[3].x = width;
-        locSquareVertices[3].y = height;
-        locSquareVertices[0].z = 
-        locSquareVertices[1].z = 
-        locSquareVertices[2].z = 
-        locSquareVertices[3].z = node._vertexZ;
+        var pos = this._positionView;
+        pos[FLOAT_PER_VERTEX] = width;          // br.x
+        pos[FLOAT_PER_VERTEX * 2 + 1] = height; // tl.y
+        pos[FLOAT_PER_VERTEX * 3] = width;      // tr.x
+        pos[FLOAT_PER_VERTEX * 3 + 1] = height; // tr.y
+        pos[2].z = 
+        pos[FLOAT_PER_VERTEX + 2] = 
+        pos[FLOAT_PER_VERTEX * 2 + 2] = 
+        pos[FLOAT_PER_VERTEX * 3 + 2] = node._vertexZ;
 
-        this._bindLayerVerticesBufferData();
+        this._dataDirty = true;
     };
 
     proto._updateColor = function () {
-        var locDisplayedColor = this._displayedColor, locDisplayedOpacity = this._displayedOpacity,
-            locSquareColors = this._squareColors;
+        var color = this._displayedColor;
+        this._color[0] = ((this._displayedOpacity << 24) | (color.b << 16) | (color.g << 8) | color.r);
+
+        var colors = this._colorView;
         for (var i = 0; i < 4; i++) {
-            locSquareColors[i].r = locDisplayedColor.r;
-            locSquareColors[i].g = locDisplayedColor.g;
-            locSquareColors[i].b = locDisplayedColor.b;
-            locSquareColors[i].a = locDisplayedOpacity;
+            colors[i * FLOAT_PER_VERTEX + 3] = this._color[0];
         }
-        this._bindLayerColorsBufferData();
+        this._dataDirty = true;
     };
 
-    proto._bindLayerVerticesBufferData = function () {
-        var glContext = cc._renderContext;
-        glContext.bindBuffer(glContext.ARRAY_BUFFER, this._verticesFloat32Buffer);
-        glContext.bufferData(glContext.ARRAY_BUFFER, this._squareVerticesAB, glContext.DYNAMIC_DRAW);
-    };
+    proto.rendering = function (ctx) {
+        var gl = ctx || cc._renderContext;
+        var node = this._node;
 
-    proto._bindLayerColorsBufferData = function () {
-        var glContext = cc._renderContext;
-        glContext.bindBuffer(glContext.ARRAY_BUFFER, this._colorsUint8Buffer);
-        glContext.bufferData(glContext.ARRAY_BUFFER, this._squareColorsAB, glContext.STATIC_DRAW);
+        if (!this._matrix) {
+            this._matrix = new cc.math.Matrix4();
+            this._matrix.identity();
+        }
+
+        var wt = this._worldTransform;
+        this._matrix.mat[0] = wt.a;
+        this._matrix.mat[4] = wt.c;
+        this._matrix.mat[12] = wt.tx;
+        this._matrix.mat[1] = wt.b;
+        this._matrix.mat[5] = wt.d;
+        this._matrix.mat[13] = wt.ty;
+
+        if (this._dataDirty) {
+            if (!this._vertexBuffer) {
+                this._vertexBuffer = gl.createBuffer();
+            }
+            gl.bindBuffer(gl.ARRAY_BUFFER, this._vertexBuffer);
+            gl.bufferData(gl.ARRAY_BUFFER, this._data, gl.DYNAMIC_DRAW);
+            this._dataDirty = false;
+        }
+
+        this._shaderProgram.use();
+        this._shaderProgram._setUniformForMVPMatrixWithMat4(this._matrix);
+        cc.glBlendFunc(node._blendFunc.src, node._blendFunc.dst);
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, this._vertexBuffer);
+        gl.enableVertexAttribArray(cc.VERTEX_ATTRIB_POSITION);
+        gl.enableVertexAttribArray(cc.VERTEX_ATTRIB_COLOR);
+
+        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 16, 0);
+        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, gl.UNSIGNED_BYTE, true, 16, 12);
+
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     };
 
     proto.updateBlendFunc = function (blendFunc) {
@@ -167,6 +158,8 @@
  * cc.LayerGradient's rendering objects of WebGL
  */
 (function () {
+    var FLOAT_PER_VERTEX = 4;
+
     cc.LayerGradient.WebGLRenderCmd = function (renderable) {
         cc.LayerColor.WebGLRenderCmd.call(this, renderable);
         this._needDraw = true;
@@ -210,15 +203,8 @@
 
         this._clippingRectDirty = true;
         var i, stopsLen = stops.length, verticesLen = stopsLen * 2, contentSize = node._contentSize;
-        var locVertices = this._squareVertices;
-        if (locVertices.length < verticesLen) {
-            this._squareVerticesAB = new ArrayBuffer(verticesLen * 12);
-            locVertices.length = 0;
-            var locSquareVerticesAB = this._squareVerticesAB;
-            var locVertex3FLen = cc.Vertex3F.BYTES_PER_ELEMENT;
-            for (i = 0; i < verticesLen; i++) {
-                locVertices.push(new cc.Vertex3F(0, 0, 0, locSquareVerticesAB, locVertex3FLen * i));
-            }
+        if (this._positionView.length / FLOAT_PER_VERTEX < verticesLen) {
+            this.initData(verticesLen);
         }
 
         //init vertex
@@ -244,19 +230,22 @@
         var sin = Math.sin(angle), cos = Math.cos(angle);
         var tx = Math.abs((a.x * cos - a.y * sin) / locAnchor.x), ty = Math.abs((b.x * sin + b.y * cos) / locAnchor.y);
         transMat = cc.affineTransformScale(transMat, tx, ty);
+        var pos = this._positionView;
         for (i = 0; i < stopsLen; i++) {
             var stop = stops[i], y = stop.p * contentSize.height;
             var p0 = cc.pointApplyAffineTransform(-locAnchor.x, y - locAnchor.y, transMat);
-            locVertices[i * 2].x = p0.x;
-            locVertices[i * 2].y = p0.y;
-            locVertices[i * 2].z = node._vertexZ;
+            var offset = i * 2 * FLOAT_PER_VERTEX;
+            pos[offset] = p0.x;
+            pos[offset + 1] = p0.y;
+            pos[offset + 2] = node._vertexZ;
             var p1 = cc.pointApplyAffineTransform(contentSize.width - locAnchor.x, y - locAnchor.y, transMat);
-            locVertices[i * 2 + 1].x = p1.x;
-            locVertices[i * 2 + 1].y = p1.y;
-            locVertices[i * 2 + 1].z = node._vertexZ;
+            offset += FLOAT_PER_VERTEX;
+            pos[offset] = p1.x;
+            pos[offset + 1] = p1.y;
+            pos[offset + 2] = node._vertexZ;
         }
 
-        this._bindLayerVerticesBufferData();
+        this._dataDirty = true;
     };
 
     proto._updateColor = function () {
@@ -264,37 +253,30 @@
         if (!stops || stops.length < 2)
             return;
 
-        //init color
-        var i, stopsLen = stops.length;
-        var locColors = this._squareColors, verticesLen = stopsLen * 2;
-        if (locColors.length < verticesLen) {
-            this._squareColorsAB = new ArrayBuffer(verticesLen * 4);
-            locColors.length = 0;
-            var locSquareColorsAB = this._squareColorsAB;
-            var locColorLen = cc._WebGLColor.BYTES_PER_ELEMENT;
-            for (i = 0; i < verticesLen; i++) {
-                locColors.push(new cc._WebGLColor(0, 0, 0, 255, locSquareColorsAB, locColorLen * i));
-            }
-        }
-
-        var opacityf = this._displayedOpacity / 255.0; //, displayColor = this._displayedColor;
+        var stopsLen = stops.length,
+            stopColor,
+            offset,
+            colors = this._colorView,
+            opacityf = this._displayedOpacity / 255;
         for (i = 0; i < stopsLen; i++) {
-            var stopColor = stops[i].color, locSquareColor0 = locColors[i * 2], locSquareColor1 = locColors[i * 2 + 1];
-            locSquareColor0.r = stopColor.r;
-            locSquareColor0.g = stopColor.g;
-            locSquareColor0.b = stopColor.b;
-            locSquareColor0.a = stopColor.a * opacityf;
-
-            locSquareColor1.r = stopColor.r;
-            locSquareColor1.g = stopColor.g;
-            locSquareColor1.b = stopColor.b;
-            locSquareColor1.a = stopColor.a * opacityf;
+            stopColor = stops[i].color;
+            this._color[0] = ((stopColor.a*opacityf) << 24) | (stopColor.b << 16) | (stopColor.g << 8) | stopColor.r;
+            
+            offset = i * 2 * FLOAT_PER_VERTEX;
+            colors[offset + 3] = this._color[0];
+            offset += FLOAT_PER_VERTEX;
+            colors[offset + 3] = this._color[0];
         }
-        this._bindLayerColorsBufferData();
+        this._dataDirty = true;
     };
 
     proto.rendering = function (ctx) {
         var context = ctx || cc._renderContext, node = this._node;
+
+        if (!this._matrix) {
+            this._matrix = new cc.math.Matrix4();
+            this._matrix.identity();
+        }
 
         //it is too expensive to use stencil to clip, so it use Scissor,
         //but it has a bug when layer rotated and layer's content size less than canvas's size.
@@ -310,20 +292,28 @@
         this._matrix.mat[5] = wt.d;
         this._matrix.mat[13] = wt.ty;
 
+        if (this._dataDirty) {
+            if (!this._vertexBuffer) {
+                this._vertexBuffer = gl.createBuffer();
+            }
+            gl.bindBuffer(gl.ARRAY_BUFFER, this._vertexBuffer);
+            gl.bufferData(gl.ARRAY_BUFFER, this._data, gl.DYNAMIC_DRAW);
+            this._dataDirty = false;
+        }
+
         //draw gradient layer
         this._shaderProgram.use();
         this._shaderProgram._setUniformForMVPMatrixWithMat4(this._matrix);
-        context.enableVertexAttribArray(cc.VERTEX_ATTRIB_POSITION);
-        context.enableVertexAttribArray(cc.VERTEX_ATTRIB_COLOR);
         cc.glBlendFunc(node._blendFunc.src, node._blendFunc.dst);
-        //
-        // Attributes
-        //
-        context.bindBuffer(context.ARRAY_BUFFER, this._verticesFloat32Buffer);
-        context.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, context.FLOAT, false, 0, 0);
-        context.bindBuffer(context.ARRAY_BUFFER, this._colorsUint8Buffer);
-        context.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, context.UNSIGNED_BYTE, true, 0, 0);
-        context.drawArrays(context.TRIANGLE_STRIP, 0, this._squareVertices.length);
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, this._vertexBuffer);
+        gl.enableVertexAttribArray(cc.VERTEX_ATTRIB_POSITION);
+        gl.enableVertexAttribArray(cc.VERTEX_ATTRIB_COLOR);
+
+        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 16, 0);
+        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, gl.UNSIGNED_BYTE, true, 16, 12);
+
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
         context.disable(context.SCISSOR_TEST);
     };
