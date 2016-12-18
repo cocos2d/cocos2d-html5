@@ -275,13 +275,13 @@
                     for (i = 0; i < len; i++) {
                         child = children[i];
                         if (child._localZOrder < 0)
-                            child._renderCmd.visit(this);
+                            child.visit(node);
                         else
                             break;
                     }
                     cc.renderer.pushRenderCommand(this);
                     for (; i < len; i++) {
-                        children[i]._renderCmd.visit(this);
+                        children[i].visit(node);
                     }
                 } else
                     cc.renderer.pushRenderCommand(this);
