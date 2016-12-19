@@ -116,7 +116,6 @@ cc.GLProgram = cc.Class.extend(/** @lends cc.GLProgram# */{
     ctor: function (vShaderFileName, fShaderFileName, glContext) {
         this._uniforms = {};
         this._hashForUniforms = {};
-        this._userUniforms = {};
         this._glContext = glContext || cc._renderContext;
 
         vShaderFileName && fShaderFileName && this.init(vShaderFileName, fShaderFileName);
@@ -232,7 +231,6 @@ cc.GLProgram = cc.Class.extend(/** @lends cc.GLProgram# */{
         }
 
         this._glContext.linkProgram(this._programObj);
-        this._parseUniforms();
 	
         if (this._vertShader)
             this._glContext.deleteShader(this._vertShader);
@@ -255,18 +253,6 @@ cc.GLProgram = cc.Class.extend(/** @lends cc.GLProgram# */{
         return true;
     },
 
-    _parseUniforms: function _parseUniforms() {
-        var activeUniforms = this._glContext.getProgramParameter(this._programObj, this._glContext.ACTIVE_UNIFORMS);
-        for (var i = 0; i < activeUniforms; ++i) {
-            var uniform = this._glContext.getActiveUniform(this._programObj, i);
-            uniform.location = this._glContext.getUniformLocation(this._programObj, uniform.name);
-            if (uniform.name.indexOf("CC_") !== 0) {
-                uniform.location = this._glContext.getUniformLocation(this._programObj, uniform.name);
-                uniform.name = uniform.name.replace("[]", "");
-                this._userUniforms[uniform.name] = uniform;
-            }
-        }
-    },
     /**
      * it will call glUseProgram()
      */
