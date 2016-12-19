@@ -359,12 +359,15 @@ cc.Audio.WebAudio.prototype = {
         loadBuffer: function (url, cb) {
             if (!SWA) return; // WebAudio Buffer
 
-            var request = new XMLHttpRequest();
+            var request = cc.loader.getXMLHttpRequest();
             request.open("GET", url, true);
             request.responseType = "arraybuffer";
 
             // Our asynchronous callback
             request.onload = function () {
+                if (request._timeoutId >= 0) {
+                    clearTimeout(request._timeoutId);
+                }
                 context["decodeAudioData"](request.response, function (buffer) {
                     //success
                     cb(null, buffer);
@@ -378,6 +381,11 @@ cc.Audio.WebAudio.prototype = {
             request.onerror = function () {
                 cb('request error - ' + url);
             };
+            if (request.ontimeout === undefined) {
+                request._timeoutId = setTimeout(function () {
+                    request.ontimeout();
+                }, request.timeout);
+            }
             request.ontimeout = function () {
                 cb('request timeout - ' + url);
             };

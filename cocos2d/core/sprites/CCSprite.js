@@ -276,8 +276,6 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @param {cc.SpriteBatchNode} batchNode
      */
     useBatchNode: function (batchNode) {
-        this.textureAtlas = batchNode.getTextureAtlas(); // weak ref
-        this._batchNode = batchNode;
     },
 
     /**
@@ -299,93 +297,9 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
     },
 
-    /**
-     * Sort all children of this sprite node.
-     * @override
-     */
-    sortAllChildren: function () {
-        if (this._reorderChildDirty) {
-            var _children = this._children;
-
-            cc.Node.prototype.sortAllChildren.call(this);
-
-            if (this._batchNode) {
-                this._arrayMakeObjectsPerformSelector(_children, cc.Node._stateCallbackType.sortAllChildren);
-            }
-
-            //don't need to check children recursively, that's done in visit of each child
-            this._reorderChildDirty = false;
-        }
-
-    },
-
-    /**
-     * Reorders a child according to a new z value.  (override cc.Node )
-     * @param {cc.Node} child
-     * @param {Number} zOrder
-     * @override
-     */
-    reorderChild: function (child, zOrder) {
-        cc.assert(child, cc._LogInfos.Sprite_reorderChild_2);
-        if (this._children.indexOf(child) === -1) {
-            cc.log(cc._LogInfos.Sprite_reorderChild);
-            return;
-        }
-
-        if (zOrder === child.zIndex)
-            return;
-
-        if (this._batchNode && !this._reorderChildDirty) {
-            this._setReorderChildDirtyRecursively();
-            this._batchNode.reorderBatch(true);
-        }
-        cc.Node.prototype.reorderChild.call(this, child, zOrder);
-    },
-
-    /**
-     * Removes a child from the sprite.
-     * @param child
-     * @param cleanup  whether or not cleanup all running actions
-     * @override
-     */
-    removeChild: function (child, cleanup) {
-        if (this._batchNode)
-            this._batchNode.removeSpriteFromAtlas(child);
-        cc.Node.prototype.removeChild.call(this, child, cleanup);
-    },
-
-    /**
-     * Removes all children from the container.
-     * @param cleanup whether or not cleanup all running actions
-     * @override
-     */
-    removeAllChildren: function (cleanup) {
-        var locChildren = this._children, locBatchNode = this._batchNode;
-        if (locBatchNode && locChildren != null) {
-            for (var i = 0, len = locChildren.length; i < len; i++)
-                locBatchNode.removeSpriteFromAtlas(locChildren[i]);
-        }
-
-        cc.Node.prototype.removeAllChildren.call(this, cleanup);
-        this._hasChildren = false;
-    },
-
     //
     // cc.Node property overloads
     //
-
-    /**
-     * Sets whether ignore anchor point for positioning
-     * @param {Boolean} relative
-     * @override
-     */
-    ignoreAnchorPointForPosition: function (relative) {
-        if (this._batchNode) {
-            cc.log(cc._LogInfos.Sprite_ignoreAnchorPointForPosition);
-            return;
-        }
-        cc.Node.prototype.ignoreAnchorPointForPosition.call(this, relative);
-    },
 
     /**
      * Sets whether the sprite should be flipped horizontally or not.
@@ -492,18 +406,6 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      */
     getBatchNode: function () {
         return this._batchNode;
-    },
-
-    _setReorderChildDirtyRecursively: function () {
-        //only set parents flag the first time
-        if (!this._reorderChildDirty) {
-            this._reorderChildDirty = true;
-            var pNode = this._parent;
-            while (pNode && pNode !== this._batchNode) {
-                pNode._setReorderChildDirtyRecursively();
-                pNode = pNode.parent;
-            }
-        }
     },
 
     // CCTextureProtocol
@@ -856,20 +758,6 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      *  layer.addChild(batch);
      */
     setBatchNode: function (spriteBatchNode) {
-        var _t = this;
-        _t._batchNode = spriteBatchNode; // weak reference
-
-        // self render
-        if (!_t._batchNode) {
-            _t.atlasIndex = cc.Sprite.INDEX_NOT_INITIALIZED;
-            _t.textureAtlas = null;
-            _t._recursiveDirty = false;
-            _t.dirty = false;
-        } else {
-            // using batch
-            _t._transformToBatch = cc.affineTransformIdentity();
-            _t.textureAtlas = _t._batchNode.getTextureAtlas(); // weak ref
-        }
     },
 
     // CCTextureProtocol

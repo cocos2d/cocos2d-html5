@@ -623,6 +623,9 @@ cc.loader = (function () {
         getXMLHttpRequest: function () {
             var xhr = window.XMLHttpRequest ? new window.XMLHttpRequest() : new ActiveXObject("MSXML2.XMLHTTP");
             xhr.timeout = 10000;
+            if (xhr.ontimeout === undefined) {
+                xhr._timeoutId = -1;
+            }
             return xhr;
         },
 
@@ -770,11 +773,23 @@ cc.loader = (function () {
                 } else {
                     if (xhr.overrideMimeType) xhr.overrideMimeType("text\/plain; charset=utf-8");
                     xhr.onload = function () {
-                        if (xhr.readyState === 4)
+                        if (xhr._timeoutId >= 0) {
+                            clearTimeout(xhr._timeoutId);
+                        }
+                        if (xhr.readyState === 4) {
                             xhr.status === 200 ? cb(null, xhr.responseText) : cb({status:xhr.status, errorMessage:errInfo}, null);
+                        }
                     };
-                    xhr.onerror = xhr.ontimeout = function () {
+                    xhr.onerror = function () {
                         cb({status: xhr.status, errorMessage: errInfo}, null);
+                    };
+                    if (xhr.ontimeout === undefined) {
+                        xhr._timeoutId = setTimeout(function () {
+                            xhr.ontimeout();
+                        }, xhr.timeout);
+                    }
+                    xhr.ontimeout = function () {
+                        cb({status: xhr.status, errorMessage: "Request timeout: " + errInfo}, null);
                     };
                 }
                 xhr.send(null);
@@ -787,21 +802,33 @@ cc.loader = (function () {
         },
 
         loadCsb: function(url, cb){
-            var xhr = new XMLHttpRequest(),
+            var xhr = cc.loader.getXMLHttpRequest(),
                 errInfo = "load " + url + " failed!";
             xhr.open("GET", url, true);
             xhr.responseType = "arraybuffer";
 
             xhr.onload = function () {
+                if (xhr._timeoutId >= 0) {
+                    clearTimeout(xhr._timeoutId);
+                }
                 var arrayBuffer = xhr.response; // Note: not oReq.responseText
                 if (arrayBuffer) {
                     window.msg = arrayBuffer;
                 }
-                if(xhr.readyState === 4)
+                if (xhr.readyState === 4) {
                     xhr.status === 200 ? cb(null, xhr.response) : cb({status:xhr.status, errorMessage:errInfo}, null);
+                }
             };
-            xhr.onerror = xhr.ontimeout = function(){
+            xhr.onerror = function(){
                 cb({status:xhr.status, errorMessage:errInfo}, null);
+            };
+            if (xhr.ontimeout === undefined) {
+                xhr._timeoutId = setTimeout(function () {
+                    xhr.ontimeout();
+                }, xhr.timeout);
+            }
+            xhr.ontimeout = function () {
+                cb({status: xhr.status, errorMessage: "Request timeout: " + errInfo}, null);
             };
             xhr.send(null);
         },
@@ -2650,8 +2677,7 @@ cc.game = /** @lends cc.game# */{
             this._renderContext = cc._renderContext = cc.webglContext
              = cc.create3DContext(localCanvas, {
                 'stencil': true,
-                'alpha': false,
-                'preserveDrawingBuffer': false
+                'alpha': false
             });
         }
         // WebGL context created successfully
