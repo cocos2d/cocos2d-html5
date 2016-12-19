@@ -64,7 +64,7 @@ cc.UniformValue.prototype = {
     },
 
     setVec2v: function setVec2v(value) {
-        this._value = value;
+        this._value = value.slice(0);
         this._type = types.GL_FLOAT_VEC2;
     },
 
@@ -74,7 +74,7 @@ cc.UniformValue.prototype = {
     },
 
     setVec3v: function setVec3v(value) {
-        this._value = value;
+        this._value = value.slice(0);
         this._type = types.GL_FLOAT_VEC3;
     },
 
@@ -84,12 +84,12 @@ cc.UniformValue.prototype = {
     },
 
     setVec4v: function setVec4v(value) {
-        this._value = value;
+        this._value = value.slice(0);
         this._type = types.GL_FLOAT_VEC4;
     },
 
     setMat4: function setMat4(value) {
-        this._value = value;
+        this._value = value.slice(0);
         this._type = types.GL_FLOAT_MAT4;
     },
 
