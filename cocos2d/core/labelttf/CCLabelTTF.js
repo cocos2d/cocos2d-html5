@@ -133,9 +133,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         this._renderCmd._setFontStyle(this._fontName, fontSize, this._fontStyle, this._fontWeight);
         this.string = strInfo;
         this._renderCmd._setColorsString();
-        if (this._string) {
-            this._renderCmd._updateTexture();
-        }
+        this._renderCmd._updateTexture();
         this._setUpdateTextureDirty();
 
         // Needed for high dpi text.
