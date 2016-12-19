@@ -1360,6 +1360,13 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     reorderChild: function (child, zOrder) {
         cc.assert(child, cc._LogInfos.Node_reorderChild);
+        if (this._children.indexOf(child) === -1) {
+            cc.log(cc._LogInfos.Node_reorderChild_2);
+            return;
+        }
+        if (zOrder === child.zIndex) {
+            return;
+        }
         cc.renderer.childrenOrderDirty = this._reorderChildDirty = true;
         child.arrivalOrder = cc.s_globalOrderOfArrival;
         cc.s_globalOrderOfArrival++;

@@ -41,7 +41,6 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
     animation: null,
     armatureData: null,
     batchNode: null,
-    _textureAtlas: null,
     _parentBone: null,
     _boneDic: null,
     _topBoneList: null,
@@ -70,6 +69,8 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
         this._armatureTransformDirty = true;
         this._blendFunc = {src: cc.BLEND_SRC, dst: cc.BLEND_DST};
         name && ccs.Armature.prototype.init.call(this, name, parentBone);
+        // Hack way to avoid RendererWebGL from skipping Armature
+        this._texture = {};
     },
 
     /**

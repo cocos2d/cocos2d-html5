@@ -160,11 +160,6 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
             cc.eventManager.setEnabled(true);
     };
 
-    _p._clear = function () {
-        var gl = cc._renderContext;
-        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-    };
-
     _p.getVisibleSize = function () {
         //if (this._openGLView) {
         return this._openGLView.getVisibleSize();

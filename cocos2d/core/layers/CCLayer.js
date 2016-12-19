@@ -74,7 +74,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
         return this._renderCmd._isBaked;
     },
 
-    visit: function () {
+    visit: function (parent) {
         // quick return if not visible
         if (!this._visible)
             return;
