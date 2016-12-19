@@ -402,6 +402,7 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
     proto._updateTexture = function () {
         this._dirtyFlag = this._dirtyFlag & cc.Node._dirtyFlags.textDirty ^ this._dirtyFlag;
         var node = this._node;
+        node._needUpdateTexture = false;
         var locContentSize = node._contentSize;
         this._updateTTF();
         var width = locContentSize.width, height = locContentSize.height;
