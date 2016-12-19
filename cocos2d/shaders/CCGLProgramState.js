@@ -156,7 +156,8 @@ cc.GLProgramState = function (glprogram) {
     
     var activeUniforms = glprogram._glContext.getProgramParameter(glprogram._programObj,
                                                                   glprogram._glContext.ACTIVE_UNIFORMS);
-    
+
+    var count = 0;
     for (var i = 0; i < activeUniforms; ++i) {
         var uniform = glprogram._glContext.getActiveUniform(glprogram._programObj, i);  
         if (uniform.name.indexOf("CC_") !== 0) {
@@ -165,8 +166,9 @@ cc.GLProgramState = function (glprogram) {
             uniform.name = uniform.name.replace("[]", "");
             var uniformValue = new cc.UniformValue(uniform, glprogram);
             this._uniforms.push(uniformValue);
-            this._uniformsByName[uniform.name] = i;
-            this._uniformsByLocation[uniform.location] = i;
+            this._uniformsByName[uniform.name] = count;
+            this._uniformsByLocation[uniform.location] = count;
+	    count++;
         }
     }
 };
