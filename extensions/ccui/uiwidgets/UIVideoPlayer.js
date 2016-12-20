@@ -420,14 +420,17 @@ ccui.VideoPlayer.EventType = {
             scaleY = scaleY / dpr;
         }
         if (this._loaded === false) return;
-        var cw = node._contentSize.width,
+        var containerStyle = cc.game.container.style,
+            offsetX = parseInt(containerStyle.paddingLeft),
+            offsetY = parseInt(containerStyle.paddingBottom),
+            cw = node._contentSize.width,
             ch = node._contentSize.height;
         var a = t.a * scaleX,
             b = t.b,
             c = t.c,
             d = t.d * scaleY,
-            tx = t.tx * scaleX - cw / 2 + cw * node._scaleX / 2 * scaleX,
-            ty = t.ty * scaleY - ch / 2 + ch * node._scaleY / 2 * scaleY;
+            tx = offsetX + t.tx * scaleX - cw / 2 + cw * node._scaleX / 2 * scaleX,
+            ty = offsetY + t.ty * scaleY - ch / 2 + ch * node._scaleY / 2 * scaleY;
         var matrix = "matrix(" + a + "," + b + "," + c + "," + d + "," + tx + "," + -ty + ")";
         this._video.style["transform"] = matrix;
         this._video.style["-webkit-transform"] = matrix;

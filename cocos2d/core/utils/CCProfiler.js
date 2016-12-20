@@ -86,9 +86,9 @@ cc.profiler = (function () {
 
             if (_showFPS) {
                 var mode = cc._renderType === cc.game.RENDER_TYPE_CANVAS ? "\n canvas" : "\n webgl";
-                _SPFLabel.innerText = _lastSPF.toFixed(3);
-                _FPSLabel.innerText = _frameRate.toFixed(1).toString() + mode;
-                _drawsLabel.innerText = (0 | cc.g_NumberOfDraws).toString();
+                _SPFLabel.innerHTML = _lastSPF.toFixed(3);
+                _FPSLabel.innerHTML = _frameRate.toFixed(1).toString() + mode;
+                _drawsLabel.innerHTML = (0 | cc.g_NumberOfDraws).toString();
             }
         }
     };
