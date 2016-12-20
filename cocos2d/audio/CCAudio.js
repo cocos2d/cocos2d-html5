@@ -354,7 +354,7 @@ cc.Audio.WebAudio.prototype = {
 
         cache: {},
 
-        useWebAudio: false,
+        useWebAudio: true,
 
         loadBuffer: function (url, cb) {
             if (!SWA) return; // WebAudio Buffer
@@ -712,6 +712,7 @@ cc.Audio.WebAudio.prototype = {
 
             }
 
+            var cache = loader.useWebAudio;
             loader.useWebAudio = true;
             cc.loader.load(url, function (audio) {
                 audio = cc.loader.getRes(url);
@@ -720,7 +721,7 @@ cc.Audio.WebAudio.prototype = {
                 audio.play(0, loop || false);
                 effectList.push(audio);
             });
-            loader.useWebAudio = false;
+            loader.useWebAudio = cache;
 
             return audio;
         },
