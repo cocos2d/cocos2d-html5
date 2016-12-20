@@ -100,7 +100,7 @@
             for (var i = 0; i < locChildren.length; i++) {
                 var getChild = locChildren[i];
                 if (getChild !== node.sprite) {
-                    getChild._renderCmd.visit(node.sprite._renderCmd);    //TODO it's very Strange
+                    getChild.visit(node.sprite);    //TODO it's very Strange
                 }
             }
             node.end();
@@ -362,10 +362,5 @@
         // restore clear color
         gl.clearDepth(depthClearValue);
         node.end();
-    };
-
-    proto.visit = function (parentCmd) {
-        this._syncStatus(parentCmd);
-        cc.renderer.pushRenderCommand(this);
     };
 })();

@@ -140,6 +140,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         var renderer = cc.renderer, cmd = this._renderCmd;
 
         cmd.visit(parent && parent._renderCmd);
+        renderer.pushRenderCommand(cmd);
         this.sprite.visit(this);
         cmd._dirtyFlag = 0;
     },
