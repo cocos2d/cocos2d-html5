@@ -1717,7 +1717,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         cc.assert(interval >= 0, cc._LogInfos.Node_schedule_2);
 
         interval = interval || 0;
-        repeat = (repeat == null) ? cc.REPEAT_FOREVER : repeat;
+        repeat = isNaN(repeat) ? cc.REPEAT_FOREVER : repeat;
         delay = delay || 0;
 
         this.scheduler.schedule(callback, this, interval, repeat, delay, !this._running, key);

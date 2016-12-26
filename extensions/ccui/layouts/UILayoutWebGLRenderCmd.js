@@ -77,7 +77,6 @@
 
         gl.stencilMask(mask_layer);
         gl.clear(gl.STENCIL_BUFFER_BIT);
-
     };
 
     proto._onAfterDrawStencil = function (ctx) {
