@@ -460,9 +460,7 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
     _onPressStateChangedToNormal: function () {
         this._buttonScale9Renderer.setSpriteFrame(this._buttonNormalSpriteFrame);
 
-        if (this._scale9Enabled) {
-            this._buttonScale9Renderer.setState( ccui.Scale9Sprite.state.NORMAL);
-        }
+        this._buttonScale9Renderer.setState( ccui.Scale9Sprite.state.NORMAL);
 
         if (this._pressedTextureLoaded) {
             if (this.pressedActionEnabled){
@@ -500,9 +498,7 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
     },
 
     _onPressStateChangedToPressed: function () {
-        if (this._scale9Enabled) {
-            this._buttonScale9Renderer.setState(ccui.Scale9Sprite.state.NORMAL);
-        }
+        this._buttonScale9Renderer.setState(ccui.Scale9Sprite.state.NORMAL);
 
         if (this._pressedTextureLoaded) {
             this._buttonScale9Renderer.setSpriteFrame(this._buttonClickedSpriteFrame);
@@ -539,7 +535,7 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
     _onPressStateChangedToDisabled: function () {
         //if disable resource is null
         if (!this._disabledTextureLoaded){
-            if (this._normalTextureLoaded && this._scale9Enabled) {
+            if (this._normalTextureLoaded) {
                 this._buttonScale9Renderer.setState(ccui.Scale9Sprite.state.GRAY);
             }
         }else{
