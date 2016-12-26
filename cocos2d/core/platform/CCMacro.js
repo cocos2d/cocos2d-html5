@@ -499,10 +499,11 @@ cc.ORIENTATION_AUTO = 3;
 
 /**
  * The limit count for concurrency http request, useful in some mobile browsers
+ * Adjust its value with the test results based on your game, the preset value is just a placeholder
  * @constant
  * @type Number
  */
-cc.CONCURRENCY_HTTP_REQUEST_COUNT = cc.sys.isMobile ? 9 : 0;
+cc.CONCURRENCY_HTTP_REQUEST_COUNT = cc.sys.isMobile ? 20 : 0;
 
 
 // ------------------- vertex attrib flags -----------------------------
