@@ -623,6 +623,11 @@ cc.SHADER_SPRITE_POSITION_TEXTURECOLOR = "ShaderSpritePositionTextureColor";
  * @constant
  * @type {String}
  */
+cc.SHADER_SPRITE_POSITION_TEXTURECOLOR_GRAY = "ShaderSpritePositionTextureColorGray";
+/**
+ * @constant
+ * @type {String}
+ */
 cc.SHADER_POSITION_TEXTURECOLORALPHATEST = "ShaderPositionTextureColorAlphaTest";
 /**
  * @constant
