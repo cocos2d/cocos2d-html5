@@ -80,7 +80,7 @@
  * // Example 03
  * var label3 = new cc.LabelBMFont("This is a \n test case", "test.fnt", 200, cc.TEXT_ALIGNMENT_LEFT, cc.p(0,0));
  */
-cc.LabelBMFont = cc.Node.extend(/** @lends cc.LabelBMFont# */{
+cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     //property string is Getter and Setter.
     //property textAlign is Getter and Setter.
     //property boundingWidth is Getter and Setter.
@@ -251,6 +251,7 @@ cc.LabelBMFont = cc.Node.extend(/** @lends cc.LabelBMFont# */{
                     var self1 = this;
                     self1._textureLoaded = true;
                     //reset the LabelBMFont
+                    self1.initWithTexture(sender, self1._initialString.length);
                     self1.setString(self1._initialString, true);
                     self1.dispatchEvent("load");
                 }, self);
@@ -261,22 +262,25 @@ cc.LabelBMFont = cc.Node.extend(/** @lends cc.LabelBMFont# */{
             texture.initWithElement(image);
             self._textureLoaded = false;
         }
-        this._texture = texture;
 
-        self._alignment = alignment || cc.TEXT_ALIGNMENT_LEFT;
-        self._imageOffset = imageOffset || cc.p(0, 0);
-        self._width = (width === undefined) ? -1 : width;
+        if (self.initWithTexture(texture, theString.length)) {
+            self._alignment = alignment || cc.TEXT_ALIGNMENT_LEFT;
+            self._imageOffset = imageOffset || cc.p(0, 0);
+            self._width = (width === undefined) ? -1 : width;
 
-        self._realOpacity = 255;
-        self._realColor = cc.color(255, 255, 255, 255);
+            self._realOpacity = 255;
+            self._realColor = cc.color(255, 255, 255, 255);
 
-        self._contentSize.width = 0;
-        self._contentSize.height = 0;
+            self._contentSize.width = 0;
+            self._contentSize.height = 0;
 
-        self.setAnchorPoint(0.5, 0.5);
+            self.setAnchorPoint(0.5, 0.5);
 
-        self.setString(theString, true);
-        return true;
+            self.setString(theString, true);
+
+            return true;
+        }
+        return false;
     },
 
     /**

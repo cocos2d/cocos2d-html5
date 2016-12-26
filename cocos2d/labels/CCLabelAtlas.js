@@ -163,10 +163,11 @@ cc.LabelAtlas = cc.LabelBMFont.extend(/** @lends cc.LabelBMFont# */{
             var locIsLoaded = texture.isLoaded();
             self._textureLoaded = locIsLoaded;
             if (!locIsLoaded) {
-                texture.addEventListener("load", function () {
+                texture.addEventListener("load", function (sender) {
                     var self1 = this;
                     self1._textureLoaded = true;
                     //reset the LabelBMFont
+                    self1.initWithTexture(sender, self1._initialString.length);
                     self1.setString(self1._initialString, true);
                     self1.dispatchEvent("load");
                 }, self);
@@ -177,20 +178,22 @@ cc.LabelAtlas = cc.LabelBMFont.extend(/** @lends cc.LabelBMFont# */{
             texture.initWithElement(image);
             self._textureLoaded = false;
         }
-        this._texture = texture;
 
-        self._alignment = cc.TEXT_ALIGNMENT_LEFT;
-        self._imageOffset = cc.p(0, 0);
-        self._width = -1;
+        if (self.initWithTexture(texture, theString.length)) {
+            self._alignment = cc.TEXT_ALIGNMENT_LEFT;
+            self._imageOffset = cc.p(0, 0);
+            self._width = -1;
 
-        self._realOpacity = 255;
-        self._realColor = cc.color(255, 255, 255, 255);
+            self._realOpacity = 255;
+            self._realColor = cc.color(255, 255, 255, 255);
 
-        self._contentSize.width = 0;
-        self._contentSize.height = 0;
+            self._contentSize.width = 0;
+            self._contentSize.height = 0;
 
-        self.setString(theString, true);
-        return true;
+            self.setString(theString, true);
+            return true;
+        }
+        return false;
     },
 
     setFntFile: function () {
