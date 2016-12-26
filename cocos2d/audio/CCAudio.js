@@ -516,12 +516,18 @@ cc.Audio.WebAudio.prototype = {
             if (bgMusic && bgMusic.getPlaying()) {
                 bgMusic.stop();
             }
+            var musicVolume = this._musicVolume;
             var audio = cc.loader.getRes(url);
             if (!audio) {
-                cc.loader.load(url);
+                cc.loader.load(url, function () {
+                    if (!audio.getPlaying()) {
+                        audio.setVolume(musicVolume);
+                        audio.play(0, loop || false);
+                    }
+                });
                 audio = cc.loader.getRes(url);
             }
-            audio.setVolume(this._musicVolume);
+            audio.setVolume(musicVolume);
             audio.play(0, loop || false);
 
             this._currMusic = audio;
