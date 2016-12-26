@@ -367,6 +367,7 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
     //v3.3
     _flippedX: false,
     _flippedY: false,
+    _className: "Scale9Sprite",
 
     /**
      * Constructor function.
