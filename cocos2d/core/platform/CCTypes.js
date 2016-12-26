@@ -60,12 +60,10 @@ _p._getB = function () {
 _p._setB = function (value) {
     this._val = (this._val & 0xffff00ff) | (value << 8);
 };
-
 _p._getA = function () {
     return this._val & 0x000000ff;
 };
-
-_p.setA = function (value) {
+_p._setA = function (value) {
     this._val = (this._val & 0xffffff00) | value;
 };
 

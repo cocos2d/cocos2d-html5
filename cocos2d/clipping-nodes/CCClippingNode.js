@@ -47,11 +47,13 @@ cc.stencilBits = -1;
  * @property {cc.Node}  stencil         - he cc.Node to use as a stencil to do the clipping.
  */
 cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
-    alphaThreshold: 0,
     inverted: false,
+    _alphaThreshold: 0,
 
     _stencil: null,
     _className: "ClippingNode",
+
+    _originStencilProgram: null,
 
     /**
      * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
@@ -61,6 +63,9 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
         stencil = stencil || null;
         cc.Node.prototype.ctor.call(this);
         this._stencil = stencil;
+        if (stencil) {
+            this._originStencilProgram = stencil.getShaderProgram();
+        }
         this.alphaThreshold = 1;
         this.inverted = false;
         this._renderCmd.initStencilBits();
@@ -154,7 +159,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
      * @return {Number}
      */
     getAlphaThreshold: function () {
-        return this.alphaThreshold;
+        return this._alphaThreshold;
     },
 
     /**
@@ -162,7 +167,11 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
      * @param {Number} alphaThreshold
      */
     setAlphaThreshold: function (alphaThreshold) {
-        this.alphaThreshold = alphaThreshold;
+        if (alphaThreshold === 1 && alphaThreshold !== this._alphaThreshold) {
+            // should reset program used by _stencil
+            this._renderCmd.resetProgramByStencil();
+        }
+        this._alphaThreshold = alphaThreshold;
     },
 
     /**
@@ -202,6 +211,8 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
     setStencil: function (stencil) {
         if (this._stencil === stencil)
             return;
+        if (stencil)
+            this._originStencilProgram = stencil.getShaderProgram();
         this._renderCmd.setStencil(stencil);
     },
 
@@ -219,6 +230,9 @@ var _p = cc.ClippingNode.prototype;
 /** @expose */
 _p.stencil;
 cc.defineGetterSetter(_p, "stencil", _p.getStencil, _p.setStencil);
+/** @expose */
+_p.alphaThreshold;
+cc.defineGetterSetter(_p, "alphaThreshold", _p.getAlphaThreshold, _p.setAlphaThreshold);
 
 
 /**

@@ -39,7 +39,7 @@
         this._dirty = false;
         this._recursiveDirty = false;
 
-        this._shaderProgram = cc.shaderCache.programForKey(cc.SHADER_SPRITE_POSITION_TEXTURECOLORALPHATEST);
+        this._shaderProgram = cc.shaderCache.programForKey(cc.SHADER_SPRITE_POSITION_TEXTURECOLOR);
     };
 
     var proto = cc.Sprite.WebGLRenderCmd.prototype = Object.create(cc.Node.WebGLRenderCmd.prototype);
@@ -230,22 +230,19 @@
 
     proto._setTexture = function (texture) {
         var node = this._node;
-        // If batchnode, then texture id should be the same
-        if (node._batchNode) {
-            if (node._batchNode.texture !== texture) {
-                cc.log(cc._LogInfos.Sprite_setTexture);
-                return;
-            }
-        } else {
-            if (node._texture !== texture) {
-                node._textureLoaded = texture ? texture._textureLoaded : false;
-                node._texture = texture;
-                this._updateBlendFunc();
+        if (node._texture !== texture) {
+            node._textureLoaded = texture ? texture._textureLoaded : false;
+            node._texture = texture;
 
-                if (node._textureLoaded) {
-                    // Force refresh the render command list
-                    cc.renderer.childrenOrderDirty = true;
-                }
+            // Update texture rect and blend func
+            var texSize = texture._contentSize;
+            var rect = cc.rect(0, 0, texSize.width, texSize.height);
+            node.setTextureRect(rect);
+            this._updateBlendFunc();
+
+            if (node._textureLoaded) {
+                // Force refresh the render command list
+                cc.renderer.childrenOrderDirty = true;
             }
         }
     };
