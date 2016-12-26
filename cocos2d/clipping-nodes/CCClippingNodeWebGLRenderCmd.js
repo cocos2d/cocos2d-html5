@@ -124,6 +124,14 @@
             node._stencil._parent = node;
     };
 
+    proto.resetProgramByStencil = function () {
+        var node = this._node;
+        if (node._stencil) {
+            var program = node._originStencilProgram;
+            setProgram(node._stencil, program);
+        }
+    };
+
     proto._onBeforeVisit = function (ctx) {
         var gl = ctx || cc._renderContext, node = this._node;
         cc.ClippingNode.WebGLRenderCmd._layer++;
