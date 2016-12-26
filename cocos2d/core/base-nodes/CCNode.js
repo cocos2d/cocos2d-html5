@@ -306,7 +306,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {Number} localZOrder
      */
     setLocalZOrder: function (localZOrder) {
-        this._localZOrder = localZOrder;
         if (this._parent)
             this._parent.reorderChild(this, localZOrder);
         cc.eventManager._setDirtyForNode(this);
