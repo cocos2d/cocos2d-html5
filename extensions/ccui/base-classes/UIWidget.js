@@ -1692,6 +1692,14 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
         cc.arrayRemoveObject(this._nodes, node);
     },
 
+    _getNormalGLProgram: function () {
+        return cc.shaderCache.programForKey(cc.SHADER_SPRITE_POSITION_TEXTURECOLOR);
+    },
+
+    _getGrayGLProgram: function () {
+        return cc.shaderCache.programForKey(cc.SHADER_SPRITE_POSITION_TEXTURECOLOR_GRAY);
+    },
+
     /**
      * Removes node by tag
      * @deprecated since v3.0, please use removeChildByTag instead.
