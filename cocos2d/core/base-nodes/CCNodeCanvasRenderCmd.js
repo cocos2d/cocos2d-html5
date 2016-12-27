@@ -448,7 +448,7 @@ cc.Node.RenderCmd.prototype = {
             opacityDirty = locFlag & dirtyFlags.opacityDirty;
 
         if (locFlag & dirtyFlags.contentDirty) {
-            this._notifyRegionStatus && this._notifyRegionStatus(_ccsg.Node.CanvasRenderCmd.RegionStatus.Dirty);
+            this._notifyRegionStatus && this._notifyRegionStatus(cc.Node.CanvasRenderCmd.RegionStatus.Dirty);
             this._dirtyFlag &= ~dirtyFlags.contentDirty;
         }
 
