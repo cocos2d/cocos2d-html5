@@ -503,6 +503,7 @@ cc.Audio.WebAudio.prototype = {
             return false;
         },
 
+        _waitLoadPlayFlag: true,
         /**
          * Play music.
          * @param {String} url The path of the music file without filename extension.
@@ -512,15 +513,17 @@ cc.Audio.WebAudio.prototype = {
          * cc.audioEngine.playMusic(path, false);
          */
         playMusic: function(url, loop){
+            this._waitLoadPlayFlag = true;
             var bgMusic = this._currMusic;
             if (bgMusic && bgMusic.getPlaying()) {
                 bgMusic.stop();
             }
             var musicVolume = this._musicVolume;
             var audio = cc.loader.getRes(url);
+            var self = this;
             if (!audio) {
                 cc.loader.load(url, function () {
-                    if (!audio.getPlaying()) {
+                    if (self._waitLoadPlayFlag && !audio.getPlaying()) {
                         audio.setVolume(musicVolume);
                         audio.play(0, loop || false);
                     }
@@ -542,6 +545,7 @@ cc.Audio.WebAudio.prototype = {
          */
         stopMusic: function(releaseData){
             var audio = this._currMusic;
+            this._waitLoadPlayFlag = false;
             if (audio) {
                 var list = cc.Audio.touchPlayList;
                 for (var i=list.length-1; i>=0; --i) {
@@ -564,6 +568,7 @@ cc.Audio.WebAudio.prototype = {
          */
         pauseMusic: function () {
             var audio = this._currMusic;
+            this._waitLoadPlayFlag = false;
             if (audio)
                 audio.pause();
         },
