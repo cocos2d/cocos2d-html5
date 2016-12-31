@@ -739,6 +739,7 @@ cc.eventManager = /** @lends cc.eventManager# */{
             listener._setSceneGraphPriority(nodeOrPriority);
             listener._setFixedPriority(0);
             listener._setRegistered(true);
+            listener._setPaused(false);
             this._addListener(listener);
         }
 
