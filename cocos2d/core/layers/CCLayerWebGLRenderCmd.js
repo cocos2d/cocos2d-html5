@@ -174,7 +174,7 @@
         if (locFlag & flags.gradientDirty) {
             this._dirtyFlag |= flags.colorDirty;
             this._updateVertex();
-            this._dirtyFlag = locFlag & flags.gradientDirty ^ locFlag;
+            this._dirtyFlag &= ~flags.gradientDirty;
         }
 
         this.originUpdateStatus();
@@ -185,7 +185,7 @@
         if (locFlag & flags.gradientDirty) {
             this._dirtyFlag |= flags.colorDirty;
             this._updateVertex();
-            this._dirtyFlag = locFlag & flags.gradientDirty ^ locFlag;
+            this._dirtyFlag &= ~flags.gradientDirty;
         }
 
         this._originSyncStatus(parentCmd);

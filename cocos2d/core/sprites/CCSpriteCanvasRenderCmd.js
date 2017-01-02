@@ -51,12 +51,12 @@
     proto._setTexture = function (texture) {
         var node = this._node;
         if (node._texture !== texture) {
-            if (texture) {
-                node._textureLoaded = texture._textureLoaded;
-            } else {
-                node._textureLoaded = false;
-            }
+            node._textureLoaded = texture ? texture._textureLoaded : false;
             node._texture = texture;
+
+            var texSize = texture._contentSize;
+            var rect = cc.rect(0, 0, texSize.width, texSize.height);
+            node.setTextureRect(rect);
             this._updateColor();
         }
     };
