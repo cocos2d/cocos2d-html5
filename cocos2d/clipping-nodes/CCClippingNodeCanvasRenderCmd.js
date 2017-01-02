@@ -38,6 +38,10 @@
     var proto = cc.ClippingNode.CanvasRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
     proto.constructor = cc.ClippingNode.CanvasRenderCmd;
 
+    proto.resetProgramByStencil = function () {
+        
+    };
+
     proto.initStencilBits = function () {
     };
 
