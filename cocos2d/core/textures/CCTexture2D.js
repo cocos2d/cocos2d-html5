@@ -419,7 +419,17 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
                     if (this._backupElement !== null)
                         this._htmlElementObj = this._backupElement;
                 }
-            }
+            },
+
+            _generateGrayTexture: function() {
+                if(!this._textureLoaded)
+                    return null;
+                var grayElement = cc.Texture2D._generateGrayTexture(this._htmlElementObj);
+                var newTexture = new cc.Texture2D();
+                newTexture.initWithElement(grayElement);
+                newTexture.handleLoadedTexture();
+                return newTexture;
+            },
         };
 
         var renderToCache = function (image, cache) {

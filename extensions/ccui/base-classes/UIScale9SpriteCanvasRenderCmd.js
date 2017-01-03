@@ -70,7 +70,7 @@
         if (this._textureToRender === null || this._originalTexture !== locTexture) {
             this._textureToRender = this._originalTexture = locTexture;
             if (cc.Scale9Sprite.state.GRAY === this._state) {
-                this._textureToRender = this._textureToRender._switchToGray();
+                this._textureToRender = this._textureToRender._generateGrayTexture();
             }
             var color = node.getDisplayedColor();
             if (locTexture && (color.r !== 255 || color.g !==255 || color.b !== 255))
