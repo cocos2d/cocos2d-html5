@@ -83,6 +83,7 @@
  * Encapsulate DOM and webAudio
  */
 cc.Audio = cc.Class.extend({
+    interruptPlay: false,
     src: null,
     _element: null,
     _AUDIO_TYPE: "AUDIO",
@@ -110,7 +111,10 @@ cc.Audio = cc.Class.extend({
     },
 
     play: function (offset, loop) {
-        if (!this._element) return;
+        if (!this._element) {
+            this.interruptPlay = false;
+            return;
+        }
         this._element.loop = loop;
         this._element.play();
         if (this._AUDIO_TYPE === 'AUDIO' && this._element.paused) {
@@ -131,7 +135,10 @@ cc.Audio = cc.Class.extend({
     },
 
     stop: function () {
-        if (!this._element) return;
+        if (!this._element) {
+            this.interruptPlay = true;
+            return;
+        }
         this._element.pause();
         try {
             this._element.currentTime = 0;
@@ -140,12 +147,18 @@ cc.Audio = cc.Class.extend({
     },
 
     pause: function () {
-        if (!this._element) return;
+        if (!this._element) {
+            this.interruptPlay = true;
+            return;
+        }
         this._element.pause();
     },
 
     resume: function () {
-        if (!this._element) return;
+        if (!this._element) {
+            this.interruptPlay = false;
+            return;
+        }
         this._element.play();
     },
 
@@ -520,7 +533,7 @@ cc.Audio.WebAudio.prototype = {
             var audio = cc.loader.getRes(url);
             if (!audio) {
                 cc.loader.load(url, function () {
-                    if (!audio.getPlaying()) {
+                    if (!audio.getPlaying() && !audio.interruptPlay) {
                         audio.setVolume(musicVolume);
                         audio.play(0, loop || false);
                     }
