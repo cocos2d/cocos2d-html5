@@ -1610,6 +1610,7 @@ var _initSys = function () {
     sys.BROWSER_TYPE_WECHAT = "wechat";
     sys.BROWSER_TYPE_ANDROID = "androidbrowser";
     sys.BROWSER_TYPE_IE = "ie";
+    sys.BROWSER_TYPE_QQ_APP = "qq"; // QQ App
     sys.BROWSER_TYPE_QQ = "qqbrowser";
     sys.BROWSER_TYPE_MOBILE_QQ = "mqqbrowser";
     sys.BROWSER_TYPE_UC = "ucbrowser";
@@ -1735,16 +1736,6 @@ var _initSys = function () {
             browserType = sys.BROWSER_TYPE_WECHAT;
         else if (browserType === "safari" && isAndroid)
             browserType = sys.BROWSER_TYPE_ANDROID;
-        else if (browserType === "qq") {
-            if (iOS)
-                browserType = sys.BROWSER_TYPE_SAFARI;
-            else if (ua.match(/android.*applewebkit/i))
-                brwoserType = sys.BROWSER_TYPE_ANDROID;
-            else if (sys.isMobile)
-                browserType = sys.BROWSER_TYPE_MOBILE_QQ;
-            else
-                browserType = sys.BROWSER_TYPE_QQ;
-        }
         else if (browserType === "trident")
             browserType = sys.BROWSER_TYPE_IE;
         else if (browserType === "360 aphone")
@@ -2717,7 +2708,7 @@ cc.game = /** @lends cc.game# */{
     },
 
     _initEvents: function () {
-        var win = window, self = this, hidden, visibilityChange, _undef = "undefined";
+        var win = window, hidden;
 
         this._eventHide = this._eventHide || new cc.EventCustom(this.EVENT_HIDE);
         this._eventHide.setUserData(this);
@@ -2730,22 +2721,21 @@ cc.game = /** @lends cc.game# */{
 
         if (!cc.isUndefined(document.hidden)) {
             hidden = "hidden";
-            visibilityChange = "visibilitychange";
         } else if (!cc.isUndefined(document.mozHidden)) {
             hidden = "mozHidden";
-            visibilityChange = "mozvisibilitychange";
         } else if (!cc.isUndefined(document.msHidden)) {
             hidden = "msHidden";
-            visibilityChange = "msvisibilitychange";
         } else if (!cc.isUndefined(document.webkitHidden)) {
             hidden = "webkitHidden";
-            visibilityChange = "webkitvisibilitychange";
         }
 
-        if (cc.sys.browserType === cc.sys.BROWSER_TYPE_QQ || cc.sys.browserType === cc.sys.BROWSER_TYPE_MOBILE_QQ) {
-            visibilityChange = "qbrowserVisibilityChange"
-        }
-
+        var changeList = [
+            "visibilitychange",
+            "mozvisibilitychange",
+            "msvisibilitychange",
+            "webkitvisibilitychange",
+            "qbrowserVisibilityChange"
+        ];
         var onHidden = function () {
             if (cc.eventManager && cc.game._eventHide)
                 cc.eventManager.dispatchEvent(cc.game._eventHide);
@@ -2756,10 +2746,15 @@ cc.game = /** @lends cc.game# */{
         };
 
         if (hidden) {
-            document.addEventListener(visibilityChange, function () {
-                if (document[hidden]) onHidden();
-                else onShow();
-            }, false);
+            for (var i=0; i<changeList.length; i++) {
+                document.addEventListener(changeList[i], function (event) {
+                    var visible = document[hidden];
+                    // QQ App
+                    visible = visible || event["hidden"];
+                    if (visible) onHidden();
+                    else onShow();
+                }, false);
+            }
         } else {
             win.addEventListener("blur", onHidden, false);
             win.addEventListener("focus", onShow, false);
