@@ -2747,15 +2747,13 @@ cc.game = /** @lends cc.game# */{
 
         if (hidden) {
             for (var i=0; i<changeList.length; i++) {
-                (function (visibilityChange){
-                    document.addEventListener(visibilityChange, function (event) {
-                        var visible = document[hidden];
-                        // QQ App
-                        visible = visible || event["hidden"];
-                        if (visible) onHidden();
-                        else onShow();
-                    }, false);
-                })(changeList[i]);
+                document.addEventListener(changeList[i], function (event) {
+                    var visible = document[hidden];
+                    // QQ App
+                    visible = visible || event["hidden"];
+                    if (visible) onHidden();
+                    else onShow();
+                }, false);
             }
         } else {
             win.addEventListener("blur", onHidden, false);
