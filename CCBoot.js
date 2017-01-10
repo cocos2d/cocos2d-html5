@@ -1727,14 +1727,24 @@ var _initSys = function () {
     /* Determine the browser type */
     (function(){
         var typeReg1 = /micromessenger|mqqbrowser|sogou|qzone|liebao|ucbrowser|360 aphone|360browser|baiduboxapp|baidubrowser|maxthon|mxbrowser|trident|miuibrowser/i;
-        var typeReg2 = /qqbrowser|chrome|safari|firefox|opr|oupeng|opera/i;
+        var typeReg2 = /qqbrowser|qq|chrome|safari|firefox|opr|oupeng|opera/i;
         var browserTypes = typeReg1.exec(ua);
         if(!browserTypes) browserTypes = typeReg2.exec(ua);
         var browserType = browserTypes ? browserTypes[0] : sys.BROWSER_TYPE_UNKNOWN;
         if (browserType === 'micromessenger')
             browserType = sys.BROWSER_TYPE_WECHAT;
-        else if (browserType === "safari" && (ua.match(/android.*applewebkit/)))
+        else if (browserType === "safari" && isAndroid)
             browserType = sys.BROWSER_TYPE_ANDROID;
+        else if (browserType === "qq") {
+            if (iOS)
+                browserType = sys.BROWSER_TYPE_SAFARI;
+            else if (ua.match(/android.*applewebkit/i))
+                brwoserType = sys.BROWSER_TYPE_ANDROID;
+            else if (sys.isMobile)
+                browserType = sys.BROWSER_TYPE_MOBILE_QQ;
+            else
+                browserType = sys.BROWSER_TYPE_QQ;
+        }
         else if (browserType === "trident")
             browserType = sys.BROWSER_TYPE_IE;
         else if (browserType === "360 aphone")
@@ -2730,6 +2740,10 @@ cc.game = /** @lends cc.game# */{
         } else if (!cc.isUndefined(document.webkitHidden)) {
             hidden = "webkitHidden";
             visibilityChange = "webkitvisibilitychange";
+        }
+
+        if (cc.sys.browserType === cc.sys.BROWSER_TYPE_QQ || cc.sys.browserType === cc.sys.BROWSER_TYPE_MOBILE_QQ) {
+            visibilityChange = "qbrowserVisibilityChange"
         }
 
         var onHidden = function () {
