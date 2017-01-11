@@ -128,7 +128,7 @@
         var node = this._node;
         if (node._stencil) {
             var program = node._originStencilProgram;
-            setProgram(node._stencil, program);
+            cc.setProgram(node._stencil, program);
         }
     };
 
