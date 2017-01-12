@@ -136,6 +136,7 @@ var simpleQuadGenerator = {
         var atlasWidth = spriteFrame._texture._pixelsWide;
         var atlasHeight = spriteFrame._texture._pixelsHigh;
         var textureRect = spriteFrame._rect;
+        textureRect = cc.rectPointsToPixels(textureRect);
 
         if (uvs.length < 8) {
             dataPool.put(uvs);
