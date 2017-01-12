@@ -214,8 +214,11 @@ cc.textureCache = /** @lends cc.textureCache# */{
     removeTextureForKey: function (textureKeyName) {
         if (textureKeyName == null)
             return;
-        if (this._textures[textureKeyName])
+        var tex = this._textures[textureKeyName];
+        if (tex) {
+            tex.releaseTexture();
             delete(this._textures[textureKeyName]);
+        }
     },
 
     //addImage move to Canvas/WebGL

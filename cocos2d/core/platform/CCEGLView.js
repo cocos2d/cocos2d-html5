@@ -303,7 +303,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
      */
     setOrientation: function (orientation) {
         orientation = orientation & cc.ORIENTATION_AUTO;
-        if (orientation) {
+        if (orientation && this._orientation !== orientation) {
             this._orientation = orientation;
             var designWidth = this._originalDesignResolutionSize.width;
             var designHeight = this._originalDesignResolutionSize.height;
