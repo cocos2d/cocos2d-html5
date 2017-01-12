@@ -177,7 +177,7 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
     };
 
     _p.getZEye = function () {
-        return (this._winSizeInPoints.height / 1.1566 );
+        return (this._winSizeInPoints.height / 1.15469993750);
     };
 
     _p.setViewport = function () {
