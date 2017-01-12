@@ -122,7 +122,7 @@ cc.Audio = cc.Class.extend({
             cc.Audio.touchPlayList.push({ loop: loop, offset: offset, audio: this._element });
         }
 
-        if (cc.Audio.bindTouch === false && this._element.paused) {
+        if (cc.Audio.bindTouch === false) {
             cc.Audio.bindTouch = true;
             // Listen to the touchstart body event and play the audio when necessary.
             cc.game.canvas.addEventListener('touchstart', cc.Audio.touchStart);
