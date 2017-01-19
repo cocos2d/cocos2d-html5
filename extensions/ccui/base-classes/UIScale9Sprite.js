@@ -136,6 +136,7 @@ var simpleQuadGenerator = {
         var atlasWidth = spriteFrame._texture._pixelsWide;
         var atlasHeight = spriteFrame._texture._pixelsHigh;
         var textureRect = spriteFrame._rect;
+        textureRect = cc.rectPointsToPixels(textureRect);
 
         if (uvs.length < 8) {
             dataPool.put(uvs);
@@ -254,12 +255,15 @@ var scale9QuadGenerator = {
         var leftWidth, centerWidth, rightWidth;
         var topHeight, centerHeight, bottomHeight;
         var textureRect = spriteFrame._rect;
+        textureRect = cc.rectPointsToPixels(textureRect);
+        rect = cc.rectPointsToPixels(rect);
+        var scale = cc.contentScaleFactor();
 
-        leftWidth = insetLeft;
-        rightWidth = insetRight;
+        leftWidth = insetLeft * scale;
+        rightWidth = insetRight * scale;
         centerWidth = rect.width - leftWidth - rightWidth;
-        topHeight = insetTop;
-        bottomHeight = insetBottom;
+        topHeight = insetTop * scale;
+        bottomHeight = insetBottom * scale;
         centerHeight = rect.height - topHeight - bottomHeight;
 
         if (uvs.length < 32) {
