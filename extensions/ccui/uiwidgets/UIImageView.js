@@ -83,20 +83,6 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
         this._imageTexType = texType;
         var imageRenderer = self._imageRenderer;
 
-        if(!imageRenderer._textureLoaded){
-            imageRenderer.addEventListener("load", function(){
-                if(!self._ignoreSize && cc.sizeEqualToSize(self._customSize, cc.size(0, 0))) {
-                    self._customSize = self._imageRenderer.getContentSize();
-                }
-
-                self._imageTextureSize = imageRenderer.getContentSize();
-
-                self._updateChildrenDisplayedRGBA();
-
-                self._updateContentSizeWithTextureSize(self._imageTextureSize);
-            });
-        }
-
         switch (self._imageTexType) {
             case ccui.Widget.LOCAL_TEXTURE:
                 if(self._scale9Enabled){
@@ -118,6 +104,24 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
                 break;
             default:
                 break;
+        }
+
+        if(!imageRenderer._textureLoaded){
+            var handleTextureLoadedEvent = function(){
+                imageRenderer.removeEventListener("load", handleTextureLoadedEvent);
+
+                if(!self._ignoreSize && cc.sizeEqualToSize(self._customSize, cc.size(0, 0))) {
+                    self._customSize = self._imageRenderer.getContentSize();
+                }
+
+                self._imageTextureSize = imageRenderer.getContentSize();
+
+                self._updateChildrenDisplayedRGBA();
+
+                self._updateContentSizeWithTextureSize(self._imageTextureSize);
+            };
+
+            imageRenderer.addEventListener("load", handleTextureLoadedEvent);
         }
 
         if(!this._ignoreSize && cc.sizeEqualToSize(this._customSize, cc.size(0, 0))) {
