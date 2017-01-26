@@ -44,7 +44,7 @@
     cc.extend(cc.DrawNode.CanvasRenderCmd.prototype, {
         rendering: function (ctx, scaleX, scaleY) {
             var wrapper = ctx || cc._renderContext, context = wrapper.getContext(), node = this._node;
-            var alpha = node._displayedOpacity / 255;
+            var alpha = this._displayedOpacity / 255;
             if (alpha === 0)
                 return;
 
