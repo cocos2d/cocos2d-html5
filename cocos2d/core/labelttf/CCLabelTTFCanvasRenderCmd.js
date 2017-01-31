@@ -26,8 +26,8 @@ cc.LabelTTF.wrapInspection = true;
 
 // These regular expressions consider a word any sequence of characters
 // from these Unicode (sub)blocks:
-// - Basic Latin (letters and numbers only, plus the hypen-minus '-')
-// - Latin-1 Supplement (accentuated letters only)
+// - Basic Latin (letters and numbers, plus the hypen-minus '-')
+// - Latin-1 Supplement (accentuated letters and ¿¡ only)
 // - Latin Extended-A (complete)
 // - Latin Extended-B (complete)
 // - IPA Extensions (complete)
@@ -36,13 +36,13 @@ cc.LabelTTF.wrapInspection = true;
 // - Greek and Coptic (complete, including reserved code points)
 // - Cyrillic (complete)
 // - Cyrillic Supplement (complete)
-// - General Punctuation (Non-Breaking Hyphen [U+2011] only*)
+// - General Punctuation (Non-Breaking Hyphen* [U+2011] and quotation marks)
 // * Note that Hyphen [U+2010] is considered a word boundary.
-cc.LabelTTF._wordRex = /([a-zA-Z0-9À-ÖØ-öø-ʯ\u0300-\u034e\u0350-\u036FͰ-ԯ\u2011]+|\S)/;
-cc.LabelTTF._symbolRex = /^[!,.:;}\]%\?>、‘“》»？。，！\u2010]/;
-cc.LabelTTF._lastWordRex = /([a-zA-Z0-9À-ÖØ-öø-ʯ\u0300-\u034e\u0350-\u036FͰ-ԯ\u2011]+|\S)$/;
-cc.LabelTTF._lastEnglish = /[a-zA-Z0-9À-ÖØ-öø-ʯ\u0300-\u034e\u0350-\u036FͰ-ԯ\u2011]+$/;
-cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9À-ÖØ-öø-ʯ\u0300-\u034e\u0350-\u036FͰ-ԯ\u2011]/;
+cc.LabelTTF._wordRex = /([a-zA-Z0-9\-¿¡«À-ÖØ-öø-ʯ\u0300-\u034e\u0350-\u036FͰ-ԯ\u2011‵-‷‹⁅]+|\S)/;
+cc.LabelTTF._symbolRex = /^[!,.:;}\]%\?>、‘“》»？。，！\u2010′-‴›‼⁆⁇-⁉]/;
+cc.LabelTTF._lastWordRex = /([a-zA-Z0-9\-¿¡«À-ÖØ-öø-ʯ\u0300-\u034e\u0350-\u036FͰ-ԯ\u2011‵-‷‹⁅]+|\S)$/;
+cc.LabelTTF._lastEnglish = /[a-zA-Z0-9\-¿¡«À-ÖØ-öø-ʯ\u0300-\u034e\u0350-\u036FͰ-ԯ\u2011‵-‷‹⁅]+$/;
+cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9\-¿¡«À-ÖØ-öø-ʯ\u0300-\u034e\u0350-\u036FͰ-ԯ\u2011‵-‷‹⁅]/;
 
 (function () {
     cc.LabelTTF.RenderCmd = function () {
