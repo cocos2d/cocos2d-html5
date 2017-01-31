@@ -24,28 +24,23 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+(function () {
 
-/**
- * Minimum priority level for user scheduling.
- * @constant
- * @type Number
- */
-cc.PRIORITY_NON_SYSTEM = cc.PRIORITY_SYSTEM + 1;
+
+var MAX_POOL_SIZE = 20;
 
 //data structures
 /**
  * A list double-linked list used for "updates with priority"
- * @Class
- * @name cc.ListEntry
- * @param {cc.ListEntry} prev
- * @param {cc.ListEntry} next
+ * @param {ListEntry} prev
+ * @param {ListEntry} next
  * @param {function} callback
  * @param {cc.Class} target not retained (retained by hashUpdateEntry)
  * @param {Number} priority
  * @param {Boolean} paused
  * @param {Boolean} markedForDeletion selector will no longer be called and entry will be removed at end of the next tick
  */
-cc.ListEntry = function (prev, next, callback, target, priority, paused, markedForDeletion) {
+var ListEntry = function (prev, next, callback, target, priority, paused, markedForDeletion) {
     this.prev = prev;
     this.next = next;
     this.callback = callback;
@@ -55,37 +50,82 @@ cc.ListEntry = function (prev, next, callback, target, priority, paused, markedF
     this.markedForDeletion = markedForDeletion;
 };
 
+var _listEntries = [];
+ListEntry.get = function (prev, next, callback, target, priority, paused, markedForDeletion) {
+    var result = _listEntries.pop();
+    if (result) {
+        result.prev = prev;
+        result.next = next;
+        result.callback = callback;
+        result.target = target;
+        result.priority = priority;
+        result.paused = paused;
+        result.markedForDeletion = markedForDeletion;
+    }
+    else {
+        result = new ListEntry(prev, next, callback, target, priority, paused, markedForDeletion);
+    }
+    return result;
+};
+ListEntry.put = function (entry) {
+    entry.prev = null;
+    entry.next = null;
+    entry.callback = null;
+    entry.target = null;
+    entry.priority = 0;
+    entry.paused = false;
+    entry.markedForDeletion = false;
+    if (_listEntries.length < MAX_POOL_SIZE)
+        _listEntries.push(entry);
+};
+
 /**
  * A update entry list
- * @Class
- * @name cc.HashUpdateEntry
  * @param {Array} list Which list does it belong to ?
- * @param {cc.ListEntry} entry entry in the list
+ * @param {ListEntry} entry entry in the list
  * @param {cc.Class} target hash key (retained)
  * @param {function} callback
- * @param {Array} hh
  */
-cc.HashUpdateEntry = function (list, entry, target, callback, hh) {
+var HashUpdateEntry = function (list, entry, target, callback) {
     this.list = list;
     this.entry = entry;
     this.target = target;
     this.callback = callback;
-    this.hh = hh;
+};
+var _hashUpdateEntries = [];
+HashUpdateEntry.get = function (list, entry, target, callback) {
+    var result = _hashUpdateEntries.pop();
+    if (result) {
+        result.list = list;
+        result.entry = entry;
+        result.target = target;
+        result.callback = callback;
+    }
+    else {
+        result = new HashUpdateEntry(list, entry, target, callback);
+    }
+    return result;
+};
+HashUpdateEntry.put = function (entry) {
+    entry.list = null;
+    entry.entry = null;
+    entry.target = null;
+    entry.callback = null;
+    if (_hashUpdateEntries.length < MAX_POOL_SIZE)
+        _hashUpdateEntries.push(entry);
 };
 
 //
 /**
  * Hash Element used for "selectors with interval"
- * @Class
  * @param {Array} timers
  * @param {cc.Class} target  hash key (retained)
  * @param {Number} timerIndex
- * @param {cc.Timer} currentTimer
+ * @param {CallbackTimer} currentTimer
  * @param {Boolean} currentTimerSalvaged
  * @param {Boolean} paused
- * @param {Array} hh
  */
-cc.HashTimerEntry = cc.hashSelectorEntry = function (timers, target, timerIndex, currentTimer, currentTimerSalvaged, paused, hh) {
+var HashTimerEntry = function (timers, target, timerIndex, currentTimer, currentTimerSalvaged, paused) {
     var _t = this;
     _t.timers = timers;
     _t.target = target;
@@ -93,24 +133,68 @@ cc.HashTimerEntry = cc.hashSelectorEntry = function (timers, target, timerIndex,
     _t.currentTimer = currentTimer;
     _t.currentTimerSalvaged = currentTimerSalvaged;
     _t.paused = paused;
-    _t.hh = hh;
+};
+var _hashTimerEntries = [];
+HashTimerEntry.get = function (timers, target, timerIndex, currentTimer, currentTimerSalvaged, paused) {
+    var result = _hashTimerEntries.pop();
+    if (result) {
+        result.timers = timers;
+        result.target = target;
+        result.timerIndex = timerIndex;
+        result.currentTimer = currentTimer;
+        result.currentTimerSalvaged = currentTimerSalvaged;
+        result.paused = paused;
+    }
+    else {
+        result = new HashTimerEntry(timers, target, timerIndex, currentTimer, currentTimerSalvaged, paused);
+    }
+    return result;
+};
+HashTimerEntry.put = function (entry) {
+    entry.timers = null;
+    entry.target = null;
+    entry.timerIndex = 0;
+    entry.currentTimer = null;
+    entry.currentTimerSalvaged = false;
+    entry.paused = false;
+    if (_hashTimerEntries.length < MAX_POOL_SIZE)
+        _hashTimerEntries.push(entry);
 };
 
 /**
  * Light weight timer
- * @class
  * @extends cc.Class
  */
-cc.Timer = cc.Class.extend(/** @lends cc.Timer# */{
-    _scheduler: null,
-    _elapsed:0.0,
-    _runForever:false,
-    _useDelay:false,
-    _timesExecuted:0,
-    _repeat:0, //0 = once, 1 is 2 x executed
-    _delay:0,
-    _interval:0.0,
+var CallbackTimer = function () {
+    this._scheduler = null;
+    this._elapsed = -1;
+    this._runForever = false;
+    this._useDelay = false;
+    this._timesExecuted = 0;
+    this._repeat = 0;
+    this._delay = 0;
+    this._interval = 0;
 
+    this._target = null;
+    this._callback = null;
+    this._key = null;
+};
+cc.inject({
+    initWithCallback: function (scheduler, callback, target, seconds, repeat, delay, key) {
+        this._scheduler = scheduler;
+        this._target = target;
+        this._callback = callback;
+        if (key)
+            this._key = key;
+
+        this._elapsed = -1;
+        this._interval = seconds;
+        this._delay = delay;
+        this._useDelay = (this._delay > 0);
+        this._repeat = repeat;
+        this._runForever = (this._repeat === cc.REPEAT_FOREVER);
+        return true;
+    },
     /**
      * @return {Number} returns interval of timer
      */
@@ -119,38 +203,6 @@ cc.Timer = cc.Class.extend(/** @lends cc.Timer# */{
      * @param {Number} interval set interval in seconds
      */
     setInterval : function(interval){this._interval = interval;},
-
-    setupTimerWithInterval: function(seconds, repeat, delay){
-        this._elapsed = -1;
-        this._interval = seconds;
-        this._delay = delay;
-        this._useDelay = (this._delay > 0);
-        this._repeat = repeat;
-        this._runForever = (this._repeat === cc.REPEAT_FOREVER);
-    },
-
-    trigger: function(){
-        return 0;
-    },
-
-    cancel: function(){
-        return 0;
-    },
-
-    /**
-     * cc.Timer's Constructor
-     * Constructor of cc.Timer
-     */
-    ctor:function () {
-        this._scheduler = null;
-        this._elapsed = -1;
-        this._runForever = false;
-        this._useDelay = false;
-        this._timesExecuted = 0;
-        this._repeat = 0;
-        this._delay = 0;
-        this._interval = 0;
-    },
 
     /**
      * triggers the timer
@@ -185,66 +237,10 @@ cc.Timer = cc.Class.extend(/** @lends cc.Timer# */{
                     }
                 }
 
-                if (!this._runForever && this._timesExecuted > this._repeat)
+                if (this._callback && !this._runForever && this._timesExecuted > this._repeat)
                     this.cancel();
             }
         }
-    }
-});
-
-cc.TimerTargetSelector = cc.Timer.extend({
-    _target: null,
-    _selector: null,
-
-    ctor: function(){
-        this._target = null;
-        this._selector = null;
-    },
-
-    initWithSelector: function(scheduler, selector, target, seconds, repeat, delay){
-        this._scheduler = scheduler;
-        this._target = target;
-        this._selector = selector;
-        this.setupTimerWithInterval(seconds, repeat, delay);
-        return true;
-    },
-
-    getSelector: function(){
-        return this._selector;
-    },
-
-    trigger: function(){
-        //override
-        if (this._target && this._selector){
-            this._target.call(this._selector, this._elapsed);
-        }
-    },
-
-    cancel: function(){
-        //override
-        this._scheduler.unschedule(this._selector, this._target);
-    }
-
-});
-
-cc.TimerTargetCallback = cc.Timer.extend({
-
-    _target: null,
-    _callback: null,
-    _key: null,
-
-    ctor: function(){
-        this._target = null;
-        this._callback = null;
-    },
-
-    initWithCallback: function(scheduler, callback, target, key, seconds, repeat, delay){
-        this._scheduler = scheduler;
-        this._target = target;
-        this._callback = callback;
-        this._key = key;
-        this.setupTimerWithInterval(seconds, repeat, delay);
-        return true;
     },
 
     getCallback: function(){
@@ -255,18 +251,37 @@ cc.TimerTargetCallback = cc.Timer.extend({
         return this._key;
     },
 
-    trigger: function(){
-        //override
-        if(this._callback)
+    trigger: function () {
+        if (this._target && this._callback){
             this._callback.call(this._target, this._elapsed);
+        }
     },
 
-    cancel: function(){
+    cancel: function () {
         //override
         this._scheduler.unschedule(this._callback, this._target);
     }
+}, CallbackTimer.prototype);
 
-});
+var _timers = [];
+CallbackTimer.get = function () {
+    return _timers.pop() || new CallbackTimer();
+};
+CallbackTimer.put = function (timer) {
+    timer._scheduler = null;
+    timer._elapsed = -1;
+    timer._runForever = false;
+    timer._useDelay = false;
+    timer._timesExecuted = 0;
+    timer._repeat = 0;
+    timer._delay = 0;
+    timer._interval = 0;
+    timer._target = null;
+    timer._callback = null;
+    timer._key = null;
+    if (_timers.length < MAX_POOL_SIZE)
+        _timers.push(timer);
+};
 
 /**
  * <p>
@@ -344,7 +359,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
             }
         }
 
-        // most of the updates are going to be 0, that's way there
+        // most of the updates are going to be 0, that's why there
         // is an special list for updates with priority 0
         if (priority === 0){
             this._appendIn(this._updates0List, callback, target, paused);
@@ -358,30 +373,38 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
 
     _removeHashElement:function (element) {
         delete this._hashForTimers[element.target.__instanceId];
-        cc.arrayRemoveObject(this._arrayForTimers, element);
-        element.Timer = null;
-        element.target = null;
-        element = null;
+        var arr = this._arrayForTimers;
+        for (var i = 0, l = arr.length; i < l; i++) {
+            if (arr[i] === element) {
+                arr.splice(i, 1);
+                break;
+            }
+        }
+        HashTimerEntry.put(element);
     },
 
     _removeUpdateFromHash:function (entry) {
-        var self = this, element = self._hashForUpdates[entry.target.__instanceId];
+        var self = this; 
+        element = self._hashForUpdates[entry.target.__instanceId];
         if (element) {
-            //list entry
-            cc.arrayRemoveObject(element.list, element.entry);
+            // Remove list entry from list
+            var list = element.list, listEntry = element.entry;
+            for (var i = 0, l = list.length; i < l; i++) {
+                if (list[i] === listEntry) {
+                    list.splice(i, 1);
+                    break;
+                }
+            }
 
             delete self._hashForUpdates[element.target.__instanceId];
-            //cc.arrayRemoveObject(self._hashForUpdates, element);
-            element.entry = null;
-
-            //hash entry
-            element.target = null;
+            ListEntry.put(listEntry);
+            HashUpdateEntry.put(element);
         }
     },
 
     _priorityIn:function (ppList, callback,  target, priority, paused) {
         var self = this,
-            listElement = new cc.ListEntry(null, null, callback, target, priority, paused, false);
+            listElement = ListEntry.get(null, null, callback, target, priority, paused, false);
 
         // empey list ?
         if (!ppList) {
@@ -399,17 +422,18 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
         }
 
         //update hash entry for quick access
-        self._hashForUpdates[target.__instanceId] = new cc.HashUpdateEntry(ppList, listElement, target, null);
+        self._hashForUpdates[target.__instanceId] = HashUpdateEntry.get(ppList, listElement, target, null);
 
         return ppList;
     },
 
     _appendIn:function (ppList, callback, target, paused) {
-        var self = this, listElement = new cc.ListEntry(null, null, callback, target, 0, paused, false);
+        var self = this, 
+            listElement = ListEntry.get(null, null, callback, target, 0, paused, false);
         ppList.push(listElement);
 
         //update hash entry for quicker access
-        self._hashForUpdates[target.__instanceId] = new cc.HashUpdateEntry(ppList, listElement, target, null, null);
+        self._hashForUpdates[target.__instanceId] = HashUpdateEntry.get(ppList, listElement, target, null, null);
     },
 
     //-----------------------public method-------------------------
@@ -546,30 +570,21 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
         this.schedule(callback_fn, target, interval, repeat, delay, paused, target.__instanceId + "");
     },
 
-    schedule: function(callback, target, interval, repeat, delay, paused, key){
+    schedule: function (callback, target, interval, repeat, delay, paused, key) {
         var isSelector = false;
-        if(typeof callback !== "function"){
-            var selector = callback;
+        if (typeof callback !== "function") {
+            var tmp = callback;
+            callback = target;
+            target = tmp;
             isSelector = true;
         }
-
-        if(isSelector === false){
-            //callback, target, interval, repeat, delay, paused, key
-            //callback, target, interval, paused, key
-            if(arguments.length === 4 || arguments.length === 5){
-                key = delay;
-                paused = repeat;
-                delay = 0;
-                repeat = cc.REPEAT_FOREVER;
-            }
-        }else{
-            //selector, target, interval, repeat, delay, paused
-            //selector, target, interval, paused
-            if(arguments.length === 4){
-                paused = repeat;
-                repeat = cc.REPEAT_FOREVER;
-                delay = 0;
-            }
+        //callback, target, interval, repeat, delay, paused, key
+        //callback, target, interval, paused, key
+        if(arguments.length === 4 || arguments.length === 5){
+            key = delay;
+            paused = repeat;
+            repeat = cc.REPEAT_FOREVER;
+            delay = 0;
         }
         if (key === undefined) {
             key = target.__instanceId + "";
@@ -579,19 +594,19 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
 
         var element = this._hashForTimers[target.__instanceId];
 
-        if(!element){
+        if (!element) {
             // Is this the 1st element ? Then set the pause level to all the callback_fns of this target
-            element = new cc.HashTimerEntry(null, target, 0, null, null, paused, null);
+            element = HashTimerEntry.get(null, target, 0, null, null, paused);
             this._arrayForTimers.push(element);
             this._hashForTimers[target.__instanceId] = element;
-        }else{
+        } else {
             cc.assert(element.paused === paused, "");
         }
 
         var timer, i;
         if (element.timers == null) {
             element.timers = [];
-        } else if(isSelector === false) {
+        } else {
             for (i = 0; i < element.timers.length; i++) {
                 timer = element.timers[i];
                 if (callback === timer._callback) {
@@ -600,27 +615,11 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
                     return;
                 }
             }
-        }else{
-            for (i = 0; i < element.timers.length; ++i){
-                timer =element.timers[i];
-                if (timer && selector === timer.getSelector()){
-                    cc.log("CCScheduler#scheduleSelector. Selector already scheduled. Updating interval from: %.4f to %.4f", timer.getInterval(), interval);
-                    timer.setInterval(interval);
-                    return;
-                }
-            }
-            //ccArrayEnsureExtraCapacity(element->timers, 1);
         }
 
-        if(isSelector === false){
-            timer = new cc.TimerTargetCallback();
-            timer.initWithCallback(this, callback, target, key, interval, repeat, delay);
-            element.timers.push(timer);
-        }else{
-            timer = new cc.TimerTargetSelector();
-            timer.initWithSelector(this, selector, target, interval, repeat, delay);
-            element.timers.push(timer);
-        }
+        timer = CallbackTimer.get();
+        timer.initWithCallback(this, callback, target, interval, repeat, delay, key);
+        element.timers.push(timer);
     },
 
     scheduleUpdate: function(target, priority, paused){
@@ -630,18 +629,16 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
     },
 
     _getUnscheduleMark: function(key, timer){
-        //key, callback, selector
+        //key, callback
         switch (typeof key){
             case "number":
             case "string":
-                return key === timer.getKey();
+                return key === timer._key;
             case "function":
                 return key === timer._callback;
-            default:
-                return key === timer.getSelector();
         }
     },
-    unschedule: function(key, target){
+    unschedule: function (key, target) {
         //key, target
         //selector, target
         //callback, target - This is in order to increase compatibility
@@ -660,6 +657,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
                         element.currentTimerSalvaged = true;
                     }
                     timers.splice(i, 1);
+                    CallbackTimer.put(timer);
                     //update timerIndex in case we are in tick;, looping over the actions
                     if (element.timerIndex >= i) {
                         element.timerIndex--;
@@ -678,37 +676,40 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
         }
     },
 
-    unscheduleUpdate: function(target){
-        if (target == null)
+    unscheduleUpdate: function (target) {
+        if (!target)
             return;
 
         var element = this._hashForUpdates[target.__instanceId];
 
-        if (element){
-            if (this._updateHashLocked){
+        if (element) {
+            if (this._updateHashLocked) {
                 element.entry.markedForDeletion = true;
-            }else{
+            } else {
                 this._removeUpdateFromHash(element.entry);
             }
         }
     },
 
-    unscheduleAllForTarget: function(target){
+    unscheduleAllForTarget: function (target) {
         // explicit nullptr handling
-        if (target == null){
+        if (!target){
             return;
         }
 
         // Custom Selectors
         var element = this._hashForTimers[target.__instanceId];
 
-        if (element){
-            if (element.timers.indexOf(element.currentTimer) > -1
-                && (! element.currentTimerSalvaged)){
+        if (element) {
+            var timers = element.timers;
+            if (timers.indexOf(element.currentTimer) > -1 && 
+                (!element.currentTimerSalvaged)) {
                 element.currentTimerSalvaged = true;
             }
-            //        ccArrayRemoveAllObjects(element.timers);
-            element.timers.length = 0;
+            for (var i = 0, l = timers.length; i < l; i++) {
+                CallbackTimer.put(timers[i]);
+            }
+            timers.length = 0;
 
             if (this._currentTarget === element){
                 this._currentTargetSalvaged = true;
@@ -768,26 +769,27 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
         }
     },
 
-    isScheduled: function(key, target){
+    isScheduled: function(callback, target){
         //key, target
         //selector, target
-        cc.assert(key, "Argument key must not be empty");
+        cc.assert(callback, "Argument callback must not be empty");
         cc.assert(target, "Argument target must be non-nullptr");
 
-        var element = this._hashForUpdates[target.__instanceId];
+        var element = this._hashForTimers[target.__instanceId];
 
-        if (!element){
+        if (!element) {
             return false;
         }
 
         if (element.timers == null){
             return false;
-        }else{
+        }
+        else {
             var timers = element.timers;
-            for (var i = 0; i < timers.length; ++i){
+            for (var i = 0; i < timers.length; ++i) {
                 var timer =  timers[i];
 
-                if (key === timer.getKey()){
+                if (callback === timer._callback){
                     return true;
                 }
             }
@@ -1029,9 +1031,19 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
         this.unscheduleAllWithMinPriority(minPriority);
     }
 });
+
 /**
  * Priority level reserved for system services.
  * @constant
  * @type Number
  */
 cc.Scheduler.PRIORITY_SYSTEM = (-2147483647 - 1);
+
+/**
+ * Minimum priority level for user scheduling.
+ * @constant
+ * @type Number
+ */
+cc.Scheduler.PRIORITY_NON_SYSTEM = cc.Scheduler.PRIORITY_SYSTEM + 1;
+
+})();

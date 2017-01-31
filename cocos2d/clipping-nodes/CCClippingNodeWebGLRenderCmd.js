@@ -23,9 +23,9 @@
  ****************************************************************************/
 
 // ------------------------------- ClippingNode's WebGL render cmd ------------------------------
-(function(){
-    cc.ClippingNode.WebGLRenderCmd = function(renderable){
-        cc.Node.WebGLRenderCmd.call(this, renderable);
+(function () {
+    cc.ClippingNode.WebGLRenderCmd = function (renderable) {
+        this._rootCtor(renderable);
         this._needDraw = false;
 
         this._beforeVisitCmd = new cc.CustomRenderCmd(this, this._onBeforeVisit);
@@ -43,7 +43,7 @@
     cc.ClippingNode.WebGLRenderCmd._visit_once = null;
     cc.ClippingNode.WebGLRenderCmd._layer = -1;
 
-    proto.initStencilBits = function(){
+    proto.initStencilBits = function () {
         // get (only once) the number of bits of the stencil buffer
         cc.ClippingNode.WebGLRenderCmd._init_once = true;
         if (cc.ClippingNode.WebGLRenderCmd._init_once) {
@@ -54,33 +54,30 @@
         }
     };
 
-    proto.transform = function(parentCmd, recursive){
+    proto.transform = function (parentCmd, recursive) {
         var node = this._node;
         this.originTransform(parentCmd, recursive);
-        if(node._stencil) {
-            node._stencil._renderCmd.transform(this, recursive);
+        if (node._stencil) {
+            node._stencil._renderCmd.transform(this, true);
+            node._stencil._dirtyFlag &= ~cc.Node._dirtyFlags.transformDirty;
         }
     };
 
-    proto.visit = function(parentCmd){
+    proto.clippingVisit = function (parentCmd) {
         var node = this._node;
-        // quick return if not visible
-        if (!node._visible)
-            return;
-
-        if( node._parent && node._parent._renderCmd)
-            this._curLevel = node._parent._renderCmd._curLevel + 1;
+        parentCmd = parentCmd || this.getParentRenderCmd();
+        this.visit(parentCmd);
 
         // if stencil buffer disabled
         if (cc.stencilBits < 1) {
             // draw everything, as if there were no stencil
-            this.originVisit(parentCmd);
+            node._visitChildren();
             return;
         }
 
         if (!node._stencil || !node._stencil.visible) {
             if (node.inverted)
-                this.originVisit(parentCmd);   // draw everything
+                node._visitChildren();   // draw everything
             return;
         }
 
@@ -91,20 +88,14 @@
                 cc.ClippingNode.WebGLRenderCmd._visit_once = false;
             }
             // draw everything, as if there were no stencil
-            this.originVisit(parentCmd);
+            node._visitChildren();
             return;
         }
 
         cc.renderer.pushRenderCommand(this._beforeVisitCmd);
 
-        //optimize performance for javascript
-        var currentStack = cc.current_stack;
-        currentStack.stack.push(currentStack.top);
-        this._syncStatus(parentCmd);
-        currentStack.top = this._stackMatrix;
-
         // node._stencil._stackMatrix = node._stackMatrix;
-        node._stencil._renderCmd.visit(this);
+        node._stencil.visit(node);
 
         cc.renderer.pushRenderCommand(this._afterDrawStencilCmd);
 
@@ -115,27 +106,33 @@
             node.sortAllChildren();
             // draw children zOrder < 0
             for (var i = 0; i < childLen; i++) {
-                locChildren[i]._renderCmd.visit(this);
+                locChildren[i].visit(node);
             }
         }
 
         cc.renderer.pushRenderCommand(this._afterVisitCmd);
 
         this._dirtyFlag = 0;
-        //optimize performance for javascript
-        currentStack.top = currentStack.stack.pop();
     };
 
-    proto.setStencil = function(stencil){
+    proto.setStencil = function (stencil) {
         var node = this._node;
-        if(node._stencil)
+        if (node._stencil)
             node._stencil._parent = null;
         node._stencil = stencil;
-        if(node._stencil)
+        if (node._stencil)
             node._stencil._parent = node;
     };
 
-    proto._onBeforeVisit = function(ctx){
+    proto.resetProgramByStencil = function () {
+        var node = this._node;
+        if (node._stencil) {
+            var program = node._originStencilProgram;
+            cc.setProgram(node._stencil, program);
+        }
+    };
+
+    proto._onBeforeVisit = function (ctx) {
         var gl = ctx || cc._renderContext, node = this._node;
         cc.ClippingNode.WebGLRenderCmd._layer++;
 
@@ -171,14 +168,14 @@
         }
     };
 
-    proto._onAfterDrawStencil = function(ctx){
+    proto._onAfterDrawStencil = function (ctx) {
         var gl = ctx || cc._renderContext;
         gl.depthMask(true);
         gl.stencilFunc(!this._node.inverted ? gl.EQUAL : gl.NOTEQUAL, this._mask_layer_le, this._mask_layer_le);
         gl.stencilOp(gl.KEEP, gl.KEEP, gl.KEEP);
     };
 
-    proto._onAfterVisit = function(ctx){
+    proto._onAfterVisit = function (ctx) {
         var gl = ctx || cc._renderContext;
 
         cc.ClippingNode.WebGLRenderCmd._layer--;

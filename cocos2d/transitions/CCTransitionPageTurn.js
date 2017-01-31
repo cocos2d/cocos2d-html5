@@ -47,7 +47,7 @@ cc.TransitionPageTurn = cc.TransitionScene.extend(/** @lends cc.TransitionPageTu
      * @param {cc.Scene} scene
      * @param {Boolean} backwards
      */
-    ctor:function (t, scene, backwards) {
+    ctor: function (t, scene, backwards) {
         cc.TransitionScene.prototype.ctor.call(this);
         this._gridProxy = new cc.NodeGrid();
         this.initWithDuration(t, scene, backwards);
@@ -56,9 +56,9 @@ cc.TransitionPageTurn = cc.TransitionScene.extend(/** @lends cc.TransitionPageTu
     /**
      * @type Boolean
      */
-    _back:true,
+    _back: true,
     _gridProxy: null,
-    _className:"TransitionPageTurn",
+    _className: "TransitionPageTurn",
 
     /**
      * Creates a base transition with duration and incoming scene.<br/>
@@ -69,7 +69,7 @@ cc.TransitionPageTurn = cc.TransitionScene.extend(/** @lends cc.TransitionPageTu
      * @param {Boolean} backwards
      * @return {Boolean}
      */
-    initWithDuration:function (t, scene, backwards) {
+    initWithDuration: function (t, scene, backwards) {
         // XXX: needed before [super init]
         this._back = backwards;
 
@@ -83,7 +83,7 @@ cc.TransitionPageTurn = cc.TransitionScene.extend(/** @lends cc.TransitionPageTu
      * @param {cc.Size} vector
      * @return {cc.ReverseTime|cc.TransitionScene}
      */
-    actionWithSize:function (vector) {
+    actionWithSize: function (vector) {
         if (this._back)
             return cc.reverseTime(cc.pageTurn3D(this._duration, vector));        // Get hold of the PageTurn3DAction
         else
@@ -93,7 +93,7 @@ cc.TransitionPageTurn = cc.TransitionScene.extend(/** @lends cc.TransitionPageTu
     /**
      * custom on enter
      */
-    onEnter:function () {
+    onEnter: function () {
         cc.TransitionScene.prototype.onEnter.call(this);
         var winSize = cc.director.getWinSize();
         var x, y;
@@ -109,11 +109,11 @@ cc.TransitionPageTurn = cc.TransitionScene.extend(/** @lends cc.TransitionPageTu
 
         if (!this._back) {
             gridProxy.setTarget(this._outScene);
-            gridProxy.onEnter();
-            gridProxy.runAction( cc.sequence(action,cc.callFunc(this.finish, this),cc.stopGrid()));
+            gridProxy._performRecursive(cc.Node._stateCallbackType.onEnter);
+            gridProxy.runAction(cc.sequence(action, cc.callFunc(this.finish, this), cc.stopGrid()));
         } else {
             gridProxy.setTarget(this._inScene);
-            gridProxy.onEnter();
+            gridProxy._performRecursive(cc.Node._stateCallbackType.onEnter);
             // to prevent initial flicker
             this._inScene.visible = false;
             gridProxy.runAction(
@@ -123,16 +123,16 @@ cc.TransitionPageTurn = cc.TransitionScene.extend(/** @lends cc.TransitionPageTu
         }
     },
 
-    visit: function(){
+    visit: function () {
         //cc.TransitionScene.prototype.visit.call(this);
-        if(this._back)
+        if (this._back)
             this._outScene.visit();
         else
             this._inScene.visit();
         this._gridProxy.visit();
     },
 
-    _sceneOrder:function () {
+    _sceneOrder: function () {
         this._isInSceneOnTop = this._back;
     }
 });

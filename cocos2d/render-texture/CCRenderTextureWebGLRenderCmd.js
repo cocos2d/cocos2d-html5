@@ -22,9 +22,9 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-(function(){
-    cc.RenderTexture.WebGLRenderCmd = function(renderableObject){
-        cc.Node.WebGLRenderCmd.call(this, renderableObject);
+(function () {
+    cc.RenderTexture.WebGLRenderCmd = function (renderableObject) {
+        this._rootCtor(renderableObject);
         this._needDraw = true;
 
         this._fBO = null;
@@ -40,7 +40,7 @@
     var proto = cc.RenderTexture.WebGLRenderCmd.prototype = Object.create(cc.Node.WebGLRenderCmd.prototype);
     proto.constructor = cc.RenderTexture.WebGLRenderCmd;
 
-    proto.setVirtualViewport = function(rtBegin, fullRect, fullViewport) {
+    proto.setVirtualViewport = function (rtBegin, fullRect, fullViewport) {
         this._rtTextureRect.x = rtBegin.x;
         this._rtTextureRect.y = rtBegin.y;
 
@@ -99,15 +99,15 @@
             var locChildren = node._children;
             for (var i = 0; i < locChildren.length; i++) {
                 var getChild = locChildren[i];
-                if (getChild !== node.sprite){
-                    getChild._renderCmd.visit(node.sprite._renderCmd);    //TODO it's very Strange
+                if (getChild !== node.sprite) {
+                    getChild.visit(node.sprite);    //TODO it's very Strange
                 }
             }
             node.end();
         }
     };
 
-    proto.clearStencil = function(stencilValue) {
+    proto.clearStencil = function (stencilValue) {
         var gl = cc._renderContext;
         // save old stencil value
         var stencilClearValue = gl.getParameter(gl.STENCIL_CLEAR_VALUE);
@@ -119,7 +119,7 @@
         gl.clearStencil(stencilClearValue);
     };
 
-    proto.cleanup = function(){
+    proto.cleanup = function () {
         var node = this._node;
         //node.sprite = null;
         this._textureCopy = null;
@@ -130,16 +130,17 @@
             gl.deleteRenderbuffer(this._depthRenderBuffer);
     };
 
-    proto.updateClearColor = function(clearColor){ };
+    proto.updateClearColor = function (clearColor) {
+    };
 
-    proto.initWithWidthAndHeight = function(width, height, format, depthStencilFormat){
+    proto.initWithWidthAndHeight = function (width, height, format, depthStencilFormat) {
         var node = this._node;
-        if(format === cc.Texture2D.PIXEL_FORMAT_A8)
-            cc.log( "cc.RenderTexture._initWithWidthAndHeightForWebGL() : only RGB and RGBA formats are valid for a render texture;");
+        if (format === cc.Texture2D.PIXEL_FORMAT_A8)
+            cc.log("cc.RenderTexture._initWithWidthAndHeightForWebGL() : only RGB and RGBA formats are valid for a render texture;");
 
         var gl = cc._renderContext, locScaleFactor = cc.contentScaleFactor();
-        this._fullRect = new cc.Rect(0,0, width, height);
-        this._fullViewport = new cc.Rect(0,0, width, height);
+        this._fullRect = new cc.Rect(0, 0, width, height);
+        this._fullViewport = new cc.Rect(0, 0, width, height);
 
         width = 0 | (width * locScaleFactor);
         height = 0 | (height * locScaleFactor);
@@ -147,7 +148,7 @@
         this._oldFBO = gl.getParameter(gl.FRAMEBUFFER_BINDING);
 
         // textures must be power of two squared
-        var powW , powH;
+        var powW, powH;
 
         if (cc.configuration.supportsNPOT()) {
             powW = width;
@@ -194,16 +195,16 @@
             this._depthRenderBuffer = gl.createRenderbuffer();
             gl.bindRenderbuffer(gl.RENDERBUFFER, this._depthRenderBuffer);
             gl.renderbufferStorage(gl.RENDERBUFFER, depthStencilFormat, powW, powH);
-            if(depthStencilFormat === gl.DEPTH_STENCIL)
+            if (depthStencilFormat === gl.DEPTH_STENCIL)
                 gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_STENCIL_ATTACHMENT, gl.RENDERBUFFER, this._depthRenderBuffer);
-            else if(depthStencilFormat === gl.STENCIL_INDEX || depthStencilFormat === gl.STENCIL_INDEX8)
+            else if (depthStencilFormat === gl.STENCIL_INDEX || depthStencilFormat === gl.STENCIL_INDEX8)
                 gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.STENCIL_ATTACHMENT, gl.RENDERBUFFER, this._depthRenderBuffer);
-            else if(depthStencilFormat === gl.DEPTH_COMPONENT16)
+            else if (depthStencilFormat === gl.DEPTH_COMPONENT16)
                 gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, this._depthRenderBuffer);
         }
 
         // check if it worked (probably worth doing :) )
-        if(gl.checkFramebufferStatus(gl.FRAMEBUFFER) !== gl.FRAMEBUFFER_COMPLETE)
+        if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) !== gl.FRAMEBUFFER_COMPLETE)
             cc.log("Could not attach texture to the framebuffer");
 
         locTexture.setAliasTexParameters();
@@ -223,7 +224,7 @@
         return true;
     };
 
-    proto.begin = function(){
+    proto.begin = function () {
         var node = this._node;
         // Save the current matrix
         cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
@@ -274,7 +275,7 @@
         }
     };
 
-    proto._beginWithClear = function(r, g, b, a, depthValue, stencilValue, flags){
+    proto._beginWithClear = function (r, g, b, a, depthValue, stencilValue, flags) {
         r = r / 255;
         g = g / 255;
         b = b / 255;
@@ -315,7 +316,7 @@
             gl.clearStencil(stencilClearValue);
     };
 
-    proto.end = function(){
+    proto.end = function () {
         var node = this._node;
         cc.renderer._renderingToBuffer(node.__instanceId);
 
@@ -343,11 +344,11 @@
          director.setProjection(director.getProjection());*/
     };
 
-    proto.clearRect = function(x, y, width, height){
+    proto.clearRect = function (x, y, width, height) {
         //TODO need to implement
     };
 
-    proto.clearDepth = function(depthValue){
+    proto.clearDepth = function (depthValue) {
         var node = this._node;
         node.begin();
 
@@ -361,31 +362,5 @@
         // restore clear color
         gl.clearDepth(depthClearValue);
         node.end();
-    };
-
-    proto.visit = function(parentCmd){
-        var node = this._node;
-        if (!node._visible)
-            return;
-        cc.kmGLPushMatrix();
-
-        //TODO using GridNode
-        /*        var locGrid = this.grid;
-         if (locGrid && locGrid.isActive()) {
-         locGrid.beforeDraw();
-         this.transformAncestors();
-         }*/
-
-        this._syncStatus(parentCmd);
-        //this.toRenderer();
-        cc.renderer.pushRenderCommand(this);
-        node.sprite.visit(this);
-
-        //TODO GridNode
-        /*        if (locGrid && locGrid.isActive())
-         locGrid.afterDraw(this);*/
-
-        this._dirtyFlag = 0;
-        cc.kmGLPopMatrix();
     };
 })();

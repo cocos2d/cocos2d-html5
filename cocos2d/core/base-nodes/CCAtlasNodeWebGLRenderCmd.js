@@ -25,9 +25,9 @@
 /**
  * cc.AtlasNode's rendering objects of WebGL
  */
-(function(){
-    cc.AtlasNode.WebGLRenderCmd = function(renderableObject){
-        cc.Node.WebGLRenderCmd.call(this, renderableObject);
+(function () {
+    cc.AtlasNode.WebGLRenderCmd = function (renderableObject) {
+        this._rootCtor(renderableObject);
         this._needDraw = true;
         this._textureAtlas = null;
         this._colorUnmodified = cc.color.WHITE;
@@ -78,7 +78,7 @@
         }
     };
 
-    proto.initWithTexture = function(texture, tileWidth, tileHeight, itemsToRender){
+    proto.initWithTexture = function (texture, tileWidth, tileHeight, itemsToRender) {
         var node = this._node;
         node._itemWidth = tileWidth;
         node._itemHeight = tileHeight;
@@ -106,7 +106,7 @@
         return true;
     };
 
-    proto.setColor = function(color3){
+    proto.setColor = function (color3) {
         var temp = cc.color(color3.r, color3.g, color3.b), node = this._node;
         this._colorUnmodified = color3;
         var locDisplayedOpacity = this._displayedOpacity;
@@ -118,7 +118,7 @@
         cc.Node.prototype.setColor.call(node, temp);
     };
 
-    proto.setOpacity = function(opacity){
+    proto.setOpacity = function (opacity) {
         var node = this._node;
         cc.Node.prototype.setOpacity.call(node, opacity);
         // special opacity for premultiplied textures
@@ -137,17 +137,17 @@
         }
     };
 
-    proto.getTexture = function(){
+    proto.getTexture = function () {
         return this._textureAtlas.texture;
     };
 
-    proto.setTexture = function(texture){
+    proto.setTexture = function (texture) {
         this._textureAtlas.texture = texture;
         this._updateBlendFunc();
         this._updateOpacityModifyRGB();
     };
 
-    proto._calculateMaxItems = function(){
+    proto._calculateMaxItems = function () {
         var node = this._node;
         var selTexture = this._textureAtlas.texture;
         var size = selTexture.getContentSize();

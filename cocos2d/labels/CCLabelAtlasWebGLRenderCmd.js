@@ -22,8 +22,8 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-(function(){
-    cc.LabelAtlas.WebGLRenderCmd = function(renderable){
+(function () {
+    cc.LabelAtlas.WebGLRenderCmd = function (renderable) {
         cc.AtlasNode.WebGLRenderCmd.call(this, renderable);
         this._needDraw = true;
     };
@@ -50,13 +50,13 @@
         }
     };
 
-    proto.setCascade = function(){
+    proto.setCascade = function () {
         var node = this._node;
         node._cascadeOpacityEnabled = true;
         node._cascadeColorEnabled = true;
     };
 
-    proto.rendering = function(ctx){
+    proto.rendering = function (ctx) {
         cc.AtlasNode.WebGLRenderCmd.prototype.rendering.call(this, ctx);
         if (cc.LABELATLAS_DEBUG_DRAW) {
             var node = this._node;
@@ -64,15 +64,15 @@
             var locRect = node.getBoundingBoxToWorld();
             var posX = locRect.x,
                 posY = locRect.y;
-                s.width = locRect.width;
-                s.height = locRect.height;
-            var vertices = [cc.p(posX, posY), cc.p(posX+ s.width, posY),
-                cc.p(s.width+posX, s.height+posY), cc.p(posX, posY+s.height)];
+            s.width = locRect.width;
+            s.height = locRect.height;
+            var vertices = [cc.p(posX, posY), cc.p(posX + s.width, posY),
+                cc.p(s.width + posX, s.height + posY), cc.p(posX, posY + s.height)];
             cc._drawingUtil.drawPoly(vertices, 4, true);
         }
     };
 
-    proto.updateAtlasValues = function(){
+    proto.updateAtlasValues = function () {
         var node = this._node;
         var locString = node._string;
         var n = locString.length;
@@ -96,9 +96,9 @@
             var a = locString.charCodeAt(i) - node._mapStartChar.charCodeAt(0);
             var row = a % node._itemsPerRow;
             var col = 0 | (a / node._itemsPerRow);
-            if(row < 0 || col < 0)
+            if (row < 0 || col < 0)
                 continue;
-            if(row*locItemWidth + locItemWidth > textureWide || col*locItemHeight + locItemHeight > textureHigh)
+            if (row * locItemWidth + locItemWidth > textureWide || col * locItemHeight + locItemHeight > textureHigh)
                 continue;
 
             cr++;
@@ -142,7 +142,7 @@
 
         this._updateColor();
 
-        this.updateContentSize(i, cr+1);
+        this.updateContentSize(i, cr + 1);
         if (n > 0) {
             locTextureAtlas.dirty = true;
             var totalQuads = locTextureAtlas.totalQuads;
@@ -151,19 +151,20 @@
         }
     };
 
-    proto.updateContentSize = function(i, cr){
+    proto.updateContentSize = function (i, cr) {
         var node = this._node,
             contentSize = node._contentSize;
-        if(i !== cr && i*node._itemWidth === contentSize.width && node._itemHeight === contentSize.height){
+        if (i !== cr && i * node._itemWidth === contentSize.width && node._itemHeight === contentSize.height) {
             node.setContentSize(cr * node._itemWidth, node._itemHeight);
         }
     };
 
-    proto.setString = function(label){
+    proto.setString = function (label) {
         var len = label.length;
         if (len > this._textureAtlas.totalQuads)
             this._textureAtlas.resizeCapacity(len);
     };
 
-    proto._addChild = function(){};
+    proto._addChild = function () {
+    };
 })();

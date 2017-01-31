@@ -2,9 +2,9 @@ cc.profiler = (function () {
     var _showFPS = false;
     var _inited = false;
     var _frames = 0, _frameRate = 0, _lastSPF = 0, _accumDt = 0;
-    var _afterVisitListener = null, 
-        _FPSLabel = document.createElement('div'), 
-        _SPFLabel = document.createElement('div'), 
+    var _afterVisitListener = null,
+        _FPSLabel = document.createElement('div'),
+        _SPFLabel = document.createElement('div'),
         _drawsLabel = document.createElement('div'),
         _fps = document.createElement('div');
 
@@ -21,7 +21,7 @@ cc.profiler = (function () {
     _fps.style.bottom = cc.DIRECTOR_STATS_POSITION.y + '0px';
     _fps.style.left = cc.DIRECTOR_STATS_POSITION.x + 'px';
     _fps.style.width = '45px';
-    _fps.style.height = '60px';
+    _fps.style.height = '80px';
 
     var labels = [_drawsLabel, _SPFLabel, _FPSLabel];
     for (var i = 0; i < 3; ++i) {
@@ -47,7 +47,7 @@ cc.profiler = (function () {
 
         if (_analyseCount >= _levelDetCycle) {
             average = _totalFPS / _levelDetCycle;
-            for (i = lastId; i >0; i--) {
+            for (i = lastId; i > 0; i--) {
                 ratio = _fpsCount[i] / _levelDetCycle;
                 // Determined level
                 if (ratio >= LEVEL_DET_FACTOR && average >= LEVELS[i]) {
@@ -85,9 +85,10 @@ cc.profiler = (function () {
             }
 
             if (_showFPS) {
-                _SPFLabel.innerText = _lastSPF.toFixed(3);
-                _FPSLabel.innerText = _frameRate.toFixed(1);
-                _drawsLabel.innerText = (0 | cc.g_NumberOfDraws).toString();
+                var mode = cc._renderType === cc.game.RENDER_TYPE_CANVAS ? "\n canvas" : "\n webgl";
+                _SPFLabel.innerHTML = _lastSPF.toFixed(3);
+                _FPSLabel.innerHTML = _frameRate.toFixed(1).toString() + mode;
+                _drawsLabel.innerHTML = (0 | cc.g_NumberOfDraws).toString();
             }
         }
     };

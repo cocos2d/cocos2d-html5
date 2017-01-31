@@ -22,9 +22,9 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-(function() {
-    cc.ScrollView.WebGLRenderCmd = function(renderable){
-        cc.Layer.WebGLRenderCmd.call(this, renderable);
+(function () {
+    cc.ScrollView.WebGLRenderCmd = function (renderable) {
+        this._layerCmdCtor(renderable);
         this._needDraw = false;
 
         this.startCmd = new cc.CustomRenderCmd(this, this._startCmd);
@@ -34,11 +34,11 @@
     var proto = cc.ScrollView.WebGLRenderCmd.prototype = Object.create(cc.Layer.WebGLRenderCmd.prototype);
     proto.constructor = cc.ScrollView.WebGLRenderCmd;
 
-    proto._startCmd = function(){
+    proto._startCmd = function () {
         var node = this._node;
         var EGLViewer = cc.view;
         var frame = node._getViewRect();
-        if(EGLViewer.isScissorEnabled()){
+        if (EGLViewer.isScissorEnabled()) {
             node._scissorRestored = true;
             node._parentScissorRect = EGLViewer.getScissorRect();
             //set the intersection of m_tParentScissorRect and frame as the new scissor rect
@@ -50,7 +50,7 @@
                 var yy = Math.min(frame.y + frame.height, locPSRect.y + locPSRect.height);
                 EGLViewer.setScissorInPoints(x, y, xx - x, yy - y);
             }
-        }else{
+        } else {
             var ctx = cc._renderContext;
             ctx.enable(ctx.SCISSOR_TEST);
             //clip
@@ -58,49 +58,14 @@
         }
     };
 
-    proto._endCmd = function(){
+    proto._endCmd = function () {
         var node = this._node;
         if (node._scissorRestored) {  //restore the parent's scissor rect
             var rect = node._parentScissorRect;
             cc.view.setScissorInPoints(rect.x, rect.y, rect.width, rect.height);
-        }else{
+        } else {
             var ctx = cc._renderContext;
             ctx.disable(ctx.SCISSOR_TEST);
         }
-    };
-
-    proto.visit = function(parentCmd){
-        var node = this._node;
-        if (!node._visible) return;
-
-        var i, locChildren = node._children, selChild, childrenLen;
-
-        this._syncStatus(parentCmd);
-
-        if (node._clippingToBounds) {
-            cc.renderer.pushRenderCommand(this.startCmd);
-        }
-
-        if (locChildren && locChildren.length > 0) {
-            childrenLen = locChildren.length;
-            // draw children zOrder < 0
-            for (i = 0; i < childrenLen; i++) {
-                selChild = locChildren[i];
-                if (selChild && selChild._localZOrder < 0)
-                    selChild._renderCmd.visit();
-                else
-                    break;
-            }
-
-            // draw children zOrder >= 0
-            for (; i < childrenLen; i++)
-                locChildren[i]._renderCmd.visit();
-        }
-
-        if (node._clippingToBounds) {
-            cc.renderer.pushRenderCommand(this.endCmd);
-        }
-
-        this._dirtyFlag = 0;
     };
 })();

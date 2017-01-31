@@ -213,7 +213,7 @@ cc.rendererCanvas = {
         scaleX = cc.isUndefined(scaleX) ? 1 : scaleX;
         scaleY = cc.isUndefined(scaleY) ? 1 : scaleY;
         instanceID = instanceID || this._currentID;
-        var locCmds = this._cacheToCanvasCmds[instanceID], i, len;
+        var i, locCmds = this._cacheToCanvasCmds[instanceID], len;
         ctx.computeRealOffsetY();
         for (i = 0, len = locCmds.length; i < len; i++) {
             locCmds[i].rendering(ctx, scaleX, scaleY);

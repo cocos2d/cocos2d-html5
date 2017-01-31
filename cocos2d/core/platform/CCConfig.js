@@ -31,7 +31,7 @@
  * @type {String}
  * @name cc.ENGINE_VERSION
  */
-window["CocosEngine"] = cc.ENGINE_VERSION = "Cocos2d-JS v3.13";
+window["CocosEngine"] = cc.ENGINE_VERSION = "Cocos2d-JS v3.14";
 
 /**
  * <p>
@@ -260,12 +260,14 @@ cc.LABELBMFONT_DEBUG_DRAW = 0;
  */
 cc.LABELATLAS_DEBUG_DRAW = 0;
 
+cc.DRAWNODE_TOTAL_VERTICES = 20000;
+
 /**
  * Whether or not support retina display
  * @constant
  * @type {Number}
  */
-cc.IS_RETINA_DISPLAY_SUPPORTED = 1;
+cc.IS_RETINA_DISPLAY_SUPPORTED = 0;
 
 /**
  * Default engine

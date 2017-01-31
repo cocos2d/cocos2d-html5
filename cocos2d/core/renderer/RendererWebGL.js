@@ -108,7 +108,7 @@ return {
 
     childrenOrderDirty: true,
     assignedZ: 0,
-    assignedZStep: 1/100,
+    assignedZStep: 1 / 100,
 
     _transformNodePool: [],                              //save nodes transform dirty
     _renderCmds: [],                                     //save renderer commands
@@ -126,7 +126,7 @@ return {
 
         this.mat4Identity = new cc.math.Matrix4();
         this.mat4Identity.identity();
-        initQuadBuffer(2000);
+        initQuadBuffer(500);
         if (cc.sys.os === cc.sys.OS_IOS) {
             _IS_IOS = true;
         }
@@ -232,24 +232,24 @@ return {
 
     clear: function () {
         var gl = cc._renderContext;
-        gl.clearColor(this._clearColor.r, this._clearColor.g, this._clearColor.b, this._clearColor.a);
+        gl.clearColor(this._clearColor.r / 255, this._clearColor.g / 255, this._clearColor.b / 255, this._clearColor.a / 255);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     },
 
-    setDepthTest: function (enable){
+    setDepthTest: function (enable) {
         var gl = cc._renderContext;
-        if(enable){
+        if (enable) {
             gl.clearDepth(1.0);
             gl.enable(gl.DEPTH_TEST);
             gl.depthFunc(gl.LEQUAL);
         }
-        else{
+        else {
             gl.disable(gl.DEPTH_TEST);
         }
     },
     
     pushRenderCommand: function (cmd) {
-        if(!cmd.needDraw())
+        if (!cmd.needDraw())
             return;
         if (this._isCacheToBufferOn) {
             var currentId = this._currentID, locCmdBuffer = this._cacheToBufferCmds;
@@ -273,9 +273,13 @@ return {
         }
 
         // Check batching
-        var texture = cmd._node._texture;
-        var blendSrc = cmd._node._blendFunc.src;
-        var blendDst = cmd._node._blendFunc.dst;
+        var node = cmd._node;
+        var texture = node._texture || (node._spriteFrame ? node._spriteFrame._texture : null);
+        if (!texture) {
+            return;
+        }
+        var blendSrc = node._blendFunc.src;
+        var blendDst = node._blendFunc.dst;
         var shader = cmd._shaderProgram;
         if (_batchedInfo.texture !== texture ||
             _batchedInfo.blendSrc !== blendSrc ||
@@ -315,7 +319,7 @@ return {
         cc.glBlendFunc(_batchedInfo.blendSrc, _batchedInfo.blendDst);
         cc.glBindTexture2DN(0, texture);                   // = cc.glBindTexture2D(texture);
 
-        var _bufferchanged = !gl.bindBuffer(gl.ARRAY_BUFFER, _quadVertexBuffer);
+        gl.bindBuffer(gl.ARRAY_BUFFER, _quadVertexBuffer);
         // upload the vertex data to the gl buffer
         if (_batchingSize > _vertexSize * 0.5) {
             gl.bufferData(gl.ARRAY_BUFFER, _vertexDataF32, gl.DYNAMIC_DRAW);
@@ -325,14 +329,12 @@ return {
             gl.bufferData(gl.ARRAY_BUFFER, view, gl.DYNAMIC_DRAW);
         }
 
-        if (_bufferchanged) {
-            gl.enableVertexAttribArray(cc.VERTEX_ATTRIB_POSITION);
-            gl.enableVertexAttribArray(cc.VERTEX_ATTRIB_COLOR);
-            gl.enableVertexAttribArray(cc.VERTEX_ATTRIB_TEX_COORDS);
-            gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 24, 0);
-            gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, gl.UNSIGNED_BYTE, true, 24, 12);
-            gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, 24, 16);
-        }
+        gl.enableVertexAttribArray(cc.VERTEX_ATTRIB_POSITION);
+        gl.enableVertexAttribArray(cc.VERTEX_ATTRIB_COLOR);
+        gl.enableVertexAttribArray(cc.VERTEX_ATTRIB_TEX_COORDS);
+        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 24, 0);
+        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, gl.UNSIGNED_BYTE, true, 24, 12);
+        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, 24, 16);
 
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, _quadIndexBuffer);
         gl.drawElements(gl.TRIANGLES, count * 6, gl.UNSIGNED_SHORT, 0);

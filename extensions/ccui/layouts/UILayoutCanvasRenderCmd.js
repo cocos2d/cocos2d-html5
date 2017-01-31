@@ -23,54 +23,21 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-(function(){
-    ccui.Layout.CanvasRenderCmd = function(renderable){
-        ccui.ProtectedNode.CanvasRenderCmd.call(this, renderable);
+(function () {
+    ccui.Layout.CanvasRenderCmd = function (renderable) {
+        this._pNodeCmdCtor(renderable);
         this._needDraw = false;
 
-        this._rendererSaveCmd = new cc.CustomRenderCmd(this, this._onRenderSaveCmd);
-        this._rendererClipCmd = new cc.CustomRenderCmd(this, this._onRenderClipCmd);
-        this._rendererRestoreCmd = new cc.CustomRenderCmd(this, this._onRenderRestoreCmd);
-        this._rendererSaveCmd._canUseDirtyRegion = true;
-        this._rendererClipCmd._canUseDirtyRegion = true;
-        this._rendererRestoreCmd._canUseDirtyRegion = true;
+        this._rendererSaveCmd = null;
+        this._rendererClipCmd = null;
+        this._rendererRestoreCmd = null;
     };
 
     var proto = ccui.Layout.CanvasRenderCmd.prototype = Object.create(ccui.ProtectedNode.CanvasRenderCmd.prototype);
     proto.constructor = ccui.Layout.CanvasRenderCmd;
+    proto._layoutCmdCtor = ccui.Layout.CanvasRenderCmd;
 
-    cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
-        if (ccui.Widget.CanvasRenderCmd) {
-            ccui.Layout.CanvasRenderCmd.prototype.widgetVisit = ccui.Widget.CanvasRenderCmd.prototype.widgetVisit;
-        }
-    });
-
-    proto.visit = function(parentCmd){
-        var node = this._node;
-        if (!node._visible)
-            return;
-        node._adaptRenderers();
-        node._doLayout();
-
-        if (node._clippingEnabled) {
-            switch (node._clippingType) {
-                case ccui.Layout.CLIPPING_STENCIL:
-                    this.stencilClippingVisit(parentCmd);
-                    break;
-                case ccui.Layout.CLIPPING_SCISSOR:
-                    this.scissorClippingVisit(parentCmd);
-                    break;
-                default:
-                    break;
-            }
-        } else {
-            this.widgetVisit(parentCmd);
-        }
-    };
-
-    proto.layoutVisit = proto.visit;
-
-    proto._onRenderSaveCmd = function(ctx, scaleX, scaleY){
+    proto._onRenderSaveCmd = function (ctx, scaleX, scaleY) {
         var wrapper = ctx || cc._renderContext, context = wrapper.getContext();
         wrapper.save();
         wrapper.save();
@@ -81,31 +48,31 @@
             var element = buffer[i], vertices = element.verts;
             var firstPoint = vertices[0];
             context.beginPath();
-            context.moveTo(firstPoint.x, -firstPoint.y );
+            context.moveTo(firstPoint.x, -firstPoint.y);
             for (var j = 1, len = vertices.length; j < len; j++)
-                context.lineTo(vertices[j].x , -vertices[j].y );
+                context.lineTo(vertices[j].x, -vertices[j].y);
             context.closePath();
         }
     };
 
-    proto._onRenderClipCmd = function(ctx){
+    proto._onRenderClipCmd = function (ctx) {
         var wrapper = ctx || cc._renderContext, context = wrapper.getContext();
         wrapper.restore();
         context.clip();
     };
 
-    proto._onRenderRestoreCmd = function(ctx){
+    proto._onRenderRestoreCmd = function (ctx) {
         var wrapper = ctx || cc._renderContext, context = wrapper.getContext();
 
         wrapper.restore();
     };
 
-    proto.rebindStencilRendering = function(stencil){
+    proto.rebindStencilRendering = function (stencil) {
         stencil._renderCmd.rendering = this.__stencilDraw;
         stencil._renderCmd._canUseDirtyRegion = true;
     };
 
-    proto.__stencilDraw = function(ctx,scaleX, scaleY){          //Only for Canvas
+    proto.__stencilDraw = function (ctx, scaleX, scaleY) {          //Only for Canvas
         //do nothing, rendering in layout
     };
 
@@ -114,39 +81,20 @@
         if (!node._clippingStencil || !node._clippingStencil.isVisible())
             return;
 
-        this._syncStatus(parentCmd);
+        if (!this._rendererSaveCmd) {
+            this._rendererSaveCmd = new cc.CustomRenderCmd(this, this._onRenderSaveCmd);
+            this._rendererClipCmd = new cc.CustomRenderCmd(this, this._onRenderClipCmd);
+            this._rendererRestoreCmd = new cc.CustomRenderCmd(this, this._onRenderRestoreCmd);
+        }
 
         cc.renderer.pushRenderCommand(this._rendererSaveCmd);
         node._clippingStencil.visit(this);
 
         cc.renderer.pushRenderCommand(this._rendererClipCmd);
-            node.sortAllChildren();
-            node.sortAllProtectedChildren();
+    };
 
-            var children = node._children;
-            var j=0, locProtectChildren = node._protectedChildren, i = 0, locChild;
-            var iLen = children.length, jLen = locProtectChildren.length;
-
-            for( ; i < iLen; i++ ){
-                locChild = children[i];
-                if ( locChild && locChild.getLocalZOrder() < 0 )
-                    locChild.visit(this);
-                else
-                    break;
-            }
-            for( ; j < jLen; j++ ) {
-                locChild = locProtectChildren[j];
-                if ( locChild && locChild.getLocalZOrder() < 0 )
-                    locChild.visit(this);
-                else
-                    break;
-            }
-            for (; i < iLen; i++)
-                children[i].visit(this);
-            for (; j < jLen; j++)
-                locProtectChildren[j].visit(this);
-            cc.renderer.pushRenderCommand(this._rendererRestoreCmd);
-        this._dirtyFlag = 0;
+    proto.postStencilVisit = proto.postScissorVisit = function () {
+        cc.renderer.pushRenderCommand(this._rendererRestoreCmd);
     };
 
     ccui.Layout.CanvasRenderCmd._getSharedCache = function () {

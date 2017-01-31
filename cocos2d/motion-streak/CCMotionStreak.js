@@ -44,33 +44,33 @@
  * new cc.MotionStreak(2, 3, 32, cc.color.GREEN, s_streak);
  */
 cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
-    texture:null,
-    fastMode:false,
-    startingPositionInitialized:false,
+    texture: null,
+    fastMode: false,
+    startingPositionInitialized: false,
 
-    _blendFunc:null,
+    _blendFunc: null,
 
-    _stroke:0,
-    _fadeDelta:0,
-    _minSeg:0,
+    _stroke: 0,
+    _fadeDelta: 0,
+    _minSeg: 0,
 
-    _maxPoints:0,
-    _nuPoints:0,
-    _previousNuPoints:0,
+    _maxPoints: 0,
+    _nuPoints: 0,
+    _previousNuPoints: 0,
 
     /* Pointers */
-    _pointVertexes:null,
-    _pointState:null,
+    _pointVertexes: null,
+    _pointState: null,
 
     // webgl
-    _vertices:null,
-    _colorPointer:null,
-    _texCoords:null,
+    _vertices: null,
+    _colorPointer: null,
+    _texCoords: null,
 
-    _verticesBuffer:null,
-    _colorPointerBuffer:null,
-    _texCoordsBuffer:null,
-    _className:"MotionStreak",
+    _verticesBuffer: null,
+    _colorPointerBuffer: null,
+    _texCoordsBuffer: null,
+    _className: "MotionStreak",
 
     /**
      * creates and initializes a motion streak with fade in seconds, minimum segments, stroke's width, color, texture filename or texture   <br/>
@@ -112,7 +112,7 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
         this._colorPointerBuffer = null;
         this._texCoordsBuffer = null;
 
-        if(texture !== undefined)
+        if (texture !== undefined)
             this.initWithFade(fade, minSeg, stroke, color, texture);
     },
 
@@ -120,7 +120,7 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
      * Gets the texture.
      * @return {cc.Texture2D}
      */
-    getTexture:function () {
+    getTexture: function () {
         return this.texture;
     },
 
@@ -128,7 +128,7 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
      * Set the texture.
      * @param {cc.Texture2D} texture
      */
-    setTexture:function (texture) {
+    setTexture: function (texture) {
         if (this.texture !== texture)
             this.texture = texture;
     },
@@ -137,7 +137,7 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
      * Gets the blend func.
      * @return {cc.BlendFunc}
      */
-    getBlendFunc:function () {
+    getBlendFunc: function () {
         return this._blendFunc;
     },
 
@@ -146,7 +146,7 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
      * @param {Number} src
      * @param {Number} dst
      */
-    setBlendFunc:function (src, dst) {
+    setBlendFunc: function (src, dst) {
         if (dst === undefined) {
             this._blendFunc = src;
         } else {
@@ -160,7 +160,7 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
      * @warning cc.MotionStreak.getOpacity has not been supported.
      * @returns {number}
      */
-    getOpacity:function () {
+    getOpacity: function () {
         cc.log("cc.MotionStreak.getOpacity has not been supported.");
         return 0;
     },
@@ -170,7 +170,7 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
      * @warning cc.MotionStreak.setOpacity has not been supported.
      * @param opacity
      */
-    setOpacity:function (opacity) {
+    setOpacity: function (opacity) {
         cc.log("cc.MotionStreak.setOpacity has not been supported.");
     },
 
@@ -179,14 +179,14 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
      * @warning cc.MotionStreak.setOpacityModifyRGB has not been supported.
      * @param value
      */
-    setOpacityModifyRGB:function (value) {
+    setOpacityModifyRGB: function (value) {
     },
 
     /**
      * Checking OpacityModifyRGB.
      * @returns {boolean}
      */
-    isOpacityModifyRGB:function () {
+    isOpacityModifyRGB: function () {
         return false;
     },
 
@@ -194,7 +194,7 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
      * Checking fast mode.
      * @returns {boolean}
      */
-    isFastMode:function () {
+    isFastMode: function () {
         return this.fastMode;
     },
 
@@ -202,7 +202,7 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
      * set fast mode
      * @param {Boolean} fastMode
      */
-    setFastMode:function (fastMode) {
+    setFastMode: function (fastMode) {
         this.fastMode = fastMode;
     },
 
@@ -210,7 +210,7 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
      * Checking starting position initialized.
      * @returns {boolean}
      */
-    isStartingPositionInitialized:function () {
+    isStartingPositionInitialized: function () {
         return this.startingPositionInitialized;
     },
 
@@ -218,7 +218,7 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
      * Set Starting Position Initialized.
      * @param {Boolean} startingPositionInitialized
      */
-    setStartingPositionInitialized:function (startingPositionInitialized) {
+    setStartingPositionInitialized: function (startingPositionInitialized) {
         this.startingPositionInitialized = startingPositionInitialized;
     },
 
@@ -226,7 +226,7 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
      * Get stroke.
      * @returns {Number} stroke
      */
-    getStroke:function () {
+    getStroke: function () {
         return this._stroke;
     },
 
@@ -234,7 +234,7 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
      * Set stroke.
      * @param {Number} stroke
      */
-    setStroke:function (stroke) {
+    setStroke: function (stroke) {
         this._stroke = stroke;
     },
 
@@ -247,14 +247,14 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
      * @param {string|cc.Texture2D} texture texture filename or texture
      * @return {Boolean}
      */
-    initWithFade:function (fade, minSeg, stroke, color, texture) {
-        if(!texture)
+    initWithFade: function (fade, minSeg, stroke, color, texture) {
+        if (!texture)
             throw new Error("cc.MotionStreak.initWithFade(): Invalid filename or texture");
 
         if (cc.isString(texture))
             texture = cc.textureCache.addImage(texture);
 
-        cc.Node.prototype.setPosition.call(this, cc.p(0,0));
+        cc.Node.prototype.setPosition.call(this, cc.p(0, 0));
         this.anchorX = 0;
         this.anchorY = 0;
         this.ignoreAnchor = true;
@@ -304,7 +304,7 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
      * color used for the tint
      * @param {cc.Color} color
      */
-    tintWithColor:function (color) {
+    tintWithColor: function (color) {
         this.color = color;
 
         // Fast assignation
@@ -319,7 +319,7 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
     /**
      * Remove all living segments of the ribbon
      */
-    reset:function () {
+    reset: function () {
         this._nuPoints = 0;
     },
 
@@ -329,9 +329,9 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
      * @param {cc.Point|Number} position
      * @param {Number} [yValue=undefined] If not exists, the first parameter must be cc.Point.
      */
-    setPosition:function (position, yValue) {
+    setPosition: function (position, yValue) {
         this.startingPositionInitialized = true;
-        if(yValue === undefined){
+        if (yValue === undefined) {
             this._positionR.x = position.x;
             this._positionR.y = position.y;
         } else {
@@ -344,7 +344,7 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
      * Gets the position.x
      * @return {Number}
      */
-    getPositionX:function () {
+    getPositionX: function () {
         return this._positionR.x;
     },
 
@@ -352,9 +352,9 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
      * Set the position.x
      * @param {Number} x
      */
-    setPositionX:function (x) {
+    setPositionX: function (x) {
         this._positionR.x = x;
-        if(!this.startingPositionInitialized)
+        if (!this.startingPositionInitialized)
             this.startingPositionInitialized = true;
     },
 
@@ -362,17 +362,17 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
      * Gets the position.y
      * @return {Number}
      */
-    getPositionY:function () {
-        return  this._positionR.y;
+    getPositionY: function () {
+        return this._positionR.y;
     },
 
     /**
      * Set the position.y
      * @param {Number} y
      */
-    setPositionY:function (y) {
+    setPositionY: function (y) {
         this._positionR.y = y;
-        if(!this.startingPositionInitialized)
+        if (!this.startingPositionInitialized)
             this.startingPositionInitialized = true;
     },
 
@@ -383,7 +383,7 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
      * Only one "update" method could be scheduled per node.</p>
      * @param {Number} delta
      */
-    update:function (delta) {
+    update: function (delta) {
         if (!this.startingPositionInitialized)
             return;
 
@@ -392,7 +392,7 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
 
         delta *= this._fadeDelta;
 
-        var newIdx, newIdx2, i, i2;
+        var i, newIdx, newIdx2, i2;
         var mov = 0;
 
         // Update current points
@@ -447,7 +447,7 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
             appendNewPoint = false;
         else if (locNuPoints > 0) {
             var a1 = cc.pDistanceSQ(cc.p(locPointVertexes[(locNuPoints - 1) * 2], locPointVertexes[(locNuPoints - 1) * 2 + 1]),
-                this._positionR) < this._minSeg;
+                    this._positionR) < this._minSeg;
             var a2 = (locNuPoints === 1) ? false : (cc.pDistanceSQ(
                 cc.p(locPointVertexes[(locNuPoints - 2) * 2], locPointVertexes[(locNuPoints - 2) * 2 + 1]), this._positionR) < (this._minSeg * 2.0));
             if (a1 || a2)
@@ -506,8 +506,8 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
         this._nuPoints = locNuPoints;
     },
 
-    _createRenderCmd: function(){
-        if(cc._renderType === cc.game.RENDER_TYPE_WEBGL)
+    _createRenderCmd: function () {
+        if (cc._renderType === cc.game.RENDER_TYPE_WEBGL)
             return new cc.MotionStreak.WebGLRenderCmd(this);
         else
             return null;  //MotionStreak doesn't support Canvas mode

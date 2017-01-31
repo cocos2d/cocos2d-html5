@@ -26,13 +26,13 @@ var GlobalVertexBuffer = (function () {
 
 var VERTICES_SIZE = 888;
 
-var GlobalVertexBuffer = function (gl) {
+var GlobalVertexBuffer = function (gl, byteLength) {
     // WebGL buffer
     this.gl = gl;
     this.vertexBuffer = gl.createBuffer();
 
     this.size = VERTICES_SIZE;
-    this.byteLength = VERTICES_SIZE * 4 * cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
+    this.byteLength = byteLength || VERTICES_SIZE * 4 * cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
     
     // buffer data and views
     this.data = new ArrayBuffer(this.byteLength);
@@ -72,14 +72,10 @@ GlobalVertexBuffer.prototype = {
             offset = parseInt(key);
             available = this._spaces[key];
             if (available >= size && this.allocBuffer(offset, size)) {
-                return {
-                    buffer: this,
-                    offset: offset,
-                    size: size
-                };
+                return offset;
             }
         }
-        return null;
+        return -1;
     },
 
     freeBuffer: function (offset, size) {
@@ -119,6 +115,11 @@ GlobalVertexBuffer.prototype = {
             this.gl.bufferSubData(gl.ARRAY_BUFFER, 0, this.dataArray);
             this._dirty = false;
         }
+    },
+
+    updateSubData: function (offset, dataArray) {
+        this.gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
+        this.gl.bufferSubData(gl.ARRAY_BUFFER, offset, dataArray);
     },
 
     destroy: function () {

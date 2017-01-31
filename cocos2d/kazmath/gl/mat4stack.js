@@ -26,54 +26,55 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-(function(cc){
+(function (cc) {
     /**
      * The stack of cc.math.Matrix4
      * @param {cc.math.Matrix4} [top]
      * @param {Array} [stack]
      * @constructor
      */
-    cc.math.Matrix4Stack = function(top, stack) {
+    cc.math.Matrix4Stack = function (top, stack) {
         this.top = top;
         this.stack = stack || [];
+        this.lastUpdated = 0;
         //this._matrixPool = [];            // use pool in next version
     };
     cc.km_mat4_stack = cc.math.Matrix4Stack;
     var proto = cc.math.Matrix4Stack.prototype;
 
-    proto.initialize = function() {    //cc.km_mat4_stack_initialize
+    proto.initialize = function () {    //cc.km_mat4_stack_initialize
         this.stack.length = 0;
         this.top = null;
     };
 
     //for compatibility
-    cc.km_mat4_stack_push = function(stack, item){
+    cc.km_mat4_stack_push = function (stack, item) {
         stack.stack.push(stack.top);
         stack.top = new cc.math.Matrix4(item);
     };
 
-    cc.km_mat4_stack_pop = function(stack, pOut){
+    cc.km_mat4_stack_pop = function (stack, pOut) {
         stack.top = stack.stack.pop();
     };
 
-    cc.km_mat4_stack_release = function(stack){
+    cc.km_mat4_stack_release = function (stack) {
         stack.stack = null;
         stack.top = null;
     };
 
-    proto.push = function(item) {
+    proto.push = function (item) {
         item = item || this.top;
         this.stack.push(this.top);
         this.top = new cc.math.Matrix4(item);
         //this.top = this._getFromPool(item);
     };
 
-    proto.pop = function() {
+    proto.pop = function () {
         //this._putInPool(this.top);
         this.top = this.stack.pop();
     };
 
-    proto.release = function(){
+    proto.release = function () {
         this.stack = null;
         this.top = null;
         this._matrixPool = null;
@@ -88,7 +89,7 @@
         return ret;
     };
 
-    proto._putInPool = function(matrix){
+    proto._putInPool = function (matrix) {
         this._matrixPool.push(matrix);
     };
 })(cc);

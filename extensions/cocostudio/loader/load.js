@@ -22,7 +22,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs._load = (function(){
+ccs._load = (function () {
 
     /**
      * load file
@@ -31,43 +31,43 @@ ccs._load = (function(){
      * @param {String} [path=] - Resource search path
      * @returns {*}
      */
-    var load = function(file, type, path){
+    var load = function (file, type, path) {
 
         var json = cc.loader.getRes(file);
 
-        if(!json)
+        if (!json)
             return cc.log("%s does not exist", file);
         var ext = extname(file).toLocaleLowerCase();
-        if(ext !== "json" && ext !== "exportjson")
+        if (ext !== "json" && ext !== "exportjson")
             return cc.log("%s load error, must be json file", file);
 
         var parse;
-        if(!type){
-            if(json["widgetTree"])
+        if (!type) {
+            if (json["widgetTree"])
                 parse = parser["ccui"];
-            else if(json["nodeTree"])
+            else if (json["nodeTree"])
                 parse = parser["timeline"];
-            else if(json["Content"] && json["Content"]["Content"])
+            else if (json["Content"] && json["Content"]["Content"])
                 parse = parser["timeline"];
-            else if(json["gameobjects"])
+            else if (json["gameobjects"])
                 parse = parser["scene"];
-        }else{
+        } else {
             parse = parser[type];
         }
 
-        if(!parse){
+        if (!parse) {
             cc.log("Can't find the parser : %s", file);
             return new cc.Node();
         }
         var version = json["version"] || json["Version"];
-        if(!version && json["armature_data"]){
+        if (!version && json["armature_data"]) {
             cc.warn("%s is armature. please use:", file);
             cc.warn("    ccs.armatureDataManager.addArmatureFileInfoAsync(%s);", file);
             cc.warn("    var armature = new ccs.Armature('name');");
             return new cc.Node();
         }
         var currentParser = getParser(parse, version);
-        if(!currentParser){
+        if (!currentParser) {
             cc.log("Can't find the parser : %s", file);
             return new cc.Node();
         }
@@ -82,24 +82,24 @@ ccs._load = (function(){
         "scene": {}
     };
 
-    load.registerParser = function(name, version, target){
-        if(!name || !version || !target)
+    load.registerParser = function (name, version, target) {
+        if (!name || !version || !target)
             return cc.log("register parser error");
-        if(!parser[name])
+        if (!parser[name])
             parser[name] = {};
         parser[name][version] = target;
     };
 
-    load.getParser = function(name, version){
-        if(name && version)
+    load.getParser = function (name, version) {
+        if (name && version)
             return parser[name] ? parser[name][version] : undefined;
-        if(name)
+        if (name)
             return parser[name];
         return parser;
     };
 
     //Gets the file extension
-    var extname = function(fileName){
+    var extname = function (fileName) {
         var arr = fileName.match(extnameReg);
         return ( arr && arr[1] ) ? arr[1] : null;
     };
@@ -107,10 +107,10 @@ ccs._load = (function(){
 
 
     var parserReg = /([^\.](\.\*)?)*$/;
-    var getParser = function(parser, version){
-        if(parser[version])
+    var getParser = function (parser, version) {
+        if (parser[version])
             return parser[version];
-        else if(version === "*")
+        else if (version === "*")
             return null;
         else
             return getParser(parser, version.replace(parserReg, "*"));
@@ -122,25 +122,25 @@ ccs._load = (function(){
 
 ccs._parser = cc.Class.extend({
 
-    ctor: function(){
+    ctor: function () {
         this.parsers = {};
     },
 
     _dirnameReg: /\S*\//,
-    _dirname: function(path){
+    _dirname: function (path) {
         var arr = path.match(this._dirnameReg);
         return (arr && arr[0]) ? arr[0] : "";
     },
 
-    getClass: function(json){
+    getClass: function (json) {
         return json["classname"];
     },
 
-    getNodeJson: function(json){
+    getNodeJson: function (json) {
         return json["widgetTree"];
     },
 
-    parse: function(file, json, resourcePath){
+    parse: function (file, json, resourcePath) {
         resourcePath = resourcePath || this._dirname(file);
         this.pretreatment(json, resourcePath);
         var node = this.parseNode(this.getNodeJson(json), resourcePath, file);
@@ -148,14 +148,16 @@ ccs._parser = cc.Class.extend({
         return node;
     },
 
-    pretreatment: function(json, resourcePath, file){},
+    pretreatment: function (json, resourcePath, file) {
+    },
 
-    deferred: function(json, resourcePath, node, file){},
+    deferred: function (json, resourcePath, node, file) {
+    },
 
-    parseNode: function(json, resourcePath){
+    parseNode: function (json, resourcePath) {
         var parser = this.parsers[this.getClass(json)];
         var widget = null;
-        if(parser)
+        if (parser)
             widget = parser.call(this, json, resourcePath);
         else
             cc.log("Can't find the parser : %s", this.getClass(json));
@@ -163,7 +165,7 @@ ccs._parser = cc.Class.extend({
         return widget;
     },
 
-    registerParser: function(widget, parse){
+    registerParser: function (widget, parse) {
         this.parsers[widget] = parse;
     }
 });
@@ -180,7 +182,7 @@ ccs._parser = cc.Class.extend({
  * @param {String} [path=] Resource path
  * @returns {{node: cc.Node, action: cc.Action}}
  */
-ccs.load = function(file, path){
+ccs.load = function (file, path) {
     var object = {
         node: null,
         action: null
@@ -188,7 +190,7 @@ ccs.load = function(file, path){
 
     object.node = ccs._load(file, null, path);
     object.action = ccs._load(file, "action", path);
-    if(object.action && object.action.tag === -1 && object.node)
+    if (object.action && object.action.tag === -1 && object.node)
         object.action.tag = object.node.tag;
     return object;
 };
@@ -208,10 +210,10 @@ ccs.load.preload = true;
  * @param {String} [path=] Resource path
  * @returns {{node: cc.Node, action: cc.Action}}
  */
-ccs.loadWithVisibleSize = function(file, path){
+ccs.loadWithVisibleSize = function (file, path) {
     var object = ccs.load(file, path);
     var size = cc.director.getVisibleSize();
-    if(object.node && size){
+    if (object.node && size) {
         object.node.setContentSize(size.width, size.height);
         ccui.helper.doLayout(object.node);
     }
@@ -229,7 +231,7 @@ ccs.actionTimelineCache = {
      * @param file
      * @returns {*}
      */
-    createAction: function(file){
+    createAction: function (file) {
         return ccs._load(file, "action");
     }
 };
@@ -242,34 +244,34 @@ ccs.csLoader = {
      * @param file
      * @returns {*}
      */
-    createNode: function(file){
+    createNode: function (file) {
         return ccs._load(file);
     }
 };
 
 cc.loader.register(["json"], {
-    load : function(realUrl, url, res, cb){
-        cc.loader.loadJson(realUrl, function(error, data){
+    load: function (realUrl, url, res, cb) {
+        cc.loader.loadJson(realUrl, function (error, data) {
             var path = cc.path;
-            if(data && data["Content"] && data["Content"]["Content"]["UsedResources"]){
+            if (data && data["Content"] && data["Content"]["Content"]["UsedResources"]) {
                 var UsedResources = data["Content"]["Content"]["UsedResources"],
                     dirname = path.dirname(url),
                     list = [],
                     tmpUrl, normalUrl;
-                for(var i=0; i<UsedResources.length; i++){
+                for (var i = 0; i < UsedResources.length; i++) {
                     if (!ccs.load.preload && /\.(png|jpg$)/.test(UsedResources[i]))
                         continue;
                     tmpUrl = path.join(dirname, UsedResources[i]);
                     normalUrl = path._normalize(tmpUrl);
-                    if(!ccs.load.validate[normalUrl]){
+                    if (!ccs.load.validate[normalUrl]) {
                         ccs.load.validate[normalUrl] = true;
                         list.push(normalUrl);
                     }
                 }
-                cc.loader.load(list, function(){
+                cc.loader.load(list, function () {
                     cb(error, data);
                 });
-            }else{
+            } else {
                 cb(error, data);
             }
 

@@ -67,8 +67,7 @@ ccui.PageViewIndicator = ccui.ProtectedNode.extend(/** @lends ccui.PageViewIndic
      * Sets direction of indicator
      * @param {ccui.ScrollView.DIR_NONE | ccui.ScrollView.DIR_VERTICAL | ccui.ScrollView.DIR_HORIZONTAL | ccui.ScrollView.DIR_BOTH} direction
      */
-    setDirection: function(direction)
-    {
+    setDirection: function (direction) {
         this._direction = direction;
         this._rearrange();
     },
@@ -77,14 +76,11 @@ ccui.PageViewIndicator = ccui.ProtectedNode.extend(/** @lends ccui.PageViewIndic
      * resets indicator with new page count.
      * @param {number} numberOfTotalPages
      */
-    reset: function(numberOfTotalPages)
-    {
-        while(this._indexNodes.length < numberOfTotalPages)
-        {
+    reset: function (numberOfTotalPages) {
+        while (this._indexNodes.length < numberOfTotalPages) {
             this._increaseNumberOfPages();
         }
-        while(this._indexNodes.length > numberOfTotalPages)
-        {
+        while (this._indexNodes.length > numberOfTotalPages) {
             this._decreaseNumberOfPages();
         }
         this._rearrange();
@@ -95,19 +91,15 @@ ccui.PageViewIndicator = ccui.ProtectedNode.extend(/** @lends ccui.PageViewIndic
      * Indicates node by index
      * @param {number} index
      */
-    indicate: function(index)
-    {
-        if (index < 0 || index >= this._indexNodes.length)
-        {
+    indicate: function (index) {
+        if (index < 0 || index >= this._indexNodes.length) {
             return;
         }
         this._currentIndexNode.setPosition(this._indexNodes[index].getPosition());
     },
 
-    _rearrange: function()
-    {
-        if(this._indexNodes.length === 0)
-        {
+    _rearrange: function () {
+        if (this._indexNodes.length === 0) {
             return;
         }
 
@@ -121,15 +113,12 @@ ccui.PageViewIndicator = ccui.ProtectedNode.extend(/** @lends ccui.PageViewIndic
         var totalSizeValue = sizeValue * numberOfItems + this._spaceBetweenIndexNodes * (numberOfItems - 1);
 
         var posValue = -(totalSizeValue / 2) + (sizeValue / 2);
-        for(var i = 0; i < this._indexNodes.length; ++i)
-        {
+        for (var i = 0; i < this._indexNodes.length; ++i) {
             var position;
-            if(horizontal)
-            {
+            if (horizontal) {
                 position = cc.p(posValue, indexNodeSize.height / 2.0);
             }
-            else
-            {
+            else {
                 position = cc.p(indexNodeSize.width / 2.0, -posValue);
             }
             this._indexNodes[i].setPosition(position);
@@ -141,10 +130,8 @@ ccui.PageViewIndicator = ccui.ProtectedNode.extend(/** @lends ccui.PageViewIndic
      * Sets space between index nodes.
      * @param {number} spaceBetweenIndexNodes
      */
-    setSpaceBetweenIndexNodes: function(spaceBetweenIndexNodes)
-    {
-        if(this._spaceBetweenIndexNodes === spaceBetweenIndexNodes)
-        {
+    setSpaceBetweenIndexNodes: function (spaceBetweenIndexNodes) {
+        if (this._spaceBetweenIndexNodes === spaceBetweenIndexNodes) {
             return;
         }
         this._spaceBetweenIndexNodes = spaceBetweenIndexNodes;
@@ -155,8 +142,7 @@ ccui.PageViewIndicator = ccui.ProtectedNode.extend(/** @lends ccui.PageViewIndic
      * Gets space between index nodes.
      * @returns {number}
      */
-    getSpaceBetweenIndexNodes: function()
-    {
+    getSpaceBetweenIndexNodes: function () {
         return this._spaceBetweenIndexNodes;
     },
 
@@ -164,8 +150,7 @@ ccui.PageViewIndicator = ccui.ProtectedNode.extend(/** @lends ccui.PageViewIndic
      * Sets color of selected index node
      * @param {cc.Color} color
      */
-    setSelectedIndexColor: function(color)
-    {
+    setSelectedIndexColor: function (color) {
         this._currentIndexNode.setColor(color);
     },
 
@@ -173,8 +158,7 @@ ccui.PageViewIndicator = ccui.ProtectedNode.extend(/** @lends ccui.PageViewIndic
      * Gets color of selected index node
      * @returns {cc.Color}
      */
-    getSelectedIndexColor: function()
-    {
+    getSelectedIndexColor: function () {
         return this._currentIndexNode.getColor();
     },
 
@@ -182,12 +166,10 @@ ccui.PageViewIndicator = ccui.ProtectedNode.extend(/** @lends ccui.PageViewIndic
      * Sets color of index nodes
      * @param {cc.Color} indexNodesColor
      */
-    setIndexNodesColor: function(indexNodesColor)
-    {
+    setIndexNodesColor: function (indexNodesColor) {
         this._indexNodesColor = indexNodesColor;
 
-        for(var  i = 0 ; i < this._indexNodes.length; ++i)
-        {
+        for (var i = 0; i < this._indexNodes.length; ++i) {
             this._indexNodes[i].setColor(indexNodesColor);
         }
     },
@@ -196,8 +178,7 @@ ccui.PageViewIndicator = ccui.ProtectedNode.extend(/** @lends ccui.PageViewIndic
      * Gets color of index nodes
      * @returns {cc.Color}
      */
-    getIndexNodesColor: function()
-    {
+    getIndexNodesColor: function () {
         var locRealColor = this._indexNodesColor;
         return cc.color(locRealColor.r, locRealColor.g, locRealColor.b, locRealColor.a);
     },
@@ -206,19 +187,16 @@ ccui.PageViewIndicator = ccui.ProtectedNode.extend(/** @lends ccui.PageViewIndic
      * Sets scale of index nodes
      * @param {Number} indexNodesScale
      */
-    setIndexNodesScale: function(indexNodesScale)
-    {
-        if(this._indexNodesScale === indexNodesScale)
-        {
+    setIndexNodesScale: function (indexNodesScale) {
+        if (this._indexNodesScale === indexNodesScale) {
             return;
         }
         this._indexNodesScale = indexNodesScale;
 
         this._currentIndexNode.setScale(indexNodesScale);
 
-        for(var  i = 0 ; i < this._indexNodes.length; ++i)
-        {
-            this._indexNodes[i].setScale(this,_indexNodesScale);
+        for (var i = 0; i < this._indexNodes.length; ++i) {
+            this._indexNodes[i].setScale(this, _indexNodesScale);
         }
 
         this._rearrange();
@@ -228,8 +206,7 @@ ccui.PageViewIndicator = ccui.ProtectedNode.extend(/** @lends ccui.PageViewIndic
      * Gets scale of index nodes
      * @returns {Number}
      */
-    getIndexNodesScale: function()
-    {
+    getIndexNodesScale: function () {
         return this._indexNodesScale;
     },
 
@@ -238,28 +215,24 @@ ccui.PageViewIndicator = ccui.ProtectedNode.extend(/** @lends ccui.PageViewIndic
      * @param {String} texName
      * @param {ccui.Widget.LOCAL_TEXTURE | ccui.Widget.PLIST_TEXTURE} [texType = ccui.Widget.LOCAL_TEXTURE]
      */
-    setIndexNodesTexture: function(texName, texType)
-    {
-        if(texType === undefined)
+    setIndexNodesTexture: function (texName, texType) {
+        if (texType === undefined)
             texType = ccui.Widget.LOCAL_TEXTURE;
         
         this._useDefaultTexture = false;
         this._indexNodesTextureFile = texName;
         this._indexNodesTexType = texType;
 
-        switch (texType)
-        {
+        switch (texType) {
             case ccui.Widget.LOCAL_TEXTURE:
                 this._currentIndexNode.setTexture(texName);
-                for(var  i = 0 ; i < this._indexNodes.length; ++i)
-                {
+                for (var i = 0; i < this._indexNodes.length; ++i) {
                     this._indexNodes[i].setTexture(texName);
                 }
                 break;
             case ccui.Widget.PLIST_TEXTURE:
                 this._currentIndexNode.setSpriteFrame(texName);
-                for(var  i = 0 ; i < this._indexNodes.length; ++i)
-                {
+                for (var i = 0; i < this._indexNodes.length; ++i) {
                     this._indexNodes[i].setSpriteFrame(texName);
                 }
                 break;
@@ -270,19 +243,15 @@ ccui.PageViewIndicator = ccui.ProtectedNode.extend(/** @lends ccui.PageViewIndic
         this._rearrange();
     },
 
-    _increaseNumberOfPages: function()
-    {
+    _increaseNumberOfPages: function () {
         var indexNode;
 
-        if(this._useDefaultTexture)
-        {
+        if (this._useDefaultTexture) {
             indexNode = ccui.helper._createSpriteFromBase64(ccui.PageViewIndicator.CIRCLE_IMAGE, ccui.PageViewIndicator.CIRCLE_IMAGE_KEY);
         }
-        else
-        {
+        else {
             indexNode = new cc.Sprite();
-            switch (this._indexNodesTexType)
-            {
+            switch (this._indexNodesTexType) {
                 case ccui.Widget.LOCAL_TEXTURE:
                     indexNode.initWithFile(this._indexNodesTextureFile);
                     break;
@@ -301,10 +270,8 @@ ccui.PageViewIndicator = ccui.ProtectedNode.extend(/** @lends ccui.PageViewIndic
         this._indexNodes.push(indexNode);
     },
 
-    _decreaseNumberOfPages: function()
-    {
-        if(this._indexNodes.length === 0)
-        {
+    _decreaseNumberOfPages: function () {
+        if (this._indexNodes.length === 0) {
             return;
         }
         this.removeProtectedChild(this._indexNodes[0]);
@@ -314,10 +281,8 @@ ccui.PageViewIndicator = ccui.ProtectedNode.extend(/** @lends ccui.PageViewIndic
     /**
      * Removes all index nodes.
      */
-    clear: function()
-    {
-        for(var i = 0; i < this._indexNodes.length; ++i)
-        {
+    clear: function () {
+        for (var i = 0; i < this._indexNodes.length; ++i) {
             this.removeProtectedChild(this._indexNodes[i]);
         }
         this._indexNodes.length = 0;

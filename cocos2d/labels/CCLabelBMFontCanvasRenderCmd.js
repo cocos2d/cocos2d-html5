@@ -30,15 +30,15 @@
  http://www.angelcode.com/products/bmfont/ (Free, Windows only)
  ****************************************************************************/
 
-(function(){
-    cc.LabelBMFont.CanvasRenderCmd = function(renderableObject){
-        cc.Node.CanvasRenderCmd.call(this, renderableObject);
+(function () {
+    cc.LabelBMFont.CanvasRenderCmd = function (renderableObject) {
+        this._rootCtor(renderableObject);
     };
 
     var proto = cc.LabelBMFont.CanvasRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
     proto.constructor = cc.LabelBMFont.CanvasRenderCmd;
 
-    proto._updateCharTexture = function(fontChar, rect, key){
+    proto._updateCharTexture = function (fontChar, rect, key) {
         if (key === 32) {
             fontChar.setTextureRect(rect, false, cc.size(0, 0));
         } else {
@@ -49,7 +49,7 @@
         }
     };
 
-    proto._updateCharColorAndOpacity = function(fontChar){
+    proto._updateCharColorAndOpacity = function (fontChar) {
         // Color MUST be set before opacity, since opacity might change color if OpacityModifyRGB is on
         fontChar._displayedColor = this._displayedColor;
         fontChar._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.colorDirty);
@@ -73,7 +73,7 @@
         node._texture = texture;
     };
 
-    proto._changeTextureColor = function(){
+    proto._changeTextureColor = function () {
         var node = this._node;
         var texture = node._texture,
             contentSize = texture.getContentSize();
@@ -83,18 +83,18 @@
         var disColor = this._displayedColor;
         var textureRect = cc.rect(0, 0, oElement.width, oElement.height);
         if (texture && contentSize.width > 0) {
-            if(!oElement)
+            if (!oElement)
                 return;
             var textureToRender = oTexture._generateColorTexture(disColor.r, disColor.g, disColor.b, textureRect);
             node.setTexture(textureToRender);
         }
     };
 
-    proto._updateChildrenDisplayedOpacity = function(locChild){
+    proto._updateChildrenDisplayedOpacity = function (locChild) {
         cc.Node.prototype.updateDisplayedOpacity.call(locChild, this._displayedOpacity);
     };
 
-    proto._updateChildrenDisplayedColor = function(locChild){
+    proto._updateChildrenDisplayedColor = function (locChild) {
         cc.Node.prototype.updateDisplayedColor.call(locChild, this._displayedColor);
     };
 

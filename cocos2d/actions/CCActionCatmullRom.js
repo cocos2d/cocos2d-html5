@@ -44,9 +44,10 @@
  * @param {cc.Point} p3
  * @param {Number} tension
  * @param {Number} t
+ * @param {cc.Point} [out]
  * @return {cc.Point}
  */
-cc.cardinalSplineAt = function (p0, p1, p2, p3, tension, t) {
+cc.cardinalSplineAt = function (p0, p1, p2, p3, tension, t, out) {
     var t2 = t * t;
     var t3 = t2 * t;
 
@@ -62,7 +63,13 @@ cc.cardinalSplineAt = function (p0, p1, p2, p3, tension, t) {
 
     var x = (p0.x * b1 + p1.x * b2 + p2.x * b3 + p3.x * b4);
     var y = (p0.y * b1 + p1.y * b2 + p2.y * b3 + p3.y * b4);
-    return cc.p(x, y);
+    if (out !== undefined) {
+        out.x = x;
+        out.y = y;
+    }
+    else {
+        return cc.p(x, y);
+    }
 };
 
 /**

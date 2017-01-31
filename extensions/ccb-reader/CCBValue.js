@@ -34,43 +34,22 @@ cc.BOOL_VALUE = 3;
 
 cc.UNSIGNEDCHAR_VALUE = 4;
 
-
-cc.Color3BWapper = cc.Class.extend({
-    _color:null,
-    ctor:function () {
-        this._color = cc.color(0, 0, 0);
-    },
-    getColor:function () {
-        return this._color;
-    }
-});
-
-cc.Color3BWapper.create = function (color) {
-    var ret = new cc.Color3BWapper();
-    if (ret) {
-        ret._color.r = color.r;
-        ret._color.g = color.g;
-        ret._color.b = color.b;
-    }
-    return ret;
-};
-
 cc.BuilderValue = cc.Class.extend({
-    _value:null,
-    _type:0,
+    _value: null,
+    _type: 0,
 
-    getIntValue:function () {
+    getIntValue: function () {
     },
-    getFloatValue:function () {
+    getFloatValue: function () {
     },
-    getBoolValue:function () {
+    getBoolValue: function () {
     },
-    getByteValue:function () {
+    getByteValue: function () {
     },
-    getPointer:function () {
+    getPointer: function () {
     },
 
-    getValue:function(){
+    getValue: function () {
         return this._value;
     }
 });

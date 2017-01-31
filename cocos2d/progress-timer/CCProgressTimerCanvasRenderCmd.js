@@ -25,9 +25,9 @@
 /**
  * cc.ProgressTimer's rendering objects of Canvas
  */
-(function(){
-    cc.ProgressTimer.CanvasRenderCmd = function(renderableObject){
-        cc.Node.CanvasRenderCmd.call(this, renderableObject);
+(function () {
+    cc.ProgressTimer.CanvasRenderCmd = function (renderableObject) {
+        this._rootCtor(renderableObject);
         this._needDraw = true;
 
         this._PI180 = Math.PI / 180;
@@ -44,7 +44,7 @@
     proto.constructor = cc.ProgressTimer.CanvasRenderCmd;
 
     proto.rendering = function (ctx, scaleX, scaleY) {
-        var wrapper = ctx || cc._renderContext,context = wrapper.getContext(), node = this._node, locSprite = node._sprite;
+        var wrapper = ctx || cc._renderContext, context = wrapper.getContext(), node = this._node, locSprite = node._sprite;
         var locTextureCoord = locSprite._renderCmd._textureCoord, alpha = locSprite._renderCmd._displayedOpacity / 255;
 
         if (locTextureCoord.width === 0 || locTextureCoord.height === 0)
@@ -76,14 +76,14 @@
         if (node._type === cc.ProgressTimer.TYPE_BAR) {
             var locBarRect = this._barRect;
             context.beginPath();
-            context.rect(locBarRect.x , locBarRect.y , locBarRect.width , locBarRect.height );
+            context.rect(locBarRect.x, locBarRect.y, locBarRect.width, locBarRect.height);
             context.clip();
             context.closePath();
         } else if (node._type === cc.ProgressTimer.TYPE_RADIAL) {
-            var locOriginX = this._origin.x ;
-            var locOriginY = this._origin.y ;
+            var locOriginX = this._origin.x;
+            var locOriginY = this._origin.y;
             context.beginPath();
-            context.arc(locOriginX, locOriginY, this._radius , this._PI180 * this._startAngle, this._PI180 * this._endAngle, this._counterClockWise);
+            context.arc(locOriginX, locOriginY, this._radius, this._PI180 * this._startAngle, this._PI180 * this._endAngle, this._counterClockWise);
             context.lineTo(locOriginX, locOriginY);
             context.clip();
             context.closePath();
@@ -95,21 +95,23 @@
         if (locSprite._renderCmd._colorized) {
             context.drawImage(image,
                 0, 0, locTextureCoord.width, locTextureCoord.height,
-                locX , locY , locWidth , locHeight );
+                locX, locY, locWidth, locHeight);
         } else {
             context.drawImage(image,
                 locTextureCoord.renderX, locTextureCoord.renderY, locTextureCoord.width, locTextureCoord.height,
-                locX , locY , locWidth , locHeight );
+                locX, locY, locWidth, locHeight);
         }
         wrapper.restore();
         cc.g_NumberOfDraws++;
     };
 
-    proto.releaseData = function(){};
+    proto.releaseData = function () {
+    };
 
-    proto.resetVertexData = function(){};
+    proto.resetVertexData = function () {
+    };
 
-    proto._updateProgress = function(){
+    proto._updateProgress = function () {
         this.setDirtyFlag(cc.Node._dirtyFlags.contentDirty);
         var node = this._node;
         var locSprite = node._sprite;
@@ -197,18 +199,18 @@
 
     proto._syncStatus = function (parentCmd) {
         var node = this._node;
-        if(!node._sprite)
+        if (!node._sprite)
             return;
         var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
         var parentNode = parentCmd ? parentCmd._node : null;
 
-        if(parentNode && parentNode._cascadeColorEnabled && (parentCmd._dirtyFlag & flags.colorDirty))
+        if (parentNode && parentNode._cascadeColorEnabled && (parentCmd._dirtyFlag & flags.colorDirty))
             locFlag |= flags.colorDirty;
 
-        if(parentNode && parentNode._cascadeOpacityEnabled && (parentCmd._dirtyFlag & flags.opacityDirty))
+        if (parentNode && parentNode._cascadeOpacityEnabled && (parentCmd._dirtyFlag & flags.opacityDirty))
             locFlag |= flags.opacityDirty;
 
-        if(parentCmd && (parentCmd._dirtyFlag & flags.transformDirty))
+        if (parentCmd && (parentCmd._dirtyFlag & flags.transformDirty))
             locFlag |= flags.transformDirty;
 
         this._dirtyFlag = locFlag;
@@ -219,19 +221,19 @@
         var colorDirty = spriteFlag & flags.colorDirty,
             opacityDirty = spriteFlag & flags.opacityDirty;
 
-        if (colorDirty){
+        if (colorDirty) {
             spriteCmd._syncDisplayColor();
-            spriteCmd._dirtyFlag = spriteCmd._dirtyFlag & flags.colorDirty ^ spriteCmd._dirtyFlag;
-            this._dirtyFlag = this._dirtyFlag & flags.colorDirty ^ this._dirtyFlag;
+            spriteCmd._dirtyFlag &= ~flags.colorDirty;
+            this._dirtyFlag &= ~flags.colorDirty;
         }
 
-        if (opacityDirty){
+        if (opacityDirty) {
             spriteCmd._syncDisplayOpacity();
-            spriteCmd._dirtyFlag = spriteCmd._dirtyFlag & flags.opacityDirty ^ spriteCmd._dirtyFlag;
-            this._dirtyFlag = this._dirtyFlag & flags.opacityDirty ^ this._dirtyFlag;
+            spriteCmd._dirtyFlag &= ~flags.opacityDirty;
+            this._dirtyFlag &= ~flags.opacityDirty;
         }
 
-        if(colorDirty || opacityDirty){
+        if (colorDirty || opacityDirty) {
             spriteCmd._updateColor();
         }
 
@@ -241,13 +243,13 @@
         }
 
         if (locFlag & flags.orderDirty) {
-            this._dirtyFlag = this._dirtyFlag & flags.orderDirty ^ this._dirtyFlag;
+            this._dirtyFlag &= ~flags.orderDirty;
         }
     };
 
     proto.updateStatus = function () {
         var node = this._node;
-        if(!node._sprite)
+        if (!node._sprite)
             return;
         var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
         var spriteCmd = node._sprite._renderCmd;
@@ -256,23 +258,23 @@
         var colorDirty = spriteFlag & flags.colorDirty,
             opacityDirty = spriteFlag & flags.opacityDirty;
 
-        if(colorDirty){
+        if (colorDirty) {
             spriteCmd._updateDisplayColor();
             spriteCmd._dirtyFlag = spriteCmd._dirtyFlag & flags.colorDirty ^ spriteCmd._dirtyFlag;
             this._dirtyFlag = this._dirtyFlag & flags.colorDirty ^ this._dirtyFlag;
         }
 
-        if(opacityDirty){
+        if (opacityDirty) {
             spriteCmd._updateDisplayOpacity();
             spriteCmd._dirtyFlag = spriteCmd._dirtyFlag & flags.opacityDirty ^ spriteCmd._dirtyFlag;
             this._dirtyFlag = this._dirtyFlag & flags.opacityDirty ^ this._dirtyFlag;
         }
 
-        if(colorDirty || opacityDirty){
+        if (colorDirty || opacityDirty) {
             spriteCmd._updateColor();
         }
 
-        if(locFlag & flags.transformDirty){
+        if (locFlag & flags.transformDirty) {
             //update the transform
             this.transform(this.getParentRenderCmd(), true);
         }

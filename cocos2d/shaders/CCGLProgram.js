@@ -39,6 +39,7 @@ cc.GLProgram = cc.Class.extend(/** @lends cc.GLProgram# */{
     _uniforms: null,
     _hashForUniforms: null,
     _usesTime: false,
+    _projectionUpdated: -1,
 
     // Uniform cache
     _updateUniformLocation: function (location) {
@@ -59,10 +60,10 @@ cc.GLProgram = cc.Class.extend(/** @lends cc.GLProgram# */{
             updated = true;
         } else {
             updated = false;
-            var count = arguments.length-1;
+            var count = arguments.length - 1;
             for (var i = 0; i < count; ++i) {
-                if (arguments[i+1] !== element[i]) {
-                    element[i] = arguments[i+1];
+                if (arguments[i + 1] !== element[i]) {
+                    element[i] = arguments[i + 1];
                     updated = true;
                 }
             }
@@ -106,18 +107,18 @@ cc.GLProgram = cc.Class.extend(/** @lends cc.GLProgram# */{
         return ( status === true );
     },
 
-	/**
-	 * Create a cc.GLProgram object
-	 * @param {String} vShaderFileName
-	 * @param {String} fShaderFileName
-	 * @returns {cc.GLProgram}
-	 */
+    /**
+     * Create a cc.GLProgram object
+     * @param {String} vShaderFileName
+     * @param {String} fShaderFileName
+     * @returns {cc.GLProgram}
+     */
     ctor: function (vShaderFileName, fShaderFileName, glContext) {
         this._uniforms = {};
         this._hashForUniforms = {};
         this._glContext = glContext || cc._renderContext;
 
-		vShaderFileName && fShaderFileName && this.init(vShaderFileName, fShaderFileName);
+        vShaderFileName && fShaderFileName && this.init(vShaderFileName, fShaderFileName);
     },
 
     /**
@@ -194,9 +195,9 @@ cc.GLProgram = cc.Class.extend(/** @lends cc.GLProgram# */{
      */
     initWithVertexShaderFilename: function (vShaderFilename, fShaderFileName) {
         var vertexSource = cc.loader.getRes(vShaderFilename);
-        if(!vertexSource) throw new Error("Please load the resource firset : " + vShaderFilename);
+        if (!vertexSource) throw new Error("Please load the resource firset : " + vShaderFilename);
         var fragmentSource = cc.loader.getRes(fShaderFileName);
-        if(!fragmentSource) throw new Error("Please load the resource firset : " + fShaderFileName);
+        if (!fragmentSource) throw new Error("Please load the resource firset : " + fShaderFileName);
         return this.initWithVertexShaderByteArray(vertexSource, fragmentSource);
     },
 
@@ -224,7 +225,7 @@ cc.GLProgram = cc.Class.extend(/** @lends cc.GLProgram# */{
      * @return {Boolean}
      */
     link: function () {
-        if(!this._programObj) {
+        if (!this._programObj) {
             cc.log("cc.GLProgram.link(): Cannot link invalid program");
             return false;
         }
@@ -418,7 +419,7 @@ cc.GLProgram = cc.Class.extend(/** @lends cc.GLProgram# */{
      * @param {WebGLUniformLocation|String} location
      * @param {Int32Array} intArray
      */
-    setUniformLocationWith3iv:function(location, intArray){
+    setUniformLocationWith3iv: function (location, intArray) {
         var locObj = typeof location === 'string' ? this.getUniformLocationForName(location) : location;
         this._glContext.uniform3iv(locObj, intArray);
     },
@@ -428,7 +429,7 @@ cc.GLProgram = cc.Class.extend(/** @lends cc.GLProgram# */{
      * @param {WebGLUniformLocation|String} location
      * @param {Int32Array} intArray
      */
-    setUniformLocationWith4iv:function(location, intArray){
+    setUniformLocationWith4iv: function (location, intArray) {
         var locObj = typeof location === 'string' ? this.getUniformLocationForName(location) : location;
         this._glContext.uniform4iv(locObj, intArray);
     },
@@ -627,7 +628,7 @@ cc.GLProgram = cc.Class.extend(/** @lends cc.GLProgram# */{
     },
 
     _setUniformsForBuiltinsForRenderer: function (node) {
-        if(!node || !node._renderCmd)
+        if (!node || !node._renderCmd)
             return;
 
         var matrixP = new cc.math.Matrix4();
@@ -664,7 +665,7 @@ cc.GLProgram = cc.Class.extend(/** @lends cc.GLProgram# */{
      */
     setUniformForModelViewProjectionMatrix: function () {
         this._glContext.uniformMatrix4fv(this._uniforms[cc.UNIFORM_MVPMATRIX_S], false,
-        cc.getMat4MultiplyValue(cc.projection_matrix_stack.top, cc.modelview_matrix_stack.top));
+            cc.getMat4MultiplyValue(cc.projection_matrix_stack.top, cc.modelview_matrix_stack.top));
     },
 
     setUniformForModelViewProjectionMatrixWithMat4: function (swapMat4) {
@@ -677,15 +678,19 @@ cc.GLProgram = cc.Class.extend(/** @lends cc.GLProgram# */{
         this._glContext.uniformMatrix4fv(this._uniforms[cc.UNIFORM_PMATRIX_S], false, cc.projection_matrix_stack.top.mat);
     },
 
-    _setUniformForMVPMatrixWithMat4: function(modelViewMatrix){
-        if(!modelViewMatrix)
+    _setUniformForMVPMatrixWithMat4: function (modelViewMatrix) {
+        if (!modelViewMatrix)
             throw new Error("modelView matrix is undefined.");
         this._glContext.uniformMatrix4fv(this._uniforms[cc.UNIFORM_MVMATRIX_S], false, modelViewMatrix.mat);
         this._glContext.uniformMatrix4fv(this._uniforms[cc.UNIFORM_PMATRIX_S], false, cc.projection_matrix_stack.top.mat);
     },
 
-    _updateProjectionUniform: function(){
-        this._glContext.uniformMatrix4fv(this._uniforms[cc.UNIFORM_PMATRIX_S], false, cc.projection_matrix_stack.top.mat);  
+    _updateProjectionUniform: function () {
+        var stack = cc.projection_matrix_stack;
+        if (stack.lastUpdated !== this._projectionUpdated) {
+            this._glContext.uniformMatrix4fv(this._uniforms[cc.UNIFORM_PMATRIX_S], false, stack.top.mat);
+            this._projectionUpdated = stack.lastUpdated;
+        }
     },
 
     /**
@@ -789,8 +794,8 @@ cc.GLProgram.create = function (vShaderFileName, fShaderFileName) {
 
 cc.GLProgram._highpSupported = null;
 
-cc.GLProgram._isHighpSupported = function(){
-    if(cc.GLProgram._highpSupported == null){
+cc.GLProgram._isHighpSupported = function () {
+    if (cc.GLProgram._highpSupported == null) {
         var ctx = cc._renderContext;
         var highp = ctx.getShaderPrecisionFormat(ctx.FRAGMENT_SHADER, ctx.HIGH_FLOAT);
         cc.GLProgram._highpSupported = highp.precision !== 0;

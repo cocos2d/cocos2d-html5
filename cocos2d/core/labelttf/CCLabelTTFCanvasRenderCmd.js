@@ -32,7 +32,7 @@ cc.LabelTTF._lastWordRex = /([a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]+|\S)$
 cc.LabelTTF._lastEnglish = /[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]+$/;
 cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
 
-(function() {
+(function () {
     cc.LabelTTF.RenderCmd = function () {
         this._fontClientHeight = 18;
         this._fontStyleStr = "";
@@ -48,17 +48,17 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
         this._status = [];
         this._renderingIndex = 0;
 
-        this._texRect = cc.rect();
         this._canUseDirtyRegion = true;
     };
     var proto = cc.LabelTTF.RenderCmd.prototype;
     proto.constructor = cc.LabelTTF.RenderCmd;
+    proto._labelCmdCtor = cc.LabelTTF.RenderCmd;
 
     proto._setFontStyle = function (fontNameOrFontDef, fontSize, fontStyle, fontWeight) {
-        if(fontNameOrFontDef instanceof cc.FontDefinition){
+        if (fontNameOrFontDef instanceof cc.FontDefinition) {
             this._fontStyleStr = fontNameOrFontDef._getCanvasFontStr();
             this._fontClientHeight = cc.LabelTTF.__getFontHeightByDiv(fontNameOrFontDef);
-        }else {
+        } else {
             var deviceFontSize = fontSize * cc.view.getDevicePixelRatio();
             this._fontStyleStr = fontStyle + " " + fontWeight + " " + deviceFontSize + "px '" + fontNameOrFontDef + "'";
             this._fontClientHeight = cc.LabelTTF.__getFontHeightByDiv(fontNameOrFontDef, fontSize);
@@ -73,7 +73,7 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
         return this._fontClientHeight;
     };
 
-    proto._updateColor = function(){
+    proto._updateColor = function () {
         this._setColorsString();
         this._updateTexture();
     };
@@ -111,6 +111,7 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
 
         this._isMultiLine = false;
         this._measureConfig();
+        var textWidthCache = {};
         if (locDimensionsWidth !== 0) {
             // Content processing
             this._strings = node._string.split('\n');
@@ -121,7 +122,13 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
         } else {
             this._strings = node._string.split('\n');
             for (i = 0, strLength = this._strings.length; i < strLength; i++) {
-                locLineWidth.push(this._measure(this._strings[i]));
+                if(this._strings[i]) {
+                    var measuredWidth = this._measure(this._strings[i]);
+                    locLineWidth.push(measuredWidth);
+                    textWidthCache[this._strings[i]] = measuredWidth;
+                } else {
+                    locLineWidth.push(0);
+                }
             }
         }
 
@@ -139,14 +146,18 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
 
         //get offset for stroke and shadow
         if (locDimensionsWidth === 0) {
-            if (this._isMultiLine)
-                locSize = cc.size(
-                    Math.ceil(Math.max.apply(Math, locLineWidth) + locStrokeShadowOffsetX),
-                    Math.ceil((this._fontClientHeight * pixelRatio * this._strings.length) + locStrokeShadowOffsetY));
-            else
-                locSize = cc.size(
-                    Math.ceil(this._measure(node._string) + locStrokeShadowOffsetX),
-                    Math.ceil(this._fontClientHeight * pixelRatio + locStrokeShadowOffsetY));
+            if (this._isMultiLine) {
+                locSize = cc.size(Math.ceil(Math.max.apply(Math, locLineWidth) + locStrokeShadowOffsetX),
+                                  Math.ceil((this._fontClientHeight * pixelRatio * this._strings.length) + locStrokeShadowOffsetY));
+            }
+            else {
+                var measuredWidth = textWidthCache[node._string];
+                if(!measuredWidth && node._string) {
+                    measuredWidth = this._measure(node._string);
+                }
+                locSize = cc.size(Math.ceil((measuredWidth ? measuredWidth : 0) + locStrokeShadowOffsetX),
+                                  Math.ceil(this._fontClientHeight * pixelRatio + locStrokeShadowOffsetY));
+            }
         } else {
             if (node._dimensions.height === 0) {
                 if (this._isMultiLine)
@@ -167,16 +178,7 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
         if (node._getFontStyle() !== "normal") {    //add width for 'italic' and 'oblique'
             locSize.width = Math.ceil(locSize.width + node._fontSize * 0.3);
         }
-        if (this._strings.length === 0) {
-            this._texRect.width = 1;
-            this._texRect.height = locSize.height || 1;
-        }
-        else {
-            this._texRect.width = locSize.width;
-            this._texRect.height = locSize.height;
-        }
-        var nodeW = locSize.width / pixelRatio, nodeH = locSize.height / pixelRatio;
-        node.setContentSize(nodeW, nodeH);
+        node.setContentSize(locSize);
         node._strokeShadowOffsetX = locStrokeShadowOffsetX;
         node._strokeShadowOffsetY = locStrokeShadowOffsetY;
 
@@ -190,12 +192,12 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
         var node = this._node;
         var scale = cc.view.getDevicePixelRatio();
         var locStrokeShadowOffsetX = node._strokeShadowOffsetX, locStrokeShadowOffsetY = node._strokeShadowOffsetY;
-        var locContentSizeHeight = node._contentSize.height * scale - locStrokeShadowOffsetY, locVAlignment = node._vAlignment,
+        var locContentSizeHeight = node._contentSize.height - locStrokeShadowOffsetY, locVAlignment = node._vAlignment,
             locHAlignment = node._hAlignment;
         var dx = locStrokeShadowOffsetX * 0.5,
             dy = locContentSizeHeight + locStrokeShadowOffsetY * 0.5;
         var xOffset = 0, yOffset = 0, OffsetYArray = [];
-        var locContentWidth = node._contentSize.width * scale - locStrokeShadowOffsetX;
+        var locContentWidth = node._contentSize.width - locStrokeShadowOffsetX;
 
         //lineHeight
         var lineHeight = node.getLineHeight() * scale;
@@ -230,9 +232,9 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
             OffsetYArray.push(yOffset);
         }
         var tmpStatus = {
-            contextTransform:cc.p(dx,dy),
-            xOffset:xOffset,
-            OffsetYArray:OffsetYArray
+            contextTransform: cc.p(dx, dy),
+            xOffset: xOffset,
+            OffsetYArray: OffsetYArray
         };
         this._status.push(tmpStatus);
     };
@@ -321,16 +323,11 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
 
     proto.updateStatus = function () {
         var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
-
+        
         if (locFlag & flags.textDirty)
             this._updateTexture();
 
-        cc.Node.RenderCmd.prototype.updateStatus.call(this);
-
-        if (this._dirtyFlag & flags.transformDirty){
-            this.transform(this.getParentRenderCmd(), true);
-            this._dirtyFlag = this._dirtyFlag & cc.Node._dirtyFlags.transformDirty ^ this._dirtyFlag;
-        }
+        this.originUpdateStatus();
     };
 
     proto._syncStatus = function (parentCmd) {
@@ -339,7 +336,7 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
         if (locFlag & flags.textDirty)
             this._updateTexture();
 
-        cc.Node.RenderCmd.prototype._syncStatus.call(this, parentCmd);
+        this._originSyncStatus(parentCmd);
 
         if (cc._renderType === cc.game.RENDER_TYPE_WEBGL || locFlag & flags.transformDirty)
             this.transform(parentCmd);
@@ -386,41 +383,43 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
     };
 })();
 
-(function(){
-    cc.LabelTTF.CacheRenderCmd = function (renderable) {
-        cc.LabelTTF.RenderCmd.call(this,renderable);
+(function () {
+    cc.LabelTTF.CacheRenderCmd = function () {
+        this._labelCmdCtor();
         var locCanvas = this._labelCanvas = document.createElement("canvas");
         locCanvas.width = 1;
         locCanvas.height = 1;
         this._labelContext = locCanvas.getContext("2d");
-        this._texRect = cc.rect();
     };
 
-    cc.LabelTTF.CacheRenderCmd.prototype = Object.create( cc.LabelTTF.RenderCmd.prototype);
+    cc.LabelTTF.CacheRenderCmd.prototype = Object.create(cc.LabelTTF.RenderCmd.prototype);
     cc.inject(cc.LabelTTF.RenderCmd.prototype, cc.LabelTTF.CacheRenderCmd.prototype);
 
     var proto = cc.LabelTTF.CacheRenderCmd.prototype;
     proto.constructor = cc.LabelTTF.CacheRenderCmd;
+    proto._cacheCmdCtor = cc.LabelTTF.CacheRenderCmd;
 
     proto._updateTexture = function () {
         this._dirtyFlag = this._dirtyFlag & cc.Node._dirtyFlags.textDirty ^ this._dirtyFlag;
         var node = this._node;
+        node._needUpdateTexture = false;
+        var locContentSize = node._contentSize;
         this._updateTTF();
-        var width = this._texRect.width, height = this._texRect.height;
+        var width = locContentSize.width, height = locContentSize.height;
 
         var locContext = this._labelContext, locLabelCanvas = this._labelCanvas;
 
-        if(!node._texture){
+        if (!node._texture) {
             var labelTexture = new cc.Texture2D();
             labelTexture.initWithElement(this._labelCanvas);
             node.setTexture(labelTexture);
         }
 
         if (node._string.length === 0) {
-            locLabelCanvas.width = width;
-            locLabelCanvas.height = height;
+            locLabelCanvas.width = 1;
+            locLabelCanvas.height = locContentSize.height || 1;
             node._texture && node._texture.handleLoadedTexture();
-            node.setTextureRect(this._texRect);
+            node.setTextureRect(cc.rect(0, 0, 1, locContentSize.height));
             return true;
         }
 
@@ -428,13 +427,13 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
         locContext.font = this._fontStyleStr;
 
         var flag = locLabelCanvas.width === width && locLabelCanvas.height === height;
-        locLabelCanvas.width = this._texRect.width;
-        locLabelCanvas.height = this._texRect.height;
+        locLabelCanvas.width = width;
+        locLabelCanvas.height = height;
         if (flag) locContext.clearRect(0, 0, width, height);
         this._saveStatus();
         this._drawTTFInCanvas(locContext);
         node._texture && node._texture.handleLoadedTexture();
-        node.setTextureRect(this._texRect);
+        node.setTextureRect(cc.rect(0, 0, width, height));
         return true;
     };
 
@@ -443,15 +442,19 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
     };
 
     proto._measure = function (text) {
-        return this._labelContext.measureText(text).width;
+        if (text) {
+            return this._labelContext.measureText(text).width;
+        } else {
+            return 0;
+        }
     };
 
 })();
 
-(function(){
+(function () {
     cc.LabelTTF.CacheCanvasRenderCmd = function (renderable) {
-        cc.Sprite.CanvasRenderCmd.call(this, renderable);
-        cc.LabelTTF.CacheRenderCmd.call(this);
+        this._spriteCmdCtor(renderable);
+        this._cacheCmdCtor();
     };
 
     var proto = cc.LabelTTF.CacheCanvasRenderCmd.prototype = Object.create(cc.Sprite.CanvasRenderCmd.prototype);
@@ -459,10 +462,10 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
     proto.constructor = cc.LabelTTF.CacheCanvasRenderCmd;
 })();
 
-(function(){
+(function () {
     cc.LabelTTF.CanvasRenderCmd = function (renderable) {
-        cc.Sprite.CanvasRenderCmd.call(this, renderable);
-        cc.LabelTTF.RenderCmd.call(this);
+        this._spriteCmdCtor(renderable);
+        this._labelCmdCtor();
     };
 
     cc.LabelTTF.CanvasRenderCmd.prototype = Object.create(cc.Sprite.CanvasRenderCmd.prototype);
@@ -471,29 +474,35 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
     var proto = cc.LabelTTF.CanvasRenderCmd.prototype;
     proto.constructor = cc.LabelTTF.CanvasRenderCmd;
 
-    proto._measureConfig = function () {};
+    proto._measureConfig = function () {
+    };
 
     proto._measure = function (text) {
-        var context = cc._renderContext.getContext();
-        context.font = this._fontStyleStr;
-        return context.measureText(text).width;
+        if(text) {
+            var context = cc._renderContext.getContext();
+            context.font = this._fontStyleStr;
+            return context.measureText(text).width;
+        } else {
+            return 0;
+        }
     };
 
     proto._updateTexture = function () {
         this._dirtyFlag = this._dirtyFlag & cc.Node._dirtyFlags.textDirty ^ this._dirtyFlag;
         var node = this._node;
-        var scale = cc.view.getDevicePixelRatio();
+        var locContentSize = node._contentSize;
         this._updateTTF();
+        var width = locContentSize.width, height = locContentSize.height;
         if (node._string.length === 0) {
-            node.setTextureRect(this._texRect);
+            node.setTextureRect(cc.rect(0, 0, 1, locContentSize.height));
             return true;
         }
         this._saveStatus();
-        node.setTextureRect(this._texRect);
+        node.setTextureRect(cc.rect(0, 0, width, height));
         return true;
     };
 
-    proto.rendering = function(ctx) {
+    proto.rendering = function (ctx) {
         var scaleX = cc.view.getScaleX(),
             scaleY = cc.view.getScaleY();
         var wrapper = ctx || cc._renderContext, context = wrapper.getContext();
@@ -501,11 +510,11 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
             return;
         var node = this._node;
         wrapper.computeRealOffsetY();
-        if(this._status.length <= 0)
+        if (this._status.length <= 0)
             return;
-        var locIndex = (this._renderingIndex >= this._status.length)? this._renderingIndex-this._status.length:this._renderingIndex;
+        var locIndex = (this._renderingIndex >= this._status.length) ? this._renderingIndex - this._status.length : this._renderingIndex;
         var status = this._status[locIndex];
-        this._renderingIndex = locIndex+1;
+        this._renderingIndex = locIndex + 1;
 
         var locHeight = node._rect.height,
             locX = node._offsetPosition.x,

@@ -245,7 +245,7 @@ cc.FLT_EPSILON = 0.0000001192092896;
  * @function
  */
 cc.contentScaleFactor = cc.IS_RETINA_DISPLAY_SUPPORTED ? function () {
-    return cc.director.getContentScaleFactor();
+    return cc.director._contentScaleFactor;
 } : function () {
     return 1;
 };
@@ -497,6 +497,14 @@ cc.ORIENTATION_LANDSCAPE = 2;
  */
 cc.ORIENTATION_AUTO = 3;
 
+/**
+ * The limit count for concurrency http request, useful in some mobile browsers
+ * Adjust its value with the test results based on your game, the preset value is just a placeholder
+ * @constant
+ * @type Number
+ */
+cc.CONCURRENCY_HTTP_REQUEST_COUNT = cc.sys.isMobile ? 20 : 0;
+
 
 // ------------------- vertex attrib flags -----------------------------
 /**
@@ -616,6 +624,11 @@ cc.SHADER_SPRITE_POSITION_TEXTURECOLOR = "ShaderSpritePositionTextureColor";
  * @constant
  * @type {String}
  */
+cc.SHADER_SPRITE_POSITION_TEXTURECOLOR_GRAY = "ShaderSpritePositionTextureColorGray";
+/**
+ * @constant
+ * @type {String}
+ */
 cc.SHADER_POSITION_TEXTURECOLORALPHATEST = "ShaderPositionTextureColorAlphaTest";
 /**
  * @constant
@@ -641,7 +654,7 @@ cc.SHADER_POSITION_TEXTURE = "ShaderPositionTexture";
  * @constant
  * @type {String}
  */
-cc.SHADER_POSITION_TEXTURE_UCOLOR = "ShaderPositionTexture_uColor";
+cc.SHADER_POSITION_TEXTURE_UCOLOR = "ShaderPositionTextureUColor";
 /**
  * @constant
  * @type {String}
@@ -651,7 +664,7 @@ cc.SHADER_POSITION_TEXTUREA8COLOR = "ShaderPositionTextureA8Color";
  * @constant
  * @type {String}
  */
-cc.SHADER_POSITION_UCOLOR = "ShaderPosition_uColor";
+cc.SHADER_POSITION_UCOLOR = "ShaderPositionUColor";
 /**
  * @constant
  * @type {String}

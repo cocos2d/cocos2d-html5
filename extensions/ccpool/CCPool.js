@@ -62,7 +62,7 @@ cc.pool = /** @lends cc.pool# */{
     putInPool: function (obj) {
         var pid = obj.constructor.prototype['__pid'];
         if (!pid) {
-            var desc = { writable: true, enumerable: false, configurable: true };
+            var desc = {writable: true, enumerable: false, configurable: true};
             desc.value = ClassManager.getNewID();
             Object.defineProperty(obj.constructor.prototype, '__pid', desc);
         }

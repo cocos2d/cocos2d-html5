@@ -25,9 +25,9 @@
 /**
  * cc.PhysicsDebugNode's rendering objects of Canvas
  */
-(function(){
-    cc.PhysicsDebugNode.CanvasRenderCmd = function(renderableObject){
-        cc.Node.CanvasRenderCmd.call(this, renderableObject);
+(function () {
+    cc.PhysicsDebugNode.CanvasRenderCmd = function (renderableObject) {
+        this._rootCtor(renderableObject);
         this._buffer = renderableObject._buffer;
         this._needDraw = true;
     };
@@ -35,7 +35,7 @@
     var proto = cc.PhysicsDebugNode.CanvasRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
     proto.constructor = cc.PhysicsDebugNode.CanvasRenderCmd;
 
-    proto.rendering = function(ctx, scaleX, scaleY){
+    proto.rendering = function (ctx, scaleX, scaleY) {
         var node = this._node;
         if (!node._space)
             return;

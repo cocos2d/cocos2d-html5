@@ -38,15 +38,42 @@ ccui.VideoPlayer = ccui.Widget.extend(/** @lends ccui.VideoPlayer# */{
     _playing: false,
     _stopped: true,
 
-    ctor: function(path){
+    ctor: function (path) {
         ccui.Widget.prototype.ctor.call(this);
         this._EventList = {};
-        if(path)
+        if (path)
             this.setURL(path);
     },
 
-    _createRenderCmd: function(){
+    _createRenderCmd: function () {
         return new ccui.VideoPlayer.RenderCmd(this);
+    },
+
+    visit: function () {
+        var cmd = this._renderCmd,
+            div = cmd._div,
+            container = cc.container,
+            eventManager = cc.eventManager;
+        if (this._visible) {
+            container.appendChild(cmd._video);
+            if (this._listener === null)
+                this._listener = cc.eventManager.addCustomListener(cc.game.EVENT_RESIZE, function () {
+                    cmd.resize();
+                });
+        } else {
+            var hasChild = false;
+            if ('contains' in container) {
+                hasChild = container.contains(cmd._video);
+            } else {
+                hasChild = container.compareDocumentPosition(cmd._video) % 16;
+            }
+            if (hasChild)
+                container.removeChild(cmd._video);
+            eventManager.removeListener(cmd._listener);
+            cmd._listener = null;
+        }
+        cmd.updateStatus();
+        cmd.resize();
     },
 
     /**
@@ -55,7 +82,7 @@ ccui.VideoPlayer = ccui.Widget.extend(/** @lends ccui.VideoPlayer# */{
      * All supported video formats will be added to the video
      * @param {String} address
      */
-    setURL: function(address){
+    setURL: function (address) {
         this._renderCmd.updateURL(address);
     },
 
@@ -63,28 +90,28 @@ ccui.VideoPlayer = ccui.Widget.extend(/** @lends ccui.VideoPlayer# */{
      * Get the video path
      * @returns {String}
      */
-    getURL: function() {
+    getURL: function () {
         return this._renderCmd._url;
     },
 
     /**
      * Play the video
      */
-    play: function(){
+    play: function () {
         var self = this,
             video = this._renderCmd._video;
-        if(video){
+        if (video) {
             this._played = true;
             video.pause();
-            if(this._stopped !== false || this._playing !== false || this._played !== true)
+            if (this._stopped !== false || this._playing !== false || this._played !== true)
                 video.currentTime = 0;
-            if(ccui.VideoPlayer._polyfill.autoplayAfterOperation){
-                setTimeout(function(){
+            if (ccui.VideoPlayer._polyfill.autoplayAfterOperation) {
+                setTimeout(function () {
                     video.play();
                     self._playing = true;
                     self._stopped = false;
                 }, 20);
-            }else{
+            } else {
                 video.play();
                 this._playing = true;
                 this._stopped = false;
@@ -95,9 +122,9 @@ ccui.VideoPlayer = ccui.Widget.extend(/** @lends ccui.VideoPlayer# */{
     /**
      * Pause the video
      */
-    pause: function(){
+    pause: function () {
         var video = this._renderCmd._video;
-        if(video && this._playing === true && this._stopped === false){
+        if (video && this._playing === true && this._stopped === false) {
             video.pause();
             this._playing = false;
         }
@@ -106,8 +133,8 @@ ccui.VideoPlayer = ccui.Widget.extend(/** @lends ccui.VideoPlayer# */{
     /**
      * Resume the video
      */
-    resume: function(){
-        if(this._stopped === false && this._playing === false && this._played === true){
+    resume: function () {
+        if (this._stopped === false && this._playing === false && this._played === true) {
             this.play();
         }
     },
@@ -115,17 +142,17 @@ ccui.VideoPlayer = ccui.Widget.extend(/** @lends ccui.VideoPlayer# */{
     /**
      * Stop the video
      */
-    stop: function(){
+    stop: function () {
         var self = this,
             video = this._renderCmd._video;
-        if(video){
+        if (video) {
             video.pause();
             video.currentTime = 0;
             this._playing = false;
             this._stopped = true;
         }
 
-        setTimeout(function(){
+        setTimeout(function () {
             self._dispatchEvent(ccui.VideoPlayer.EventType.STOPPED);
         }, 0);
     },
@@ -133,12 +160,12 @@ ccui.VideoPlayer = ccui.Widget.extend(/** @lends ccui.VideoPlayer# */{
      * Jump to the specified point in time
      * @param {Number} sec
      */
-    seekTo: function(sec){
+    seekTo: function (sec) {
         var video = this._renderCmd._video;
-        if(video){
+        if (video) {
             video.currentTime = sec;
-            if(ccui.VideoPlayer._polyfill.autoplayAfterOperation && this.isPlaying()){
-                setTimeout(function(){
+            if (ccui.VideoPlayer._polyfill.autoplayAfterOperation && this.isPlaying()) {
+                setTimeout(function () {
                     video.play();
                 }, 20);
             }
@@ -149,9 +176,9 @@ ccui.VideoPlayer = ccui.Widget.extend(/** @lends ccui.VideoPlayer# */{
      * Whether the video is playing
      * @returns {boolean}
      */
-    isPlaying: function(){
-        if(ccui.VideoPlayer._polyfill.autoplayAfterOperation && this._playing){
-            setTimeout(function(){
+    isPlaying: function () {
+        if (ccui.VideoPlayer._polyfill.autoplayAfterOperation && this._playing) {
+            setTimeout(function () {
                 video.play();
             }, 20);
         }
@@ -161,10 +188,10 @@ ccui.VideoPlayer = ccui.Widget.extend(/** @lends ccui.VideoPlayer# */{
     /**
      * Whether to keep the aspect ratio
      */
-    setKeepAspectRatioEnabled: function(enable){
+    setKeepAspectRatioEnabled: function (enable) {
         cc.log("On the web is always keep the aspect ratio");
     },
-    isKeepAspectRatioEnabled: function(){
+    isKeepAspectRatioEnabled: function () {
         return false;
     },
 
@@ -173,10 +200,10 @@ ccui.VideoPlayer = ccui.Widget.extend(/** @lends ccui.VideoPlayer# */{
      * May appear inconsistent in different browsers
      * @param {boolean} enable
      */
-    setFullScreenEnabled: function(enable){
+    setFullScreenEnabled: function (enable) {
         var video = this._renderCmd._video;
-        if(video){
-            if(enable)
+        if (video) {
+            if (enable)
                 cc.screen.requestFullScreen(video);
             else
                 cc.screen.exitFullScreen(video);
@@ -186,7 +213,7 @@ ccui.VideoPlayer = ccui.Widget.extend(/** @lends ccui.VideoPlayer# */{
     /**
      * Determine whether already full screen
      */
-    isFullScreenEnabled: function(){
+    isFullScreenEnabled: function () {
         cc.log("Can't know status");
     },
 
@@ -195,7 +222,7 @@ ccui.VideoPlayer = ccui.Widget.extend(/** @lends ccui.VideoPlayer# */{
      * @param {ccui.VideoPlayer.EventType} event
      * @param {Function} callback
      */
-    setEventListener: function(event, callback){
+    setEventListener: function (event, callback) {
         this._EventList[event] = callback;
     },
 
@@ -203,11 +230,11 @@ ccui.VideoPlayer = ccui.Widget.extend(/** @lends ccui.VideoPlayer# */{
      * Delete events
      * @param {ccui.VideoPlayer.EventType} event
      */
-    removeEventListener: function(event){
+    removeEventListener: function (event) {
         this._EventList[event] = null;
     },
 
-    _dispatchEvent: function(event) {
+    _dispatchEvent: function (event) {
         var callback = this._EventList[event];
         if (callback)
             callback.call(this, this, this._renderCmd._video.src);
@@ -216,43 +243,40 @@ ccui.VideoPlayer = ccui.Widget.extend(/** @lends ccui.VideoPlayer# */{
     /**
      * Trigger playing events
      */
-    onPlayEvent: function(){
+    onPlayEvent: function () {
         var list = this._EventList[ccui.VideoPlayer.EventType.PLAYING];
-        if(list)
-            for(var i=0; i<list.length; i++)
+        if (list)
+            for (var i = 0; i < list.length; i++)
                 list[i].call(this, this, this._renderCmd._video.src);
     },
 
-    //_createCloneInstance: function(){},
-    //_copySpecialProperties: function(){},
-
-    setContentSize: function(w, h){
+    setContentSize: function (w, h) {
         ccui.Widget.prototype.setContentSize.call(this, w, h);
-        if(h === undefined){
+        if (h === undefined) {
             h = w.height;
             w = w.width;
         }
         this._renderCmd.changeSize(w, h);
     },
 
-    cleanup: function(){
+    cleanup: function () {
         this._renderCmd.removeDom();
         this.stopAllActions();
         this.unscheduleAllCallbacks();
     },
 
-    onEnter: function(){
+    onEnter: function () {
         ccui.Widget.prototype.onEnter.call(this);
         var list = ccui.VideoPlayer.elements;
-        if(list.indexOf(this) === -1)
+        if (list.indexOf(this) === -1)
             list.push(this);
     },
 
-    onExit: function(){
+    onExit: function () {
         ccui.Widget.prototype.onExit.call(this);
         var list = ccui.VideoPlayer.elements;
         var index = list.indexOf(this);
-        if(index !== -1)
+        if (index !== -1)
             list.splice(index, 1);
     }
 
@@ -264,9 +288,9 @@ ccui.VideoPlayer.pauseElements = [];
 
 cc.eventManager.addCustomListener(cc.game.EVENT_HIDE, function () {
     var list = ccui.VideoPlayer.elements;
-    for(var node, i=0; i<list.length; i++){
+    for (var node, i = 0; i < list.length; i++) {
         node = list[i];
-        if(list[i]._playing){
+        if (list[i]._playing) {
             node.pause();
             ccui.VideoPlayer.pauseElements.push(node);
         }
@@ -275,7 +299,7 @@ cc.eventManager.addCustomListener(cc.game.EVENT_HIDE, function () {
 cc.eventManager.addCustomListener(cc.game.EVENT_SHOW, function () {
     var list = ccui.VideoPlayer.pauseElements;
     var node = list.pop();
-    while(node){
+    while (node) {
         node.play();
         node = list.pop();
     }
@@ -292,7 +316,7 @@ ccui.VideoPlayer.EventType = {
     COMPLETED: "complete"
 };
 
-(function(video){
+(function (video) {
     /**
      * Adapter various machines
      * @devicePixelRatio Whether you need to consider devicePixelRatio calculated position
@@ -304,40 +328,40 @@ ccui.VideoPlayer.EventType = {
         canPlayType: []
     };
 
-    (function(){
+    (function () {
         /**
          * Some old browser only supports Theora encode video
          * But native does not support this encode,
          * so it is best to provide mp4 and webm or ogv file
          */
         var dom = document.createElement("video");
-        if(dom.canPlayType("video/ogg")){
+        if (dom.canPlayType("video/ogg")) {
             video._polyfill.canPlayType.push(".ogg");
             video._polyfill.canPlayType.push(".ogv");
         }
-        if(dom.canPlayType("video/mp4"))
+        if (dom.canPlayType("video/mp4"))
             video._polyfill.canPlayType.push(".mp4");
-        if(dom.canPlayType("video/webm"))
+        if (dom.canPlayType("video/webm"))
             video._polyfill.canPlayType.push(".webm");
     })();
 
-    if(cc.sys.OS_IOS === cc.sys.os){
+    if (cc.sys.OS_IOS === cc.sys.os) {
         video._polyfill.devicePixelRatio = true;
         video._polyfill.event = "progress";
     }
-    if(cc.sys.browserType === cc.sys.BROWSER_TYPE_FIREFOX){
+    if (cc.sys.browserType === cc.sys.BROWSER_TYPE_FIREFOX) {
         video._polyfill.autoplayAfterOperation = true;
     }
 
     var style = document.createElement("style");
     style.innerHTML = ".cocosVideo:-moz-full-screen{transform:matrix(1,0,0,1,0,0) !important;}" +
-    ".cocosVideo:full-screen{transform:matrix(1,0,0,1,0,0) !important;}" +
-    ".cocosVideo:-webkit-full-screen{transform:matrix(1,0,0,1,0,0) !important;}";
+        ".cocosVideo:full-screen{transform:matrix(1,0,0,1,0,0) !important;}" +
+        ".cocosVideo:-webkit-full-screen{transform:matrix(1,0,0,1,0,0) !important;}";
     document.head.appendChild(style);
 
 })(ccui.VideoPlayer);
 
-(function(polyfill){
+(function (polyfill) {
 
     var RenderCmd = null;
     if (cc._renderType === cc.game.RENDER_TYPE_WEBGL) {
@@ -345,9 +369,9 @@ ccui.VideoPlayer.EventType = {
     } else {
         RenderCmd = cc.Node.CanvasRenderCmd;
     }
-    
-    ccui.VideoPlayer.RenderCmd = function(node){
-        RenderCmd.call(this, node);
+
+    ccui.VideoPlayer.RenderCmd = function (node) {
+        this._rootCtor(node);
         this._listener = null;
         this._url = "";
         this.initStyle();
@@ -356,40 +380,15 @@ ccui.VideoPlayer.EventType = {
     var proto = ccui.VideoPlayer.RenderCmd.prototype = Object.create(RenderCmd.prototype);
     proto.constructor = ccui.VideoPlayer.RenderCmd;
 
-    proto.visit = function(){
-        var self = this,
-            container = cc.container,
-            eventManager = cc.eventManager;
-        if(this._node._visible){
-            container.appendChild(this._video);
-            if(this._listener === null)
-                this._listener = cc.eventManager.addCustomListener(cc.game.EVENT_RESIZE, function () {
-                    self.resize();
-                });
-        }else{
-            var hasChild = false;
-            if('contains' in container) {
-                hasChild = container.contains(this._video);
-            }else {
-                hasChild = container.compareDocumentPosition(this._video) % 16;
-            }
-            if(hasChild)
-                container.removeChild(this._video);
-            eventManager.removeListener(this._listener);
-            this._listener = null;
-        }
-        this.updateStatus();
-    };
-
     proto.transform = function (parentCmd, recursive) {
         this.originTransform(parentCmd, recursive);
         this.updateMatrix(this._worldTransform, cc.view._scaleX, cc.view._scaleY);
     };
 
-    proto.updateStatus = function(){
+    proto.updateStatus = function () {
         polyfill.devicePixelRatio = cc.view.isRetinaEnabled();
         var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
-        if(locFlag & flags.transformDirty){
+        if (locFlag & flags.transformDirty) {
             //update the transform
             this.transform(this.getParentRenderCmd(), true);
             this.updateMatrix(this._worldTransform, cc.view._scaleX, cc.view._scaleY);
@@ -401,40 +400,43 @@ ccui.VideoPlayer.EventType = {
         }
     };
 
-    proto.resize = function(view){
+    proto.resize = function (view) {
         view = view || cc.view;
         var node = this._node,
             eventManager = cc.eventManager;
-        if(node._parent && node._visible)
+        if (node._parent && node._visible)
             this.updateMatrix(this._worldTransform, view._scaleX, view._scaleY);
-        else{
+        else {
             eventManager.removeListener(this._listener);
             this._listener = null;
         }
     };
 
-    proto.updateMatrix = function(t, scaleX, scaleY){
+    proto.updateMatrix = function (t, scaleX, scaleY) {
         var node = this._node;
-        if(polyfill.devicePixelRatio){
+        if (polyfill.devicePixelRatio) {
             var dpr = cc.view.getDevicePixelRatio();
             scaleX = scaleX / dpr;
             scaleY = scaleY / dpr;
         }
-        if(this._loaded === false) return;
-        var cw = node._contentSize.width,
+        if (this._loaded === false) return;
+        var containerStyle = cc.game.container.style,
+            offsetX = parseInt(containerStyle.paddingLeft),
+            offsetY = parseInt(containerStyle.paddingBottom),
+            cw = node._contentSize.width,
             ch = node._contentSize.height;
         var a = t.a * scaleX,
             b = t.b,
             c = t.c,
             d = t.d * scaleY,
-            tx = t.tx*scaleX - cw/2 + cw*node._scaleX/2*scaleX,
-            ty = t.ty*scaleY - ch/2 + ch*node._scaleY/2*scaleY;
+            tx = offsetX + t.tx * scaleX - cw / 2 + cw * node._scaleX / 2 * scaleX,
+            ty = offsetY + t.ty * scaleY - ch / 2 + ch * node._scaleY / 2 * scaleY;
         var matrix = "matrix(" + a + "," + b + "," + c + "," + d + "," + tx + "," + -ty + ")";
         this._video.style["transform"] = matrix;
         this._video.style["-webkit-transform"] = matrix;
     };
 
-    proto.updateURL = function(path){
+    proto.updateURL = function (path) {
         var source, video, hasChild, container, extname;
         var node = this._node;
 
@@ -443,17 +445,17 @@ ccui.VideoPlayer.EventType = {
 
         this._url = path;
 
-        if(cc.loader.resPath && !/^http/.test(path))
+        if (cc.loader.resPath && !/^http/.test(path))
             path = cc.path.join(cc.loader.resPath, path);
 
         hasChild = false;
         container = cc.container;
-        if('contains' in container) {
+        if ('contains' in container) {
             hasChild = container.contains(this._video);
-        }else {
+        } else {
             hasChild = container.compareDocumentPosition(this._video) % 16;
         }
-        if(hasChild)
+        if (hasChild)
             container.removeChild(this._video);
 
         this._video = document.createElement("video");
@@ -461,8 +463,8 @@ ccui.VideoPlayer.EventType = {
         this.bindEvent();
         var self = this;
 
-        var cb = function(){
-            if(self._loaded == true)
+        var cb = function () {
+            if (self._loaded == true)
                 return;
             self._loaded = true;
             self.changeSize();
@@ -472,7 +474,7 @@ ccui.VideoPlayer.EventType = {
             video.style["visibility"] = "visible";
             //IOS does not display video images
             video.play();
-            if(!node._played){
+            if (!node._played) {
                 video.pause();
                 video.currentTime = 0;
             }
@@ -487,15 +489,15 @@ ccui.VideoPlayer.EventType = {
         node._playing = false;
         node._stopped = true;
         this.initStyle();
-        this.visit();
+        this._node.visit();
 
         source = document.createElement("source");
         source.src = path;
         video.appendChild(source);
 
         extname = cc.path.extname(path);
-        for(var i=0; i<polyfill.canPlayType.length; i++){
-            if(extname !== polyfill.canPlayType[i]){
+        for (var i = 0; i < polyfill.canPlayType.length; i++) {
+            if (extname !== polyfill.canPlayType[i]) {
                 source = document.createElement("source");
                 source.src = path.replace(extname, polyfill.canPlayType[i]);
                 video.appendChild(source);
@@ -503,26 +505,26 @@ ccui.VideoPlayer.EventType = {
         }
     };
 
-    proto.bindEvent = function(){
+    proto.bindEvent = function () {
         var self = this,
             node = this._node,
             video = this._video;
         //binding event
-        video.addEventListener("ended", function(){
+        video.addEventListener("ended", function () {
             node._renderCmd.updateMatrix(self._worldTransform, cc.view._scaleX, cc.view._scaleY);
             node._playing = false;
             node._dispatchEvent(ccui.VideoPlayer.EventType.COMPLETED);
         });
-        video.addEventListener("play", function(){
+        video.addEventListener("play", function () {
             node._dispatchEvent(ccui.VideoPlayer.EventType.PLAYING);
         });
-        video.addEventListener("pause", function(){
+        video.addEventListener("pause", function () {
             node._dispatchEvent(ccui.VideoPlayer.EventType.PAUSED);
         });
     };
 
-    proto.initStyle = function(){
-        if(!this._video)  return;
+    proto.initStyle = function () {
+        if (!this._video)  return;
         var video = this._video;
         video.style.position = "absolute";
         video.style.bottom = "0px";
@@ -530,29 +532,29 @@ ccui.VideoPlayer.EventType = {
         video.className = "cocosVideo";
     };
 
-    proto.changeSize = function(w, h){
+    proto.changeSize = function (w, h) {
         var contentSize = this._node._contentSize;
         w = w || contentSize.width;
         h = h || contentSize.height;
         var video = this._video;
-        if(video){
-            if(w !== 0)
+        if (video) {
+            if (w !== 0)
                 video.width = w;
-            if(h !== 0)
+            if (h !== 0)
                 video.height = h;
         }
     };
 
-    proto.removeDom = function(){
+    proto.removeDom = function () {
         var video = this._video;
-        if(video){
+        if (video) {
             var hasChild = false;
-            if('contains' in cc.container) {
+            if ('contains' in cc.container) {
                 hasChild = cc.container.contains(video);
-            }else {
+            } else {
                 hasChild = cc.container.compareDocumentPosition(video) % 16;
             }
-            if(hasChild)
+            if (hasChild)
                 cc.container.removeChild(video);
         }
     };

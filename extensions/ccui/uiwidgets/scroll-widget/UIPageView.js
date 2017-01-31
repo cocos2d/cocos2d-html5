@@ -38,7 +38,7 @@ ccui.PageView = ccui.ListView.extend(/** @lends ccui.PageView# */{
     _childFocusCancelOffset: 0,
     _pageViewEventListener: null,
     _pageViewEventSelector: null,
-    _className:"PageView",
+    _className: "PageView",
 
     _indicator: null,
     _indicatorPositionAsAnchorPoint: null,
@@ -77,8 +77,7 @@ ccui.PageView = ccui.ListView.extend(/** @lends ccui.PageView# */{
      * Insert a page into the end of PageView.
      * @param {ccui.Widget} page Page to be inserted.
      */
-    addPage: function(page)
-    {
+    addPage: function (page) {
         this.pushBackCustomItem(page);
     },
 
@@ -87,8 +86,7 @@ ccui.PageView = ccui.ListView.extend(/** @lends ccui.PageView# */{
      * @param {ccui.Widget} page Page to be inserted.
      * @param {number} idx A given index.
      */
-    insertPage: function(page, idx)
-    {
+    insertPage: function (page, idx) {
         this.insertCustomItem(page, idx);
     },
 
@@ -111,7 +109,7 @@ ccui.PageView = ccui.ListView.extend(/** @lends ccui.PageView# */{
     /**
      * Removes all pages from PageView
      */
-    removeAllPages: function(){
+    removeAllPages: function () {
         this.removeAllItems();
     },
 
@@ -132,14 +130,13 @@ ccui.PageView = ccui.ListView.extend(/** @lends ccui.PageView# */{
     },
 
 
-    _doLayout: function(){
+    _doLayout: function () {
         if (!this._refreshViewDirty)
             return;
 
         ccui.ListView.prototype._doLayout.call(this);
 
-        if(this._indicator)
-        {
+        if (this._indicator) {
             var index = this.getIndex(this.getCenterItemInCurrentView());
             this._indicator.indicate(index);
         }
@@ -151,20 +148,16 @@ ccui.PageView = ccui.ListView.extend(/** @lends ccui.PageView# */{
      * Changes scroll direction of ccui.PageView.
      * @param {ccui.ScrollView.DIR_NONE | ccui.ScrollView.DIR_VERTICAL | ccui.ScrollView.DIR_HORIZONTAL | ccui.ScrollView.DIR_BOTH} direction
      */
-    setDirection: function(direction)
-    {
+    setDirection: function (direction) {
         ccui.ListView.prototype.setDirection.call(this, direction);
-        if(direction === ccui.ScrollView.DIR_HORIZONTAL)
-        {
+        if (direction === ccui.ScrollView.DIR_HORIZONTAL) {
             this._indicatorPositionAsAnchorPoint = cc.p(0.5, 0.1);
         }
-        else if(direction === ccui.ScrollView.DIR_VERTICAL)
-        {
+        else if (direction === ccui.ScrollView.DIR_VERTICAL) {
             this._indicatorPositionAsAnchorPoint = cc.p(0.1, 0.5);
         }
 
-        if(this._indicator)
-        {
+        if (this._indicator) {
             this._indicator.setDirection(direction);
             this._refreshIndicatorPosition();
         }
@@ -176,7 +169,7 @@ ccui.PageView = ccui.ListView.extend(/** @lends ccui.PageView# */{
      * @param threshold
      * @deprecated Since v3.9, this method has no effect.
      */
-    setCustomScrollThreshold: function(threshold){
+    setCustomScrollThreshold: function (threshold) {
 
     },
 
@@ -185,7 +178,7 @@ ccui.PageView = ccui.ListView.extend(/** @lends ccui.PageView# */{
      * @since v3.2
      * @deprecated Since v3.9, this method always returns 0.
      */
-    getCustomScrollThreshold: function(){
+    getCustomScrollThreshold: function () {
         return 0;
     },
 
@@ -194,52 +187,44 @@ ccui.PageView = ccui.ListView.extend(/** @lends ccui.PageView# */{
      * @since v3.2
      * @deprecated Since v3.9, this method has no effect.
      */
-    setUsingCustomScrollThreshold: function(flag){
+    setUsingCustomScrollThreshold: function (flag) {
     },
 
     /**
      * Queries whether we are using user defined scroll page threshold or not
      * @deprecated Since v3.9, this method always returns false.
      */
-    isUsingCustomScrollThreshold: function(){
+    isUsingCustomScrollThreshold: function () {
         return false;
     },
 
-    _moveInnerContainer: function(deltaMove, canStartBounceBack)
-    {
+    _moveInnerContainer: function (deltaMove, canStartBounceBack) {
         ccui.ListView.prototype._moveInnerContainer.call(this, deltaMove, canStartBounceBack);
         this._curPageIdx = this.getIndex(this.getCenterItemInCurrentView());
-        if(this._indicator)
-        {
+        if (this._indicator) {
             this._indicator.indicate(this._curPageIdx);
         }
     },
 
-    _onItemListChanged: function()
-    {
+    _onItemListChanged: function () {
         ccui.ListView.prototype._onItemListChanged.call(this);
-        if(this._indicator)
-        {
+        if (this._indicator) {
             this._indicator.reset(this._items.length);
         }
     },
 
-    _onSizeChanged: function()
-    {
+    _onSizeChanged: function () {
         ccui.ListView.prototype._onSizeChanged.call(this);
         this._refreshIndicatorPosition();
     },
 
-    _remedyLayoutParameter: function (item)
-    {
+    _remedyLayoutParameter: function (item) {
         item.setContentSize(this.getContentSize());
         ccui.ListView.prototype._remedyLayoutParameter.call(this, item);
     },
-    
-    _refreshIndicatorPosition: function()
-    {
-        if(this._indicator)
-        {
+
+    _refreshIndicatorPosition: function () {
+        if (this._indicator) {
             var contentSize = this.getContentSize();
             var posX = contentSize.width * this._indicatorPositionAsAnchorPoint.x;
             var posY = contentSize.height * this._indicatorPositionAsAnchorPoint.y;
@@ -257,12 +242,10 @@ ccui.PageView = ccui.ListView.extend(/** @lends ccui.PageView# */{
         var touchMoveVelocity = this._flattenVectorByDirection(this._calculateTouchMoveVelocity());
 
         var INERTIA_THRESHOLD = 500;
-        if(cc.pLength(touchMoveVelocity) < INERTIA_THRESHOLD)
-        {
+        if (cc.pLength(touchMoveVelocity) < INERTIA_THRESHOLD) {
             this._startMagneticScroll();
         }
-        else
-        {
+        else {
             // Handle paging by inertia force.
             var currentPage = this.getItem(this._curPageIdx);
             var destination = this._calculateItemDestination(cc.p(0.5, 0.5), currentPage, cc.p(0.5, 0.5));
@@ -271,18 +254,14 @@ ccui.PageView = ccui.ListView.extend(/** @lends ccui.PageView# */{
 
             // If the direction of displacement to current page and the direction of touch are same, just start magnetic scroll to the current page.
             // Otherwise, move to the next page of touch direction.
-            if(touchMoveVelocity.x * deltaToCurrentPage.x > 0 || touchMoveVelocity.y * deltaToCurrentPage.y > 0)
-            {
+            if (touchMoveVelocity.x * deltaToCurrentPage.x > 0 || touchMoveVelocity.y * deltaToCurrentPage.y > 0) {
                 this._startMagneticScroll();
             }
-            else
-            {
-                if(touchMoveVelocity.x < 0 || touchMoveVelocity.y > 0)
-                {
+            else {
+                if (touchMoveVelocity.x < 0 || touchMoveVelocity.y > 0) {
                     ++this._curPageIdx;
                 }
-                else
-                {
+                else {
                     --this._curPageIdx;
                 }
                 this._curPageIdx = Math.min(this._curPageIdx, this._items.length);
@@ -293,19 +272,18 @@ ccui.PageView = ccui.ListView.extend(/** @lends ccui.PageView# */{
 
     },
 
-    _getAutoScrollStopEpsilon: function()
-    {
+    _getAutoScrollStopEpsilon: function () {
         return 0.001;
     },
 
     _pageTurningEvent: function () {
-        if(this._pageViewEventSelector){
+        if (this._pageViewEventSelector) {
             if (this._pageViewEventListener)
                 this._pageViewEventSelector.call(this._pageViewEventListener, this, ccui.PageView.EVENT_TURNING);
             else
                 this._pageViewEventSelector(this, ccui.PageView.EVENT_TURNING);
         }
-        if(this._ccEventCallback)
+        if (this._ccEventCallback)
             this._ccEventCallback(this, ccui.PageView.EVENT_TURNING);
     },
 
@@ -320,9 +298,9 @@ ccui.PageView = ccui.ListView.extend(/** @lends ccui.PageView# */{
         this._pageViewEventListener = target;
     },
 
-    addEventListener: function(selector){
-        this._ccEventCallback = function(ref, eventType) {
-            if(eventType == ccui.ScrollView.EVENT_AUTOSCROLL_ENDED)
+    addEventListener: function (selector) {
+        this._ccEventCallback = function (ref, eventType) {
+            if (eventType == ccui.ScrollView.EVENT_AUTOSCROLL_ENDED)
                 selector(this, eventType)
         };
     },
@@ -332,8 +310,7 @@ ccui.PageView = ccui.ListView.extend(/** @lends ccui.PageView# */{
      * This is the different between scrollToPage.
      * @param {number} index A given index in PageView. Index start from 0 to pageCount -1.
      */
-    setCurrentPageIndex: function(index)
-    {
+    setCurrentPageIndex: function (index) {
         this.jumpToItem(index, cc.p(0.5, 0.5), cc.p(0.5, 0.5));
     },
 
@@ -343,8 +320,7 @@ ccui.PageView = ccui.ListView.extend(/** @lends ccui.PageView# */{
      * @param {number} index A given index in PageView. Index start from 0 to pageCount -1.
      * @deprecated since v3.9, this is deprecated. Use `setCurrentPageIndex()` instead.
      */
-    setCurPageIndex: function(index)
-    {
+    setCurPageIndex: function (index) {
         this.setCurrentPageIndex(index);
     },
 
@@ -370,7 +346,7 @@ ccui.PageView = ccui.ListView.extend(/** @lends ccui.PageView# */{
      * Returns all pages of PageView
      * @returns {Array}
      */
-    getPages:function(){
+    getPages: function () {
         return this.getItems();
     },
 
@@ -379,7 +355,7 @@ ccui.PageView = ccui.ListView.extend(/** @lends ccui.PageView# */{
      * @param {Number} index
      * @returns {ccui.Layout}
      */
-    getPage: function(index){
+    getPage: function (index) {
         return this.getItem(index);
     },
 
@@ -416,20 +392,16 @@ ccui.PageView = ccui.ListView.extend(/** @lends ccui.PageView# */{
      * Toggle page indicator enabled.
      * @param {boolean} enabled True if enable page indicator, false otherwise.
      */
-    setIndicatorEnabled: function(enabled)
-    {
-        if(enabled == (this._indicator !== null))
-        {
+    setIndicatorEnabled: function (enabled) {
+        if (enabled == (this._indicator !== null)) {
             return;
         }
 
-        if(!enabled)
-        {
+        if (!enabled) {
             this.removeProtectedChild(this._indicator);
             this._indicator = null;
         }
-        else
-        {
+        else {
             this._indicator = new ccui.PageViewIndicator();
             this._indicator.setDirection(this.getDirection());
             this.addProtectedChild(this._indicator, 10000);
@@ -442,8 +414,7 @@ ccui.PageView = ccui.ListView.extend(/** @lends ccui.PageView# */{
      * Query page indicator state.
      * @returns {boolean} True if page indicator is enabled, false otherwise.
      */
-    getIndicatorEnabled: function()
-    {
+    getIndicatorEnabled: function () {
         return this._indicator !== null;
     },
 
@@ -451,8 +422,7 @@ ccui.PageView = ccui.ListView.extend(/** @lends ccui.PageView# */{
      * Set the page indicator's position using anchor point.
      * @param {cc.Point} positionAsAnchorPoint The position as anchor point.
      */
-    setIndicatorPositionAsAnchorPoint: function(positionAsAnchorPoint)
-    {
+    setIndicatorPositionAsAnchorPoint: function (positionAsAnchorPoint) {
         this._indicatorPositionAsAnchorPoint = positionAsAnchorPoint;
         this._refreshIndicatorPosition();
     },
@@ -461,8 +431,7 @@ ccui.PageView = ccui.ListView.extend(/** @lends ccui.PageView# */{
      * Get the page indicator's position as anchor point.
      * @returns {cc.Point}
      */
-    getIndicatorPositionAsAnchorPoint: function()
-    {
+    getIndicatorPositionAsAnchorPoint: function () {
         return this._indicatorPositionAsAnchorPoint;
     },
 
@@ -470,10 +439,8 @@ ccui.PageView = ccui.ListView.extend(/** @lends ccui.PageView# */{
      * Set the page indicator's position in page view.
      * @param {cc.Point} position The position in page view
      */
-    setIndicatorPosition: function(position)
-    {
-        if(this._indicator)
-        {
+    setIndicatorPosition: function (position) {
+        if (this._indicator) {
             var contentSize = this.getContentSize();
             this._indicatorPositionAsAnchorPoint.x = position.x / contentSize.width;
             this._indicatorPositionAsAnchorPoint.y = position.y / contentSize.height;
@@ -485,8 +452,7 @@ ccui.PageView = ccui.ListView.extend(/** @lends ccui.PageView# */{
      * Get the page indicator's position.
      * @returns {cc.Point}
      */
-    getIndicatorPosition: function()
-    {
+    getIndicatorPosition: function () {
         cc.assert(this._indicator !== null, "");
         return this._indicator.getPosition();
     },
@@ -495,10 +461,8 @@ ccui.PageView = ccui.ListView.extend(/** @lends ccui.PageView# */{
      * Set space between page indicator's index nodes.
      * @param {number} spaceBetweenIndexNodes Space between nodes in pixel.
      */
-    setIndicatorSpaceBetweenIndexNodes: function(spaceBetweenIndexNodes)
-    {
-        if(this._indicator)
-        {
+    setIndicatorSpaceBetweenIndexNodes: function (spaceBetweenIndexNodes) {
+        if (this._indicator) {
             this._indicator.setSpaceBetweenIndexNodes(spaceBetweenIndexNodes);
         }
     },
@@ -507,8 +471,7 @@ ccui.PageView = ccui.ListView.extend(/** @lends ccui.PageView# */{
      * Get the space between page indicator's index nodes.
      * @returns {number}
      */
-    getIndicatorSpaceBetweenIndexNodes: function()
-    {
+    getIndicatorSpaceBetweenIndexNodes: function () {
         cc.assert(this._indicator !== null, "");
         return this._indicator.getSpaceBetweenIndexNodes();
     },
@@ -517,10 +480,8 @@ ccui.PageView = ccui.ListView.extend(/** @lends ccui.PageView# */{
      * Set color of page indicator's selected index.
      * @param {cc.Color} color Color for indicator
      */
-    setIndicatorSelectedIndexColor: function(color)
-    {
-        if(this._indicator)
-        {
+    setIndicatorSelectedIndexColor: function (color) {
+        if (this._indicator) {
             this._indicator.setSelectedIndexColor(color);
         }
     },
@@ -529,8 +490,7 @@ ccui.PageView = ccui.ListView.extend(/** @lends ccui.PageView# */{
      * Get the color of page indicator's selected index.
      * @returns {cc.Color}
      */
-    getIndicatorSelectedIndexColor: function()
-    {
+    getIndicatorSelectedIndexColor: function () {
         cc.assert(this._indicator !== null, "");
         return this._indicator.getSelectedIndexColor();
     },
@@ -539,10 +499,8 @@ ccui.PageView = ccui.ListView.extend(/** @lends ccui.PageView# */{
      * Set color of page indicator's index nodes.
      * @param {cc.Color} color Color for indicator
      */
-    setIndicatorIndexNodesColor: function(color)
-    {
-        if(this._indicator)
-        {
+    setIndicatorIndexNodesColor: function (color) {
+        if (this._indicator) {
             this._indicator.setIndexNodesColor(color);
         }
     },
@@ -551,8 +509,7 @@ ccui.PageView = ccui.ListView.extend(/** @lends ccui.PageView# */{
      * Get the color of page indicator's index nodes.
      * @returns {cc.Color}
      */
-    getIndicatorIndexNodesColor: function()
-    {
+    getIndicatorIndexNodesColor: function () {
         cc.assert(this._indicator !== null, "");
         return this._indicator.getIndexNodesColor();
     },
@@ -561,10 +518,8 @@ ccui.PageView = ccui.ListView.extend(/** @lends ccui.PageView# */{
      * Set scale of page indicator's index nodes.
      * @param {Number} scale Scale for indicator
      */
-    setIndicatorIndexNodesScale: function(indexNodesScale)
-    {
-        if(this._indicator)
-        {
+    setIndicatorIndexNodesScale: function (indexNodesScale) {
+        if (this._indicator) {
             this._indicator.setIndexNodesScale(indexNodesScale);
             this._indicator.indicate(this._curPageIdx);
         }
@@ -574,8 +529,7 @@ ccui.PageView = ccui.ListView.extend(/** @lends ccui.PageView# */{
      * Get the scale of page indicator's index nodes.
      * @returns {Number}
      */
-    getIndicatorIndexNodesScale: function()
-    {
+    getIndicatorIndexNodesScale: function () {
         cc.assert(this._indicator !== null, "");
         return this._indicator.getIndexNodesScale();
     },
@@ -585,10 +539,8 @@ ccui.PageView = ccui.ListView.extend(/** @lends ccui.PageView# */{
      * @param {String} texName
      * @param {ccui.Widget.LOCAL_TEXTURE | ccui.Widget.PLIST_TEXTURE} [texType = ccui.Widget.LOCAL_TEXTURE]
      */
-    setIndicatorIndexNodesTexture: function(texName, texType)
-    {
-        if(this._indicator)
-        {
+    setIndicatorIndexNodesTexture: function (texName, texType) {
+        if (this._indicator) {
             this._indicator.setIndexNodesTexture(texName, texType);
             this._indicator.indicate(this._curPageIdx);
         }
