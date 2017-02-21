@@ -216,9 +216,9 @@ sp.Skeleton = cc.Node.extend(/** @lends sp.Skeleton# */{
 
         for (var i = 0, slotCount = slots.length; i < slotCount; ++i) {
             var slot = slots[i];
-            if (!slot.attachment || ! (attachment instanceof spine.RegionAttachment))
-                continue;
             var attachment = slot.attachment;
+            if (!attachment || ! (attachment instanceof spine.RegionAttachment))
+                continue;
             vertices = attachment.updateWorldVertices(slot, false);
             minX = Math.min(minX, vertices[VERTEX.X1] * scaleX, vertices[VERTEX.X4] * scaleX, vertices[VERTEX.X2] * scaleX, vertices[VERTEX.X3] * scaleX);
             minY = Math.min(minY, vertices[VERTEX.Y1] * scaleY, vertices[VERTEX.Y4] * scaleY, vertices[VERTEX.Y2] * scaleY, vertices[VERTEX.Y3] * scaleY);
