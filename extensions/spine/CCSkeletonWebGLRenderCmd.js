@@ -28,32 +28,38 @@
         this._needDraw = true;
         this._matrix = new cc.math.Matrix4();
         this._matrix.identity();
-        this._tmpQuad = new cc.V3F_C4B_T2F_Quad();
+        this.vertexType = cc.renderer.VertexType.CUSTOM;
         this.setShaderProgram(cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLOR));
     };
 
     var proto = sp.Skeleton.WebGLRenderCmd.prototype = Object.create(cc.Node.WebGLRenderCmd.prototype);
     proto.constructor = sp.Skeleton.WebGLRenderCmd;
 
-    proto.rendering = function (ctx) {
-        var node = this._node, tmpQuad = this._tmpQuad;
+    proto.uploadData = function (f32buffer, ui32buffer, vertexDataOffset){
+
+        // rendering the cached data first
+        cc.renderer._batchRendering();
+        vertexDataOffset = 0;
+
+        var node = this._node;
         var color = node.getColor(), locSkeleton = node._skeleton;
 
-        var blendMode, textureAtlas, attachment, slot, i, n;
-        var locBlendFunc = node._blendFunc;
+        var textureAtlas, attachment, slot, i, n;
         var premultiAlpha = node._premultipliedAlpha;
+        var blendMode = -1;
+        var dataInited = false;
+        var cachedVertices = 0;
 
-        var wt = this._worldTransform;
-        this._matrix.mat[0] = wt.a;
-        this._matrix.mat[4] = wt.c;
-        this._matrix.mat[12] = wt.tx;
-        this._matrix.mat[1] = wt.b;
-        this._matrix.mat[5] = wt.d;
-        this._matrix.mat[13] = wt.ty;
+        var wt = this._worldTransform, mat = this._matrix.mat;
+        mat[0] = wt.a;
+        mat[4] = wt.c;
+        mat[12] = wt.tx;
+        mat[1] = wt.b;
+        mat[5] = wt.d;
+        mat[13] = wt.ty;
 
         this._shaderProgram.use();
         this._shaderProgram._setUniformForMVPMatrixWithMat4(this._matrix);
-        // cc.glBlendFunc(locBlendFunc.src, locBlendFunc.dst);
         locSkeleton.r = color.r / 255;
         locSkeleton.g = color.g / 255;
         locSkeleton.b = color.b / 255;
@@ -64,67 +70,88 @@
             locSkeleton.b *= locSkeleton.a;
         }
 
-        //for (i = 0, n = locSkeleton.slots.length; i < n; i++) {
+        var debugSlotsInfo = null;
+        if (this._node._debugSlots) {
+            debugSlotsInfo = [];
+        }
+
         for (i = 0, n = locSkeleton.drawOrder.length; i < n; i++) {
             slot = locSkeleton.drawOrder[i];
             if (!slot.attachment)
                 continue;
             attachment = slot.attachment;
 
-            switch (slot.attachment.type) {
-                case sp.ATTACHMENT_TYPE.REGION:
-                    this._updateRegionAttachmentQuad(attachment, slot, tmpQuad, premultiAlpha);
-                    break;
-                case sp.ATTACHMENT_TYPE.MESH:
-                    this._updateMeshAttachmentQuad(attachment, slot, tmpQuad, premultiAlpha);
-                    break;
-                case sp.ATTACHMENT_TYPE.SKINNED_MESH:
-                    break;
-                default:
-                    continue;
+            // get the vertices length
+            var vertCount = 0;
+            if (attachment instanceof spine.RegionAttachment) {
+                vertCount = 6; // a quad = two triangles = six vertices
+            }
+            else if (attachment instanceof spine.MeshAttachment) {
+                vertCount = attachment.regionUVs.length / 2;
+            }
+            else {
+                continue;
             }
 
+            // no vertices to render
+            if (vertCount === 0) {
+                continue;
+            }
             var regionTextureAtlas = node.getTextureAtlas(attachment);
-
-            if (slot.data.blendMode != blendMode) {
-                if (textureAtlas) {
-                    textureAtlas.drawQuads();
-                    textureAtlas.removeAllQuads();
-                }
+            // init data at the first time
+            if (!dataInited) {
+                textureAtlas = regionTextureAtlas;
                 blendMode = slot.data.blendMode;
-                switch (blendMode) {
-                case spine.BlendMode.additive:
-                    cc.glBlendFunc(premultiAlpha ? cc.ONE : cc.SRC_ALPHA, cc.ONE);
-                    break;
-                case spine.BlendMode.multiply:
-                    cc.glBlendFunc(cc.DST_COLOR, cc.ONE_MINUS_SRC_ALPHA);
-                    break;
-                case spine.BlendMode.screen:
-                    cc.glBlendFunc(cc.ONE, cc.ONE_MINUS_SRC_COLOR);
-                    break;
-                default:
-                    cc.glBlendFunc(premultiAlpha ? cc.ONE : cc.SRC_ALPHA, cc.ONE_MINUS_SRC_ALPHA);
-                }
-            } else if (regionTextureAtlas != textureAtlas && textureAtlas) {
-                textureAtlas.drawQuads();
-                textureAtlas.removeAllQuads();
-            }
-            textureAtlas = regionTextureAtlas;
-
-            var quadCount = textureAtlas.getTotalQuads();
-            if (textureAtlas.getCapacity() == quadCount) {
-                textureAtlas.drawQuads();
-                textureAtlas.removeAllQuads();
-                if (!textureAtlas.resizeCapacity(textureAtlas.getCapacity() * 2))
-                    return;
+                cc.renderer._updateBatchedInfo(textureAtlas.texture.getRealTexture(), this._getBlendFunc(blendMode, premultiAlpha), this.getShaderProgram());
+                dataInited = true;
             }
 
-            textureAtlas.updateQuad(tmpQuad, quadCount);
+            // if data changed or the vertices will be overflow
+            if ((cachedVertices + vertCount) * 6 > f32buffer.length ||
+                textureAtlas !== regionTextureAtlas ||
+                blendMode !== slot.data.blendMode) {
+                // render the cached data
+                cc.renderer._batchRendering();
+                vertexDataOffset = 0;
+                cachedVertices = 0;
+
+                // update the batched info
+                textureAtlas = regionTextureAtlas;
+                blendMode = slot.data.blendMode;
+                cc.renderer._updateBatchedInfo(textureAtlas.texture.getRealTexture(), this._getBlendFunc(blendMode, premultiAlpha), this.getShaderProgram());
+            }
+
+            // update the vertex buffer
+            var slotDebugPoints = null;
+            if (attachment instanceof spine.RegionAttachment) {
+                slotDebugPoints = this._uploadRegionAttachmentData(attachment, slot, premultiAlpha, f32buffer, ui32buffer, vertexDataOffset);
+            }
+            else if (attachment instanceof spine.MeshAttachment) {
+                this._uploadMeshAttachmentData(attachment, slot, premultiAlpha, f32buffer, ui32buffer, vertexDataOffset);
+            }
+            else {
+                continue;
+            }
+
+            if (this._node._debugSlots) {
+                debugSlotsInfo[i] = slotDebugPoints;
+            }
+
+            // update the index buffer
+            if (attachment instanceof spine.RegionAttachment) {
+                cc.renderer._increaseBatchingSize(vertCount, cc.renderer.VertexType.TRIANGLE);
+            } else {
+                cc.renderer._increaseBatchingSize(vertCount, cc.renderer.VertexType.CUSTOM, attachment.triangles);
+            }
+
+            // update the index data
+            cachedVertices += vertCount;
+            vertexDataOffset += vertCount * 6;
         }
 
-        if (textureAtlas) {
-            textureAtlas.drawQuads();
-            textureAtlas.removeAllQuads();
+        // render the left vertices
+        if (cachedVertices > 0) {
+            cc.renderer._batchRendering();
         }
 
         if (node._debugBones || node._debugSlots) {
@@ -133,25 +160,16 @@
             cc.current_stack.top = this._matrix;
             var drawingUtil = cc._drawingUtil;
 
-            if (node._debugSlots) {
+            if (node._debugSlots && debugSlotsInfo && debugSlotsInfo.length > 0) {
                 // Slots.
                 drawingUtil.setDrawColor(0, 0, 255, 255);
                 drawingUtil.setLineWidth(1);
 
                 for (i = 0, n = locSkeleton.slots.length; i < n; i++) {
-                    slot = locSkeleton.drawOrder[i];
-                    if (!slot.attachment || slot.attachment.type != sp.ATTACHMENT_TYPE.REGION)
-                        continue;
-                    attachment = slot.attachment;
-                    this._updateRegionAttachmentQuad(attachment, slot, tmpQuad);
-
-                    var points = [];
-                    points.push(cc.p(tmpQuad.bl.vertices.x, tmpQuad.bl.vertices.y));
-                    points.push(cc.p(tmpQuad.br.vertices.x, tmpQuad.br.vertices.y));
-                    points.push(cc.p(tmpQuad.tr.vertices.x, tmpQuad.tr.vertices.y));
-                    points.push(cc.p(tmpQuad.tl.vertices.x, tmpQuad.tl.vertices.y));
-
-                    drawingUtil.drawPoly(points, 4, true);
+                    var points = debugSlotsInfo[i];
+                    if (points) {
+                        drawingUtil.drawPoly(points, 4, true);
+                    }
                 }
             }
 
@@ -163,8 +181,8 @@
 
                 for (i = 0, n = locSkeleton.bones.length; i < n; i++) {
                     bone = locSkeleton.bones[i];
-                    var x = bone.data.length * bone.m00 + bone.worldX;
-                    var y = bone.data.length * bone.m10 + bone.worldY;
+                    var x = bone.data.length * bone.a + bone.worldX;
+                    var y = bone.data.length * bone.c + bone.worldY;
                     drawingUtil.drawLine(cc.p(bone.worldX, bone.worldY), cc.p(x, y));
                 }
 
@@ -182,6 +200,35 @@
             }
             cc.kmGLPopMatrix();
         }
+
+        return 0;
+    };
+
+    proto._getBlendFunc = function (blendMode, premultiAlpha) {
+        var ret = {};
+        switch (blendMode) {
+            case spine.BlendMode.Normal:
+                ret.src = premultiAlpha ? cc.ONE : cc.SRC_ALPHA;
+                ret.dst = cc.ONE_MINUS_SRC_ALPHA;
+                break;
+            case spine.BlendMode.Additive:
+                ret.src = premultiAlpha ? cc.ONE : cc.SRC_ALPHA;
+                ret.dst = cc.ONE;
+                break;
+            case spine.BlendMode.Multiply:
+                ret.src = cc.DST_COLOR;
+                ret.dst = cc.ONE_MINUS_SRC_ALPHA;
+                break;
+            case spine.BlendMode.Screen:
+                ret.src = cc.ONE;
+                ret.dst = cc.ONE_MINUS_SRC_COLOR;
+                break;
+            default:
+                ret = this._node._blendFunc;
+                break;
+        }
+
+        return ret;
     };
 
     proto._createChildFormSkeletonData = function () {
@@ -190,76 +237,75 @@
     proto._updateChild = function () {
     };
 
-    proto._updateRegionAttachmentQuad = function (attachment, slot, quad, premultipliedAlpha) {
-        var vertices = {};
-        attachment.computeVertices(slot.bone.skeleton.x, slot.bone.skeleton.y, slot.bone, vertices);
-        var a = slot.bone.skeleton.a * slot.a * attachment.a * 255;
-        var multiplier = premultipliedAlpha ? a : 255;
-        var r = slot.bone.skeleton.r * slot.r * attachment.r * multiplier;
-        var g = slot.bone.skeleton.g * slot.g * attachment.g * multiplier;
-        var b = slot.bone.skeleton.b * slot.b * attachment.b * multiplier;
+    proto._uploadRegionAttachmentData = function(attachment, slot, premultipliedAlpha, f32buffer, ui32buffer, vertexDataOffset) {
+        // the vertices in format:
+        // [
+        //   X1, Y1, C1R, C1G, C1B, C1A, U1, V1,    // bottom left
+        //   X2, Y2, C2R, C2G, C2B, C2A, U2, V2,    // top left
+        //   X3, Y3, C3R, C3G, C3B, C3A, U3, V3,    // top right
+        //   X4, Y4, C4R, C4G, C4B, C4A, U4, V4     // bottom right
+        // ]
+        //
+        var nodeColor = this._displayedColor;
+        var nodeR = nodeColor.r,
+            nodeG = nodeColor.g,
+            nodeB = nodeColor.b,
+            nodeA = nodeColor.a;
+        var vertices = attachment.updateWorldVertices(slot, premultipliedAlpha);
+        var offset = vertexDataOffset;
+        // generate 6 vertices data (two triangles) from the quad vertices
+        // using two angles : (0, 1, 2) & (0, 2, 3)
+        for (var i = 0; i < 6; i++) {
+            var srcIdx = i < 4 ? i % 3 : i - 2;
+            var r = vertices[srcIdx * 8 + 2] * nodeR,
+                g = vertices[srcIdx * 8 + 3] * nodeG,
+                b = vertices[srcIdx * 8 + 4] * nodeB,
+                a = vertices[srcIdx * 8 + 5] * nodeA;
+            var color = ((a<<24) | (b<<16) | (g<<8) | r);
+            f32buffer[offset] = vertices[srcIdx * 8];
+            f32buffer[offset + 1] = vertices[srcIdx * 8 + 1];
+            f32buffer[offset + 2] = this._node.vertexZ;
+            ui32buffer[offset + 3] = color;
+            f32buffer[offset + 4] = vertices[srcIdx * 8 + 6];
+            f32buffer[offset + 5] = vertices[srcIdx * 8 + 7];
+            offset += 6;
+        }
 
-        quad.bl.colors.r = quad.tl.colors.r = quad.tr.colors.r = quad.br.colors.r = r;
-        quad.bl.colors.g = quad.tl.colors.g = quad.tr.colors.g = quad.br.colors.g = g;
-        quad.bl.colors.b = quad.tl.colors.b = quad.tr.colors.b = quad.br.colors.b = b;
-        quad.bl.colors.a = quad.tl.colors.a = quad.tr.colors.a = quad.br.colors.a = a;
-
-        var VERTEX = sp.VERTEX_INDEX;
-        quad.bl.vertices.x = vertices[VERTEX.X1];
-        quad.bl.vertices.y = vertices[VERTEX.Y1];
-        quad.tl.vertices.x = vertices[VERTEX.X2];
-        quad.tl.vertices.y = vertices[VERTEX.Y2];
-        quad.tr.vertices.x = vertices[VERTEX.X3];
-        quad.tr.vertices.y = vertices[VERTEX.Y3];
-        quad.br.vertices.x = vertices[VERTEX.X4];
-        quad.br.vertices.y = vertices[VERTEX.Y4];
-
-        quad.bl.texCoords.u = attachment.uvs[VERTEX.X1];
-        quad.bl.texCoords.v = attachment.uvs[VERTEX.Y1];
-        quad.tl.texCoords.u = attachment.uvs[VERTEX.X2];
-        quad.tl.texCoords.v = attachment.uvs[VERTEX.Y2];
-        quad.tr.texCoords.u = attachment.uvs[VERTEX.X3];
-        quad.tr.texCoords.v = attachment.uvs[VERTEX.Y3];
-        quad.br.texCoords.u = attachment.uvs[VERTEX.X4];
-        quad.br.texCoords.v = attachment.uvs[VERTEX.Y4];
+        if (this._node._debugSlots) {
+            // return the quad points info if debug slot enabled
+            var VERTEX = spine.RegionAttachment;
+            return [
+                cc.p(vertices[VERTEX.X1], vertices[VERTEX.Y1]),
+                cc.p(vertices[VERTEX.X2], vertices[VERTEX.Y2]),
+                cc.p(vertices[VERTEX.X3], vertices[VERTEX.Y3]),
+                cc.p(vertices[VERTEX.X4], vertices[VERTEX.Y4])
+            ];
+        }
     };
 
-    proto._updateMeshAttachmentQuad = function (attachment, slot, quad, premultipliedAlpha) {
-        var vertices = {};
-        attachment.computeWorldVertices(slot.bone.x, slot.bone.y, slot, vertices);
-        var r = slot.bone.skeleton.r * slot.r * 255;
-        var g = slot.bone.skeleton.g * slot.g * 255;
-        var b = slot.bone.skeleton.b * slot.b * 255;
-        var normalizedAlpha = slot.bone.skeleton.a * slot.a;
-        if (premultipliedAlpha) {
-            r *= normalizedAlpha;
-            g *= normalizedAlpha;
-            b *= normalizedAlpha;
+    proto._uploadMeshAttachmentData = function(attachment, slot, premultipliedAlpha, f32buffer, ui32buffer, vertexDataOffset) {
+        // get the vertex data
+        var vertices = attachment.updateWorldVertices(slot, premultipliedAlpha);
+        var offset = vertexDataOffset;
+        var nodeColor = this._displayedColor;
+        var nodeR = nodeColor.r,
+            nodeG = nodeColor.g,
+            nodeB = nodeColor.b,
+            nodeA = nodeColor.a;
+        for (var i = 0, n = vertices.length; i < n; i += 8) {
+            var r = vertices[i + 2] * nodeR,
+                g = vertices[i + 3] * nodeG,
+                b = vertices[i + 4] * nodeB,
+                a = vertices[i + 5] * nodeA;
+            var color = ((a<<24) | (b<<16) | (g<<8) | r);
+
+            f32buffer[offset] = vertices[i];
+            f32buffer[offset + 1] = vertices[i + 1];
+            f32buffer[offset + 2] = this._node.vertexZ;
+            ui32buffer[offset + 3] = color;
+            f32buffer[offset + 4] = vertices[i + 6];
+            f32buffer[offset + 5] = vertices[i + 7];
+            offset += 6;
         }
-        var a = normalizedAlpha * 255;
-
-        quad.bl.colors.r = quad.tl.colors.r = quad.tr.colors.r = quad.br.colors.r = r;
-        quad.bl.colors.g = quad.tl.colors.g = quad.tr.colors.g = quad.br.colors.g = g;
-        quad.bl.colors.b = quad.tl.colors.b = quad.tr.colors.b = quad.br.colors.b = b;
-        quad.bl.colors.a = quad.tl.colors.a = quad.tr.colors.a = quad.br.colors.a = a;
-
-        var VERTEX = sp.VERTEX_INDEX;
-        quad.bl.vertices.x = vertices[VERTEX.X1];
-        quad.bl.vertices.y = vertices[VERTEX.Y1];
-        quad.tl.vertices.x = vertices[VERTEX.X2];
-        quad.tl.vertices.y = vertices[VERTEX.Y2];
-        quad.tr.vertices.x = vertices[VERTEX.X3];
-        quad.tr.vertices.y = vertices[VERTEX.Y3];
-        quad.br.vertices.x = vertices[VERTEX.X4];
-        quad.br.vertices.y = vertices[VERTEX.Y4];
-
-        quad.bl.texCoords.u = attachment.uvs[VERTEX.X1];
-        quad.bl.texCoords.v = attachment.uvs[VERTEX.Y1];
-        quad.tl.texCoords.u = attachment.uvs[VERTEX.X2];
-        quad.tl.texCoords.v = attachment.uvs[VERTEX.Y2];
-        quad.tr.texCoords.u = attachment.uvs[VERTEX.X3];
-        quad.tr.texCoords.v = attachment.uvs[VERTEX.Y3];
-        quad.br.texCoords.u = attachment.uvs[VERTEX.X4];
-        quad.br.texCoords.v = attachment.uvs[VERTEX.Y4];
     };
 })();
