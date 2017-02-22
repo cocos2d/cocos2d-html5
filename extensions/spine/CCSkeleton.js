@@ -194,10 +194,7 @@ sp.Skeleton = cc.Node.extend(/** @lends sp.Skeleton# */{
             skeletonJsonReader.scale = scale;
 
             var skeletonJson = cc.loader.getRes(argSkeletonFile);
-            // TODO: FIXME: This operation added for avoid the bug of spine runtime:
-            // https://github.com/EsotericSoftware/spine-runtimes/pull/838
-            var clonedJsonObj = JSON.parse(JSON.stringify(skeletonJson));
-            skeletonData = skeletonJsonReader.readSkeletonData(clonedJsonObj);
+            skeletonData = skeletonJsonReader.readSkeletonData(skeletonJson);
             atlas.dispose(skeletonJsonReader);
             ownsSkeletonData = true;
         } else {
