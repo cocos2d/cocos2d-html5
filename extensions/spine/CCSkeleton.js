@@ -183,7 +183,7 @@ sp.Skeleton = cc.Node.extend(/** @lends sp.Skeleton# */{
             if (cc.isString(argAtlasFile)) {
                 var data = cc.loader.getRes(argAtlasFile);
                 sp._atlasLoader.setAtlasFile(argAtlasFile);
-                atlas = new spine.Atlas(data, sp._atlasLoader);
+                atlas = new spine.TextureAtlas(data, sp._atlasLoader.load.bind(sp._atlasLoader));
             } else {
                 atlas = atlasFile;
             }
@@ -194,7 +194,10 @@ sp.Skeleton = cc.Node.extend(/** @lends sp.Skeleton# */{
             skeletonJsonReader.scale = scale;
 
             var skeletonJson = cc.loader.getRes(argSkeletonFile);
-            skeletonData = skeletonJsonReader.readSkeletonData(skeletonJson);
+            // TODO: FIXME: This operation added for avoid the bug of spine runtime:
+            // https://github.com/EsotericSoftware/spine-runtimes/pull/838
+            var clonedJsonObj = JSON.parse(JSON.stringify(skeletonJson));
+            skeletonData = skeletonJsonReader.readSkeletonData(clonedJsonObj);
             atlas.dispose(skeletonJsonReader);
             ownsSkeletonData = true;
         } else {
@@ -212,14 +215,14 @@ sp.Skeleton = cc.Node.extend(/** @lends sp.Skeleton# */{
     getBoundingBox: function () {
         var minX = cc.FLT_MAX, minY = cc.FLT_MAX, maxX = cc.FLT_MIN, maxY = cc.FLT_MIN;
         var scaleX = this.getScaleX(), scaleY = this.getScaleY(), vertices = [],
-            slots = this._skeleton.slots, VERTEX = sp.VERTEX_INDEX;
+            slots = this._skeleton.slots, VERTEX = spine.RegionAttachment;
 
         for (var i = 0, slotCount = slots.length; i < slotCount; ++i) {
             var slot = slots[i];
-            if (!slot.attachment || slot.attachment.type != sp.ATTACHMENT_TYPE.REGION)
-                continue;
             var attachment = slot.attachment;
-            this._computeRegionAttachmentWorldVertices(attachment, slot.bone.skeleton.x, slot.bone.skeleton.y, slot.bone, vertices);
+            if (!attachment || ! (attachment instanceof spine.RegionAttachment))
+                continue;
+            vertices = attachment.updateWorldVertices(slot, false);
             minX = Math.min(minX, vertices[VERTEX.X1] * scaleX, vertices[VERTEX.X4] * scaleX, vertices[VERTEX.X2] * scaleX, vertices[VERTEX.X3] * scaleX);
             minY = Math.min(minY, vertices[VERTEX.Y1] * scaleY, vertices[VERTEX.Y4] * scaleY, vertices[VERTEX.Y2] * scaleY, vertices[VERTEX.Y3] * scaleY);
             maxX = Math.max(maxX, vertices[VERTEX.X1] * scaleX, vertices[VERTEX.X4] * scaleX, vertices[VERTEX.X2] * scaleX, vertices[VERTEX.X3] * scaleX);
@@ -227,20 +230,6 @@ sp.Skeleton = cc.Node.extend(/** @lends sp.Skeleton# */{
         }
         var position = this.getPosition();
         return cc.rect(position.x + minX, position.y + minY, maxX - minX, maxY - minY);
-    },
-
-    _computeRegionAttachmentWorldVertices : function(self, x, y, bone, vertices){
-        var offset = self.offset, vertexIndex = sp.VERTEX_INDEX;
-        x += bone.worldX;
-        y += bone.worldY;
-        vertices[vertexIndex.X1] = offset[vertexIndex.X1] * bone.m00 + offset[vertexIndex.Y1] * bone.m01 + x;
-        vertices[vertexIndex.Y1] = offset[vertexIndex.X1] * bone.m10 + offset[vertexIndex.Y1] * bone.m11 + y;
-        vertices[vertexIndex.X2] = offset[vertexIndex.X2] * bone.m00 + offset[vertexIndex.Y2] * bone.m01 + x;
-        vertices[vertexIndex.Y2] = offset[vertexIndex.X2] * bone.m10 + offset[vertexIndex.Y2] * bone.m11 + y;
-        vertices[vertexIndex.X3] = offset[vertexIndex.X3] * bone.m00 + offset[vertexIndex.Y3] * bone.m01 + x;
-        vertices[vertexIndex.Y3] = offset[vertexIndex.X3] * bone.m10 + offset[vertexIndex.Y3] * bone.m11 + y;
-        vertices[vertexIndex.X4] = offset[vertexIndex.X4] * bone.m00 + offset[vertexIndex.Y4] * bone.m01 + x;
-        vertices[vertexIndex.Y4] = offset[vertexIndex.X4] * bone.m10 + offset[vertexIndex.Y4] * bone.m11 + y;
     },
 
     /**
@@ -305,7 +294,7 @@ sp.Skeleton = cc.Node.extend(/** @lends sp.Skeleton# */{
      * @returns {spine.RegionAttachment|spine.BoundingBoxAttachment}
      */
     getAttachment: function (slotName, attachmentName) {
-        return this._skeleton.getAttachmentBySlotName(slotName, attachmentName);
+        return this._skeleton.getAttachmentByName(slotName, attachmentName);
     },
 
     /**
@@ -356,7 +345,7 @@ sp.Skeleton = cc.Node.extend(/** @lends sp.Skeleton# */{
      * @returns {cc.Node}
      */
     getTextureAtlas: function (regionAttachment) {
-        return regionAttachment.rendererObject.page.rendererObject;
+        return regionAttachment.region;
     },
 
     /**

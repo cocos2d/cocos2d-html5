@@ -24,35 +24,18 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-/**
- * @ignore
- */
-sp._atlasPage_createTexture_webGL = function (self, path) {
-    var texture = cc.textureCache.addImage(path);
-    self.rendererObject = new cc.TextureAtlas(texture, 128);
-    self.width = texture.getPixelsWide();
-    self.height = texture.getPixelsHigh();
-};
-
-sp._atlasPage_createTexture_canvas = function(self, path) {
-    self._texture = cc.textureCache.addImage(path);
-};
-
-sp._atlasPage_disposeTexture = function (self) {
-    self.rendererObject.release();
-};
-
 sp._atlasLoader = {
     spAtlasFile:null,
     setAtlasFile:function(spAtlasFile){
         this.spAtlasFile = spAtlasFile;
     },
-    load:function(page, line, spAtlas){
+    load:function(line){
         var texturePath = cc.path.join(cc.path.dirname(this.spAtlasFile), line);
-        if (cc._renderType === cc.game.RENDER_TYPE_WEBGL)
-            sp._atlasPage_createTexture_webGL(page,texturePath);
-        else
-            sp._atlasPage_createTexture_canvas(page,texturePath);
+        var texture = cc.textureCache.addImage(texturePath);
+        var tex = new sp.SkeletonTexture();
+        tex._image = { width: texture.getPixelsWide(), height: texture.getPixelsHigh() };
+        tex.setRealTexture(texture);
+        return tex;
     },
     unload:function(obj){
     }
@@ -139,7 +122,7 @@ sp.SkeletonAnimation = sp.Skeleton.extend(/** @lends sp.SkeletonAnimation# */{
      * @param {Number} duration
      */
     setMix: function (fromAnimation, toAnimation, duration) {
-        this._state.data.setMixByName(fromAnimation, toAnimation, duration);
+        this._state.data.setMixWith(fromAnimation, toAnimation, duration);
     },
 
     /**
@@ -165,7 +148,7 @@ sp.SkeletonAnimation = sp.Skeleton.extend(/** @lends sp.SkeletonAnimation# */{
             cc.log("Spine: Animation not found: " + name);
             return null;
         }
-        return this._state.setAnimation(trackIndex, animation, loop);
+        return this._state.setAnimationWith(trackIndex, animation, loop);
     },
 
     /**
@@ -183,7 +166,7 @@ sp.SkeletonAnimation = sp.Skeleton.extend(/** @lends sp.SkeletonAnimation# */{
             cc.log("Spine: Animation not found:" + name);
             return null;
         }
-        return this._state.addAnimation(trackIndex, animation, loop, delay);
+        return this._state.addAnimationWith(trackIndex, animation, loop, delay);
     },
 
     /**
