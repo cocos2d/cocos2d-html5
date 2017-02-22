@@ -73,7 +73,7 @@ proto.start = function(trackEntry) {
         this.startListener(trackEntry);
     }
     if (this.callback) {
-        this.callback.call(this.callbackTarget, this.skeletonNode, trackEntry, animEventType.START, null, 0);
+        this.callback.call(this.callbackTarget, this.skeletonNode, trackEntry, sp.ANIMATION_EVENT_TYPE.START, null, 0);
     }
 };
 
@@ -82,7 +82,7 @@ proto.interrupt = function(trackEntry) {
         this.interruptListener(trackEntry);
     }
     if (this.callback) {
-        this.callback.call(this.callbackTarget, this.skeletonNode, trackEntry, animEventType.INTERRUPT, null, 0);
+        this.callback.call(this.callbackTarget, this.skeletonNode, trackEntry, sp.ANIMATION_EVENT_TYPE.INTERRUPT, null, 0);
     }
 };
 
@@ -91,7 +91,7 @@ proto.end = function (trackEntry) {
         this.endListener(trackEntry);
     }
     if (this.callback) {
-        this.callback.call(this.callbackTarget, this.skeletonNode, trackEntry, animEventType.END, null, 0);
+        this.callback.call(this.callbackTarget, this.skeletonNode, trackEntry, sp.ANIMATION_EVENT_TYPE.END, null, 0);
     }
 };
 
@@ -100,7 +100,7 @@ proto.dispose = function (trackEntry) {
         this.disposeListener(trackEntry);
     }
     if (this.callback) {
-        this.callback.call(this.callbackTarget, this.skeletonNode, trackEntry, animEventType.DISPOSE, null, 0);
+        this.callback.call(this.callbackTarget, this.skeletonNode, trackEntry, sp.ANIMATION_EVENT_TYPE.DISPOSE, null, 0);
     }
 };
 
@@ -110,7 +110,7 @@ proto.complete = function (trackEntry) {
         this.completeListener(trackEntry, loopCount);
     }
     if (this.callback) {
-        this.callback.call(this.callbackTarget, this.skeletonNode, trackEntry, animEventType.COMPLETE, null, loopCount);
+        this.callback.call(this.callbackTarget, this.skeletonNode, trackEntry, sp.ANIMATION_EVENT_TYPE.COMPLETE, null, loopCount);
     }
 };
 
@@ -119,7 +119,7 @@ proto.event = function (trackEntry, event) {
         this.eventListener(trackEntry, event);
     }
     if (this.callback) {
-        this.callback.call(this.callbackTarget, this.skeletonNode, trackEntry, animEventType.EVENT, event, 0);
+        this.callback.call(this.callbackTarget, this.skeletonNode, trackEntry, sp.ANIMATION_EVENT_TYPE.EVENT, event, 0);
     }
 };
 
