@@ -1051,6 +1051,7 @@ var spine;
 					}
 				}
 				this.queueEvents(current, animationTime);
+				events.length = 0;
 				current.nextAnimationLast = animationTime;
 				current.nextTrackLast = current.trackTime;
 			}
@@ -1094,7 +1095,9 @@ var spine;
 					timeline.apply(skeleton, animationLast, animationTime, events, alpha, setupPose, true);
 				}
 			}
+			if (entry.mixDuration > 0)
 			this.queueEvents(from, animationTime);
+			this.events.length = 0;
 			from.nextAnimationLast = animationTime;
 			from.nextTrackLast = from.trackTime;
 			return mix;
@@ -1182,7 +1185,6 @@ var spine;
 					continue;
 				this.queue.event(entry, events[i]);
 			}
-			this.events.length = 0;
 		};
 		AnimationState.prototype.clearTracks = function () {
 			this.queue.drainDisabled = true;
@@ -1221,7 +1223,7 @@ var spine;
 				current.mixingFrom = from;
 				current.mixTime = 0;
 				from.timelinesRotation.length = 0;
-				if (from.mixingFrom != null)
+				if (from.mixingFrom != null && from.mixDuration > 0)
 					current.mixAlpha *= Math.min(from.mixTime / from.mixDuration, 1);
 			}
 			this.queue.start(current);
@@ -1333,7 +1335,7 @@ var spine;
 			entry.trackTime = 0;
 			entry.trackLast = -1;
 			entry.nextTrackLast = -1;
-			entry.trackEnd = loop ? Number.MAX_VALUE : entry.animationEnd;
+			entry.trackEnd = Number.MAX_VALUE;
 			entry.timeScale = 1;
 			entry.alpha = 1;
 			entry.mixAlpha = 1;
