@@ -263,13 +263,6 @@ cc.LABELATLAS_DEBUG_DRAW = 0;
 cc.DRAWNODE_TOTAL_VERTICES = 20000;
 
 /**
- * Whether or not support retina display
- * @constant
- * @type {Number}
- */
-cc.IS_RETINA_DISPLAY_SUPPORTED = 1;
-
-/**
  * Default engine
  * @constant
  * @type {String}
