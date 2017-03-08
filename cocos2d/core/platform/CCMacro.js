@@ -244,10 +244,8 @@ cc.FLT_EPSILON = 0.0000001192092896;
  * @return {Number}
  * @function
  */
-cc.contentScaleFactor = cc.IS_RETINA_DISPLAY_SUPPORTED ? function () {
+cc.contentScaleFactor = function () {
     return cc.director._contentScaleFactor;
-} : function () {
-    return 1;
 };
 
 /**
@@ -312,12 +310,10 @@ cc._sizePixelsToPointsOut = function (sizeInPixels, outSize) {
  * @return {cc.Rect}
  * @function
  */
-cc.rectPixelsToPoints = cc.IS_RETINA_DISPLAY_SUPPORTED ? function (pixel) {
+cc.rectPixelsToPoints = function (pixel) {
     var scale = cc.contentScaleFactor();
     return cc.rect(pixel.x / scale, pixel.y / scale,
         pixel.width / scale, pixel.height / scale);
-} : function (p) {
-    return p;
 };
 
 /**
@@ -326,12 +322,10 @@ cc.rectPixelsToPoints = cc.IS_RETINA_DISPLAY_SUPPORTED ? function (pixel) {
  * @return {cc.Rect}
  * @function
  */
-cc.rectPointsToPixels = cc.IS_RETINA_DISPLAY_SUPPORTED ? function (point) {
+cc.rectPointsToPixels = function (point) {
    var scale = cc.contentScaleFactor();
     return cc.rect(point.x * scale, point.y * scale,
         point.width * scale, point.height * scale);
-} : function (p) {
-    return p;
 };
 
 //some gl constant variable
