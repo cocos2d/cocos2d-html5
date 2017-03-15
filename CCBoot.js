@@ -916,6 +916,7 @@ cc.loader = (function () {
 
             var self = this;
             var errorCallback = function () {
+                this.removeEventListener('load', loadCallback, false);
                 this.removeEventListener('error', errorCallback, false);
 
                 if (img.crossOrigin && img.crossOrigin.toLowerCase() === "anonymous") {
@@ -1757,7 +1758,7 @@ var _initSys = function () {
     sys.browserVersion = "";
     /* Determine the browser version number */
     (function(){
-        var versionReg1 = /(micromessenger|qq|mx|maxthon|baidu|sogou)(mobile)?(browser)?\/?([\d.]+)/i;
+        var versionReg1 = /(micromessenger|mqqbrowser|qq|maxthon|baidu|sogou)(mobile)?(browser)?\/?([\d.]+)/i;
         var versionReg2 = /(msie |rv:|firefox|chrome|ucbrowser|oupeng|opera|opr|safari|miui)(mobile)?(browser)?\/?([\d.]+)/i;
         var tmp = ua.match(versionReg1);
         if(!tmp) tmp = ua.match(versionReg2);
@@ -1844,7 +1845,7 @@ var _initSys = function () {
         var tmpCanvas = document.createElement("CANVAS");
         try{
             var context = cc.create3DContext(tmpCanvas);
-            if (context && context.getShaderPrecisionFormat) {
+            if (context) {
                 _supportWebGL = true;
             }
 
@@ -2330,6 +2331,7 @@ cc.game = /** @lends cc.game# */{
         config[CONFIG_KEY.frameRate] = frameRate;
         if (self._intervalId)
             window.cancelAnimationFrame(self._intervalId);
+        self._intervalId = 0;
         self._paused = true;
         self._setAnimFrame();
         self._runMainLoop();
@@ -2512,8 +2514,9 @@ cc.game = /** @lends cc.game# */{
 //  @Time ticker section
     _setAnimFrame: function () {
         this._lastTime = new Date();
-        this._frameTime = 1000 / cc.game.config[cc.game.CONFIG_KEY.frameRate];
-        if ((cc.sys.os === cc.sys.OS_IOS && cc.sys.browserType === cc.sys.BROWSER_TYPE_WECHAT) || cc.game.config[cc.game.CONFIG_KEY.frameRate] !== 60) {
+        var frameRate = cc.game.config[cc.game.CONFIG_KEY.frameRate];
+        this._frameTime = 1000 / frameRate;
+        if (frameRate !== 60 && frameRate !== 30) {
             window.requestAnimFrame = this._stTime;
             window.cancelAnimationFrame = this._ctTime;
         }
@@ -2551,20 +2554,26 @@ cc.game = /** @lends cc.game# */{
     //Run game.
     _runMainLoop: function () {
         var self = this, callback, config = self.config, CONFIG_KEY = self.CONFIG_KEY,
-            director = cc.director;
+            director = cc.director,
+            skip = true, frameRate = config[CONFIG_KEY.frameRate];
 
         director.setDisplayStats(config[CONFIG_KEY.showFPS]);
 
         callback = function () {
             if (!self._paused) {
+                if (frameRate === 30) {
+                    if (skip = !skip) {
+                        self._intervalId = window.requestAnimFrame(callback);
+                        return;
+                    }
+                }
+
                 director.mainLoop();
-                if (self._intervalId)
-                    window.cancelAnimationFrame(self._intervalId);
                 self._intervalId = window.requestAnimFrame(callback);
             }
         };
 
-        window.requestAnimFrame(callback);
+        self._intervalId = window.requestAnimFrame(callback);
         self._paused = false;
     },
 

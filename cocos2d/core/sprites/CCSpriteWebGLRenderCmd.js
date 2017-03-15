@@ -235,10 +235,12 @@
             node._texture = texture;
 
             // Update texture rect and blend func
-            var texSize = texture._contentSize;
-            var rect = cc.rect(0, 0, texSize.width, texSize.height);
-            node.setTextureRect(rect);
-            this._updateBlendFunc();
+            if (texture) {
+                var texSize = texture._contentSize;
+                var rect = cc.rect(0, 0, texSize.width, texSize.height);
+                node.setTextureRect(rect);
+                this._updateBlendFunc();
+            }
 
             if (node._textureLoaded) {
                 // Force refresh the render command list

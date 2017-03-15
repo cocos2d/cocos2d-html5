@@ -510,5 +510,7 @@ cc.pAddIn = function(v1, v2) {
  * @param {cc.Point} v
  */
 cc.pNormalizeIn = function(v) {
-    cc.pMultIn(v, 1.0 / Math.sqrt(v.x * v.x + v.y * v.y));
+    var n = Math.sqrt(v.x * v.x + v.y * v.y);
+    if (n !== 0)
+        cc.pMultIn(v, 1.0 / n);
 };

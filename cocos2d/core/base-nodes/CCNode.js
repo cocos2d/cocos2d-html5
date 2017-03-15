@@ -2015,7 +2015,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     updateTransform: function () {
         var children = this._children, node;
         for (var i = 0; i < children.length; i++) {
-            varnode = children[i];
+            var node = children[i];
             if (node)
                 node.updateTransform();
         }

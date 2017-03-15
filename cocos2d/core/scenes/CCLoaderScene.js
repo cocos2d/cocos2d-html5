@@ -33,6 +33,7 @@
 cc.LoaderScene = cc.Scene.extend({
     _interval : null,
     _label : null,
+    _logo : null,
     _className:"LoaderScene",
     cb: null,
     target: null,
@@ -132,7 +133,7 @@ cc.LoaderScene = cc.Scene.extend({
         this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
         this._bgLayer._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
         this._label._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
-        this._logo._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
+        this._logo && this._logo._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
     }
 });
 /**

@@ -570,7 +570,7 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
                         // Copy old data
                         if (prev !== 0 && prevOffset !== offset) {
                             // offset is in byte, we need to transform to float32 index
-                            var last = (prevOffset + prev) / 4;
+                            var last = prevOffset / 4 + prev * FLOAT_PER_VERTEX;
                             for (var i = offset / 4, j = prevOffset / 4; j < last; i++, j++) {
                                 _sharedBuffer.dataArray[i] = _sharedBuffer.dataArray[j];
                             }
