@@ -916,6 +916,7 @@ cc.loader = (function () {
 
             var self = this;
             var errorCallback = function () {
+                this.removeEventListener('load', loadCallback, false);
                 this.removeEventListener('error', errorCallback, false);
 
                 if (img.crossOrigin && img.crossOrigin.toLowerCase() === "anonymous") {
@@ -1757,7 +1758,7 @@ var _initSys = function () {
     sys.browserVersion = "";
     /* Determine the browser version number */
     (function(){
-        var versionReg1 = /(micromessenger|qq|mx|maxthon|baidu|sogou)(mobile)?(browser)?\/?([\d.]+)/i;
+        var versionReg1 = /(micromessenger|mqqbrowser|qq|maxthon|baidu|sogou)(mobile)?(browser)?\/?([\d.]+)/i;
         var versionReg2 = /(msie |rv:|firefox|chrome|ucbrowser|oupeng|opera|opr|safari|miui)(mobile)?(browser)?\/?([\d.]+)/i;
         var tmp = ua.match(versionReg1);
         if(!tmp) tmp = ua.match(versionReg2);
@@ -1844,7 +1845,7 @@ var _initSys = function () {
         var tmpCanvas = document.createElement("CANVAS");
         try{
             var context = cc.create3DContext(tmpCanvas);
-            if (context && context.getShaderPrecisionFormat) {
+            if (context) {
                 _supportWebGL = true;
             }
 
