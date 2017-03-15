@@ -67,7 +67,7 @@ ccui.linearVerticalLayoutManager = /** @lends ccui.linearVerticalLayoutManager# 
             }
 
             if (layout.getAlignment() == ccui.Layout.ALIGN_CENTER) {
-                topBoundary = (layoutSize.height - usedHeight) / 2 + usedHeight;
+                topBoundary = (layoutSize.height + usedHeight) / 2;
             } else {
                 topBoundary = usedHeight;
             }
