@@ -1078,18 +1078,18 @@
      * @returns {ccui.TextBMFont}
      */
     parser.initTextBMFont = function (json, resourcePath) {
-
         var widget = new ccui.TextBMFont();
         this.widgetAttributes(widget, json);
-
-        var text = json["LabelText"];
-        widget.setString(text);
 
         loadTexture(json["LabelBMFontFile_CNB"], resourcePath, function (path, type) {
             if (!cc.loader.getRes(path))
                 cc.log("%s need to be pre loaded", path);
             widget.setFntFile(path);
         });
+
+        var text = json["LabelText"];
+        widget.setString(text);
+
         widget.ignoreContentAdaptWithSize(true);
         return widget;
     };

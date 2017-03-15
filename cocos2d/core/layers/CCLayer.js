@@ -247,7 +247,7 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
         return true;
     },
 
-    visit: function () {
+    visit: function (parent) {
         // quick return if not visible
         if (!this._visible)
             return;
