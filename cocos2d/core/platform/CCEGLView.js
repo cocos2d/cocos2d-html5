@@ -140,6 +140,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     _resizeCallback: null,
 
     _orientationChanging: true,
+    _resizing: false,
 
     _scaleX: 1,
     _originalScaleX: 1,
@@ -187,8 +188,6 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         _t._viewName = "Cocos2dHTML5";
 
         var sys = cc.sys;
-        _t.enableRetina(sys.os === sys.OS_IOS || sys.os === sys.OS_OSX);
-        _t.enableAutoFullScreen(sys.isMobile && sys.browserType !== sys.BROWSER_TYPE_BAIDU);
         cc.visibleRect && cc.visibleRect.init(_t._visibleRect);
 
         // Setup system default resolution policies
@@ -212,15 +211,29 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
 
         // Check frame size changed or not
         var prevFrameW = view._frameSize.width, prevFrameH = view._frameSize.height, prevRotated = view._isRotated;
-        view._initFrameSize();
+        if (cc.sys.isMobile) {
+            var containerStyle = cc.game.container.style,
+                margin = containerStyle.margin;
+            containerStyle.margin = '0';
+            containerStyle.display = 'none';
+            view._initFrameSize();
+            containerStyle.margin = margin;
+            containerStyle.display = 'block';
+        }
+        else {
+            view._initFrameSize();
+        }
         if (view._isRotated === prevRotated && view._frameSize.width === prevFrameW && view._frameSize.height === prevFrameH)
             return;
 
         // Frame size changed, do resize works
         var width = view._originalDesignResolutionSize.width;
         var height = view._originalDesignResolutionSize.height;
-        if (width > 0)
+        view._resizing = true;
+        if (width > 0) {
             view.setDesignResolutionSize(width, height, view._resolutionPolicy);
+        }
+        view._resizing = false;
 
         cc.eventManager.dispatchCustomEvent('canvas-resize');
         if (view._resizeCallback) {
@@ -347,9 +360,11 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
             cc.container.style.transformOrigin = '0px 0px 0px';
             this._isRotated = true;
         }
-        setTimeout(function () {
-            cc.view._orientationChanging = false;
-        }, 1000);
+        if (this._orientationChanging) {
+            setTimeout(function () {
+                cc.view._orientationChanging = false;
+            }, 1000);
+        }
     },
 
     // hack
@@ -480,12 +495,6 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
      */
     isAutoFullScreenEnabled: function () {
         return this._autoFullScreen;
-    },
-
-    /**
-     * Force destroying EGL view, subclass must implement this method.
-     */
-    end: function () {
     },
 
     /**
@@ -688,7 +697,8 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
 
         // Permit to re-detect the orientation of device.
         this._orientationChanging = true;
-        this._initFrameSize();
+        if (!this._resizing)
+            this._initFrameSize();
 
         if (!policy) {
             cc.log(cc._LogInfos.EGLView_setDesignResolutionSize_2);
@@ -771,8 +781,10 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         this._setViewportMeta({"width": width}, true);
 
         // Set body width to the exact pixel resolution
-        document.documentElement.style.width = width + 'px';
-        document.body.style.width = "100%";
+        document.documentElement.style.width = width + "px";
+        document.body.style.width = width + "px";
+        document.body.style.left = "0px";
+        document.body.style.top = "0px";
 
         // Reset the resolution size and policy
         this.setDesignResolutionSize(width, height, resolutionPolicy);
@@ -985,7 +997,7 @@ cc.ContainerStrategy = cc.Class.extend(/** @lends cc.ContainerStrategy# */{
 
     _setupContainer: function (view, w, h) {
         var locCanvas = cc.game.canvas, locContainer = cc.game.container;
-        if (cc.sys.isMobile) {
+        if (cc.sys.os === cc.sys.OS_ANDROID) {
             document.body.style.width = (view._isRotated ? h : w) + 'px';
             document.body.style.height = (view._isRotated ? w : h) + 'px';
         }
