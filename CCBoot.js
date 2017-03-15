@@ -2677,7 +2677,7 @@ cc.game = /** @lends cc.game# */{
             this._renderContext = cc._renderContext = cc.webglContext
              = cc.create3DContext(localCanvas, {
                 'stencil': true,
-                'alpha': false
+                'alpha': true
             });
         }
         // WebGL context created successfully
