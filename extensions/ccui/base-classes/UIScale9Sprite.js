@@ -1,3 +1,5 @@
+/* global ccui */
+
 /****************************************************************************
  Copyright (c) 2008-2010 Ricardo Quesada
  Copyright (c) 2011-2012 cocos2d-x.org
@@ -367,6 +369,7 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
     _uvsDirty: true,
     _isTriangle: false,
     _isTrimmedContentSize: false,
+    _textureLoaded: false,
 
     //v3.3
     _flippedX: false,
@@ -412,6 +415,10 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
         if (webgl === undefined) {
             webgl = cc._renderType === cc.game.RENDER_TYPE_WEBGL;
         }
+    },
+
+    textureLoaded: function () {
+        return this._textureLoaded;
     },
 
     getCapInsets: function () {
@@ -477,6 +484,7 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
         }
 
         var locLoaded = texture.isLoaded();
+        this._textureLoaded = locLoaded;
         this._loader.clear();
         if (!locLoaded) {
             this._loader.once(texture, function () {
@@ -608,10 +616,12 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
                 if (cc.sizeEqualToSize(self._contentSize, cc.size(0, 0))) {
                     self.setContentSize(self._spriteFrame._rect);
                 }
+                self._textureLoaded = true;
                 self._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.contentDirty);
                 cc.renderer.childrenOrderDirty = true;
             };
-            if (spriteFrame.textureLoaded()) {
+            self._textureLoaded = spriteFrame.textureLoaded();
+            if (self._textureLoaded) {
                 onResourceDataLoaded();
             } else {
                 this._loader.clear();
