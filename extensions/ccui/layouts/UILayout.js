@@ -147,7 +147,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
 
         var stencilClipping = this._clippingEnabled && this._clippingType === ccui.Layout.CLIPPING_STENCIL;
         var scissorClipping = this._clippingEnabled && this._clippingType === ccui.Layout.CLIPPING_SCISSOR;
-        
+
         if (stencilClipping) {
             cmd.stencilClippingVisit(parentCmd);
         }
@@ -1435,6 +1435,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      */
     setAlignment: function (alignment) {
         this._alignment = alignment;
+        this._doLayoutDirty = true;
     },
 
     /**
