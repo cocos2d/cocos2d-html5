@@ -235,10 +235,10 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 
     /**
      * clears the texture with a color
-     * @param {Number|cc.Rect} r red 0-1
-     * @param {Number} g green 0-1
-     * @param {Number} b blue 0-1
-     * @param {Number} a alpha 0-1
+     * @param {Number|cc.Rect} r red 0-255
+     * @param {Number} g green 0-255
+     * @param {Number} b blue 0-255
+     * @param {Number} a alpha 0-255
      */
     clear: function (r, g, b, a) {
         this.beginWithClear(r, g, b, a);
