@@ -194,6 +194,9 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         } else {
             view = cc.view;
         }
+        if (view._orientationChanging) {
+            return;
+        }
 
         // Check frame size changed or not
         var prevFrameW = view._frameSize.width, prevFrameH = view._frameSize.height, prevRotated = view._isRotated;
@@ -229,7 +232,13 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
 
     _orientationChange: function () {
         cc.view._orientationChanging = true;
-        cc.view._resizeEvent();
+        if (cc.sys.isMobile) {
+            cc.game.container.style.display = "none";
+        }
+        setTimeout(function () {
+            cc.view._orientationChanging = false;
+            cc.view._resizeEvent();
+        }, 300);
     },
 
     /**
@@ -347,11 +356,6 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
             cc.container.style['-webkit-transform-origin'] = '0px 0px 0px';
             cc.container.style.transformOrigin = '0px 0px 0px';
             this._isRotated = true;
-        }
-        if (this._orientationChanging) {
-            setTimeout(function () {
-                cc.view._orientationChanging = false;
-            }, 1000);
         }
     },
 
@@ -676,8 +680,6 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         if (cc.sys.isMobile)
             this._adjustViewportMeta();
 
-        // Permit to re-detect the orientation of device.
-        this._orientationChanging = true;
         // If resizing, then frame size is already initialized, this logic should be improved
         if (!this._resizing)
             this._initFrameSize();
