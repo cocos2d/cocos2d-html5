@@ -523,12 +523,17 @@ cc.MenuItemFont = cc.MenuItemLabel.extend(/** @lends cc.MenuItemFont# */{
      */
     ctor: function (value, callback, target) {
         var label;
-        if (value && value.length > 0) {
-            this._fontName = cc._globalFontName;
-            this._fontSize = cc._globalFontSize;
-            label = new cc.LabelTTF(value, this._fontName, this._fontSize);
-        }
-        else {
+        if (value) {
+	        		if(typeof value === "string"){
+		        		if(value.length>0){
+	        				this._fontName = cc._globalFontName;
+	        				this._fontSize = cc._globalFontSize;
+		        			label = new cc.LabelTTF(value, this._fontName, this._fontSize);
+		        		}
+		        	}else{
+		        		label=value;
+	        		}
+        } else {
             this._fontSize = 0;
             this._fontName = "";
         }
