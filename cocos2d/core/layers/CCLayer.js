@@ -75,12 +75,16 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     },
 
     visit: function (parent) {
-        // quick return if not visible
-        if (!this._visible)
-            return;
+        var cmd = this._renderCmd, parentCmd = parent ? parent._renderCmd : null;
 
-        var renderer = cc.renderer, cmd = this._renderCmd;
-        cmd.visit(parent && parent._renderCmd);
+        // quick return if not visible
+        if (!this._visible) {
+            cmd._propagateFlagsDown(parentCmd);
+            return;
+        }
+
+        var renderer = cc.renderer;
+        cmd.visit(parentCmd);
 
         if (cmd._isBaked) {
             renderer.pushRenderCommand(cmd);
@@ -248,12 +252,16 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
     },
 
     visit: function (parent) {
-        // quick return if not visible
-        if (!this._visible)
-            return;
+        var cmd = this._renderCmd, parentCmd = parent ? parent._renderCmd : null;
 
-        var renderer = cc.renderer, cmd = this._renderCmd;
-        cmd.visit(parent && parent._renderCmd);
+        // quick return if not visible
+        if (!this._visible) {
+            cmd._propagateFlagsDown(parentCmd);
+            return;
+        }
+
+        var renderer = cc.renderer;
+        cmd.visit(parentCmd);
 
         if (cmd._isBaked) {
             renderer.pushRenderCommand(cmd._bakeRenderCmd);

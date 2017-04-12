@@ -442,6 +442,22 @@ cc.Node.RenderCmd.prototype = {
     _updateColor: function () {
     },
 
+    _propagateFlagsDown: function (parentCmd) {
+        var locFlag = this._dirtyFlag;
+        var parentNode = parentCmd ? parentCmd._node : null;
+
+        if(parentNode && parentNode._cascadeColorEnabled && (parentCmd._dirtyFlag & dirtyFlags.colorDirty))
+            locFlag |= dirtyFlags.colorDirty;
+
+        if(parentNode && parentNode._cascadeOpacityEnabled && (parentCmd._dirtyFlag & dirtyFlags.opacityDirty))
+            locFlag |= dirtyFlags.opacityDirty;
+
+        if(parentCmd && (parentCmd._dirtyFlag & dirtyFlags.transformDirty))
+            locFlag |= dirtyFlags.transformDirty;
+
+        this._dirtyFlag = locFlag;
+    },
+
     updateStatus: function () {
         var locFlag = this._dirtyFlag;
         var colorDirty = locFlag & dirtyFlags.colorDirty,

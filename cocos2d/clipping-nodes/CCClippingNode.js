@@ -128,9 +128,6 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
     },
 
     visit: function (parent) {
-        if (!this._visible)
-            return;
-
         this._renderCmd.clippingVisit(parent && parent._renderCmd);
     },
 
