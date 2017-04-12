@@ -26,11 +26,11 @@ cc.LabelTTF.wrapInspection = true;
 
 //Support: English French German
 //Other as Oriental Language
-cc.LabelTTF._wordRex = /([a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]+|\S)/;
+cc.LabelTTF._wordRex = /(\S+)/;
 cc.LabelTTF._symbolRex = /^[!,.:;}\]%\?>、‘“》？。，！]/;
-cc.LabelTTF._lastWordRex = /([a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]+|\S)$/;
-cc.LabelTTF._lastEnglish = /[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]+$/;
-cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
+cc.LabelTTF._lastWordRex = /(\S+)$/;
+cc.LabelTTF._lastEnglish = /\S+$/;
+cc.LabelTTF._firsrEnglish = /^\S/;
 
 (function () {
     cc.LabelTTF.RenderCmd = function () {
