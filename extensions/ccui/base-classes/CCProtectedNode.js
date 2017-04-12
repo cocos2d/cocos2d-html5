@@ -47,15 +47,19 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
     },
 
     visit: function (parent) {
-        // quick return if not visible
-        if (!this._visible)
-            return;
+        var cmd = this._renderCmd, parentCmd = parent ? parent._renderCmd : null;
 
-        var renderer = cc.renderer, cmd = this._renderCmd;
+        // quick return if not visible
+        if (!this._visible) {
+            cmd._propagateFlagsDown(parentCmd);
+            return;
+        }
+
+        var renderer = cc.renderer;
         var i, children = this._children, len = children.length, child;
         var j, pChildren = this._protectedChildren, pLen = pChildren.length, pChild;
 
-        cmd.visit(parent && parent._renderCmd);
+        cmd.visit(parentCmd);
 
         var locGrid = this.grid;
         if (locGrid && locGrid._active)

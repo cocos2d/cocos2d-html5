@@ -37,7 +37,7 @@ cc.Color = function (r, g, b, a) {
     r = r || 0;
     g = g || 0;
     b = b || 0;
-    a = a || 0;
+    a = typeof a === 'number' ? a : 255;
     this._val = ((r << 24) >>> 0) + (g << 16) + (b << 8) + a;
 };
 

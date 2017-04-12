@@ -145,10 +145,14 @@ ccs.SkeletonNode = (function () {
         },
 
         _visit: function (parentCmd) {
-            if (!this._visible)
-                return;
             var cmd = this._renderCmd;
             parentCmd = parentCmd || cmd.getParentRenderCmd();
+
+            // quick return if not visible
+            if (!this._visible) {
+                cmd._propagateFlagsDown(parentCmd);
+                return;
+            }
             cmd._syncStatus(parentCmd);
 
             var i, node;

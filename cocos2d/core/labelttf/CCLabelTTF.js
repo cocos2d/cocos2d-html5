@@ -826,7 +826,11 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         _t._rectRotated = rotated || false;
         _t.setContentSize(untrimmedSize || rect);
 
-        _t.setVertexRect(rect);
+        var locRect = _t._rect;
+        locRect.x = rect.x;
+        locRect.y = rect.y;
+        locRect.width = rect.width;
+        locRect.height = rect.height;
         _t._renderCmd._setTextureCoords(rect, false);
 
         var relativeOffsetX = _t._unflippedOffsetPositionFromCenter.x, relativeOffsetY = _t._unflippedOffsetPositionFromCenter.y;
@@ -834,7 +838,6 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             relativeOffsetX = -relativeOffsetX;
         if (_t._flippedY)
             relativeOffsetY = -relativeOffsetY;
-        var locRect = _t._rect;
         _t._offsetPosition.x = relativeOffsetX + (rect.width - locRect.width) / 2;
         _t._offsetPosition.y = relativeOffsetY + (rect.height - locRect.height) / 2;
     },

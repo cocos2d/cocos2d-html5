@@ -166,12 +166,16 @@ cc.ScrollView = cc.Layer.extend(/** @lends cc.ScrollView# */{
     },
 
     visit: function (parent) {
+        var cmd = this._renderCmd, parentCmd = parent ? parent._renderCmd : null;
+
+        // quick return if not visible
         if (!this._visible) {
+            cmd._propagateFlagsDown(parentCmd);
             return;
         }
 
-        var renderer = cc.renderer, cmd = this._renderCmd;
-        cmd.visit(parent && parent._renderCmd);
+        var renderer = cc.renderer;
+        cmd.visit(parentCmd);
 
         if (this._clippingToBounds) {
             renderer.pushRenderCommand(cmd.startCmd);

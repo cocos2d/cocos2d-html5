@@ -124,14 +124,18 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     },
 
     visit: function (parent) {
-        if (!this._visible)
+        var cmd = this._renderCmd, parentCmd = parent ? parent._renderCmd : null;
+
+        // quick return if not visible
+        if (!this._visible) {
+            cmd._propagateFlagsDown(parentCmd);
             return;
+        }
 
         this._adaptRenderers();
         this._doLayout();
 
-        var renderer = cc.renderer, cmd = this._renderCmd;
-        var parentCmd = parent && parent._renderCmd;
+        var renderer = cc.renderer;
         cmd.visit(parentCmd);
         
         renderer.pushRenderCommand(cmd);
