@@ -222,22 +222,20 @@ cc.inject({
             } else {//advanced usage
                 if (this._useDelay) {
                     if (this._elapsed >= this._delay) {
+                        this._timesExecuted += 1;  // important to increment before call trigger
                         this.trigger();
-
                         this._elapsed -= this._delay;
-                        this._timesExecuted += 1;
                         this._useDelay = false;
                     }
                 } else {
                     if (this._elapsed >= this._interval) {
+                        this._timesExecuted += 1;  // important to increment before call trigger
                         this.trigger();
-
                         this._elapsed = 0;
-                        this._timesExecuted += 1;
                     }
                 }
 
-                if (this._callback && !this._runForever && this._timesExecuted > this._repeat)
+                if (this._callback && this.isExhausted())
                     this.cancel();
             }
         }
@@ -260,6 +258,10 @@ cc.inject({
     cancel: function () {
         //override
         this._scheduler.unschedule(this._callback, this._target);
+    },
+
+    isExhausted: function () {
+        return !this._runForever && this._timesExecuted > this._repeat;
     }
 }, CallbackTimer.prototype);
 
@@ -609,7 +611,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
         } else {
             for (i = 0; i < element.timers.length; i++) {
                 timer = element.timers[i];
-                if (callback === timer._callback) {
+                if (!timer.isExhausted() && callback === timer._callback) {
                     cc.log(cc._LogInfos.Scheduler_scheduleCallbackForTarget, timer.getInterval().toFixed(4), interval.toFixed(4));
                     timer._interval = interval;
                     return;
