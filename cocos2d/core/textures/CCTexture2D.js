@@ -189,6 +189,7 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
              * handle loaded texture
              */
             handleLoadedTexture: function () {
+            try {
                 var self = this;
                 if (self._textureLoaded) return;
                 if (!self._htmlElementObj) {
@@ -203,6 +204,7 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
 
                 //dispatch load event to listener.
                 self.dispatchEvent("load");
+            } catch(err) { console.warn("Texture load error", err); }
             },
 
             /**
