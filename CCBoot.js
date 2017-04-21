@@ -2669,7 +2669,7 @@ cc.game = /** @lends cc.game# */{
             }
             width = width || element.clientWidth;
             height = height || element.clientHeight;
-            this.canvas = cc._canvas = localCanvas = document.createElement("CANVAS");
+            this.canvas = cc._canvas = localCanvas = cc.$(document.createElement("CANVAS"));
             this.container = cc.container = localContainer = document.createElement("DIV");
             element.appendChild(localContainer);
         }
