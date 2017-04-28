@@ -256,7 +256,8 @@
         var viewPortRectHeightRatio = viewport.height / this._fullRect.height;
         viewport.x = (this._fullRect.x - this._rtTextureRect.x) * viewPortRectWidthRatio;
         viewport.y = (this._fullRect.y - this._rtTextureRect.y) * viewPortRectHeightRatio;
-        gl.viewport(viewport.x, viewport.y, viewport.width, viewport.height);
+        var locScaleFactor = cc.contentScaleFactor();
+        gl.viewport(viewport.x, viewport.y, viewport.width * locScaleFactor, viewport.height * locScaleFactor);
 
         this._oldFBO = gl.getParameter(gl.FRAMEBUFFER_BINDING);
         gl.bindFramebuffer(gl.FRAMEBUFFER, this._fBO);//Will direct drawing to the frame buffer created above
