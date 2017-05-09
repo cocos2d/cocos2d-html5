@@ -258,8 +258,8 @@ cc.eventManager = /** @lends cc.eventManager# */{
 
             if (!this._inDispatch) {
                 listeners.clear();
-                delete this._listenersMap[listenerID];
             }
+            delete this._listenersMap[listenerID];
         }
 
         var locToAddedListeners = this._toAddedListeners, listener;
@@ -751,8 +751,8 @@ cc.eventManager = /** @lends cc.eventManager# */{
      * @param {function} callback
      * @return {cc.EventListener} the generated event. Needed in order to remove the event from the dispatcher
      */
-    addCustomListener: function (eventName, callback) {
-        var listener = new cc._EventListenerCustom(eventName, callback);
+    addCustomListener: function (eventName, callback, target) {
+        var listener = new cc._EventListenerCustom(eventName, callback, target);
         this.addListener(listener, 1);
         return listener;
     },
