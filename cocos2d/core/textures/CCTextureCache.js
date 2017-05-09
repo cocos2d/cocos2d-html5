@@ -279,11 +279,11 @@ cc.textureCache = /** @lends cc.textureCache# */{
             var selTexture = locTextures[key];
             count++;
             if (selTexture.getHtmlElementObj() instanceof  HTMLImageElement)
-                cc.log(cc._LogInfos.textureCache_dumpCachedTextureInfo, key, selTexture.getHtmlElementObj().src, selTexture.pixelsWidth, selTexture.pixelsHeight);
+                cc.log(cc._LogInfos.textureCache_dumpCachedTextureInfo, key, selTexture.getHtmlElementObj().src, selTexture.getPixelsWide(), selTexture.getPixelsHigh());
             else {
-                cc.log(cc._LogInfos.textureCache_dumpCachedTextureInfo_2, key, selTexture.pixelsWidth, selTexture.pixelsHeight);
+                cc.log(cc._LogInfos.textureCache_dumpCachedTextureInfo_2, key, selTexture.getPixelsWide(), selTexture.getPixelsHigh());
             }
-            totalBytes += selTexture.pixelsWidth * selTexture.pixelsHeight * 4;
+            totalBytes += selTexture.getPixelsWide() * selTexture.getPixelsHigh() * 4;
         }
 
         var locTextureColorsCache = this._textureColorsCache;
