@@ -192,9 +192,7 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
                 var self = this;
                 if (self._textureLoaded) return;
                 if (!self._htmlElementObj) {
-                    var img = cc.loader.getRes(self.url);
-                    if (!img) return;
-                    self.initWithElement(img);
+                    return;
                 }
 
                 var locElement = self._htmlElementObj;

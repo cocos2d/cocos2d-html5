@@ -313,7 +313,7 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
 
         var _p = cc.textureCache;
 
-        _p.handleLoadedTexture = function (url) {
+        _p.handleLoadedTexture = function (url, img) {
             var locTexs = this._textures;
             //remove judge
             var tex = locTexs[url];
@@ -321,6 +321,7 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
                 tex = locTexs[url] = new cc.Texture2D();
                 tex.url = url;
             }
+            tex.initWithElement(img);
             tex.handleLoadedTexture();
         };
 
@@ -365,12 +366,12 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
                 if (err)
                     return cb && cb.call(target, err);
 
-                if (!cc.loader.cache[url]) {
-                    cc.loader.cache[url] = img;
-                }
-                cc.textureCache.handleLoadedTexture(url);
-
+                cc.textureCache.handleLoadedTexture(url, img);
                 var texResult = locTexs[url];
+                if (!cc.loader.cache[url]) {
+                    cc.loader.cache[url] = texResult;
+                }
+
                 cb && cb.call(target, texResult);
             });
 
