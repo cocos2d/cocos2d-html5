@@ -54,9 +54,13 @@ cc._imgLoader = {
             callback = function (err, img) {
                 if (err)
                     return cb(err);
-                cc.loader.cache[url] = img;
-                cc.textureCache.handleLoadedTexture(url);
-                cb(null, img);
+                
+                var tex = cc.textureCache.getTextureForKey(url) || new cc.Texture2D();
+                tex.url = url;
+                tex.initWithElement(img);
+                tex.handleLoadedTexture();
+                cc.textureCache.cacheImage(url, tex);
+                cb(null, tex);
             };
         }
         cc.loader.loadImg(realUrl, callback);

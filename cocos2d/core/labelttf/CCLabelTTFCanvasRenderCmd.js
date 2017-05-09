@@ -430,7 +430,10 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9\-¿¡«À-ÖØ-öø-ʯ\u0300-\u034e\u03
         if (node._string.length === 0) {
             locLabelCanvas.width = 1;
             locLabelCanvas.height = locContentSize.height || 1;
-            node._texture && node._texture.handleLoadedTexture();
+            if (node._texture) {
+                node._texture._htmlElementObj = this._labelCanvas;
+                node._texture.handleLoadedTexture();
+            }
             node.setTextureRect(cc.rect(0, 0, 1, locContentSize.height));
             return true;
         }
@@ -444,7 +447,10 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9\-¿¡«À-ÖØ-öø-ʯ\u0300-\u034e\u03
         if (flag) locContext.clearRect(0, 0, width, height);
         this._saveStatus();
         this._drawTTFInCanvas(locContext);
-        node._texture && node._texture.handleLoadedTexture();
+        if (node._texture) {
+            node._texture._htmlElementObj = this._labelCanvas;
+            node._texture.handleLoadedTexture();
+        }
         node.setTextureRect(cc.rect(0, 0, width, height));
         return true;
     };
