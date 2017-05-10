@@ -323,6 +323,7 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
             }
             tex.initWithElement(img);
             tex.handleLoadedTexture();
+            return tex;
         };
 
         /**
@@ -366,12 +367,7 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
                 if (err)
                     return cb && cb.call(target, err);
 
-                cc.textureCache.handleLoadedTexture(url, img);
-                var texResult = locTexs[url];
-                if (!cc.loader.cache[url]) {
-                    cc.loader.cache[url] = texResult;
-                }
-
+                var texResult = cc.textureCache.handleLoadedTexture(url, img);
                 cb && cb.call(target, texResult);
             });
 

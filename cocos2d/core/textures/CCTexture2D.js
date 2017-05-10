@@ -227,6 +227,7 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
             },
 
             releaseTexture: function () {
+                this._htmlElementObj = null;
                 cc.loader.release(this.url);
             },
 
