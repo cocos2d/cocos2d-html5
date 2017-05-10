@@ -903,6 +903,12 @@ cc.loader = (function () {
             else if (option !== undefined)
                 callback = option;
 
+            var texture = this.getRes(url);
+            if (texture) {
+                callback && callback(null, texture);
+                return null;
+            }
+
             var queue = _queue[url];
             if (queue) {
                 queue.callbacks.push(callback);

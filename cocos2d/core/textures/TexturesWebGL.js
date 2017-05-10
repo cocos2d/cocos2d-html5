@@ -83,6 +83,7 @@ cc._tmp.WebGLTexture2D = function () {
         releaseTexture: function () {
             if (this._webTextureObj)
                 cc._renderContext.deleteTexture(this._webTextureObj);
+            this._htmlElementObj = null;
             cc.loader.release(this.url);
         },
 
@@ -871,6 +872,7 @@ cc._tmp.WebGLTextureCache = function () {
         else {
             tex.handleLoadedTexture();
         }
+        return tex;
     };
 
     /**
@@ -916,12 +918,7 @@ cc._tmp.WebGLTextureCache = function () {
             if (err)
                 return cb && cb.call(target, err);
 
-            if (!cc.loader.cache[url]) {
-                cc.loader.cache[url] = img;
-            }
-            cc.textureCache.handleLoadedTexture(url);
-
-            var texResult = locTexs[url];
+            var texResult = cc.textureCache.handleLoadedTexture(url, img);
             cb && cb.call(target, texResult);
         });
 
