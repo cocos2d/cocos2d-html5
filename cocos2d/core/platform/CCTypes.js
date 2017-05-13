@@ -794,7 +794,7 @@ cc.hexToColor = function (hex) {
     var r = c >> 16;
     var g = (c >> 8) % 256;
     var b = c % 256;
-    return new cc.Color(r, g, b);
+    return cc.color(r, g, b);
 };
 
 /**
