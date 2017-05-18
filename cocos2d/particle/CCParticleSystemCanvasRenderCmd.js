@@ -195,11 +195,12 @@
     };
     proto._updateDeltaColor = function (selParticle, dt) {
         if (!this._node._dontTint) {
-            selParticle.color.r += selParticle.deltaColor.r * dt;
-            selParticle.color.g += selParticle.deltaColor.g * dt;
-            selParticle.color.b += selParticle.deltaColor.b * dt;
-            selParticle.color.a += selParticle.deltaColor.a * dt;
-            selParticle.isChangeColor = true;
+            var deltaColor = selParticle.deltaColor;
+            selParticle.color.r += deltaColor.r * dt;
+            selParticle.color.g += deltaColor.g * dt;
+            selParticle.color.b += deltaColor.b * dt;
+            selParticle.color.a += deltaColor.a * dt;
+            selParticle.isChangeColor = deltaColor.r !== 0 || deltaColor.g !== 0 || deltaColor.b !== 0;
         }
     };
 })();
