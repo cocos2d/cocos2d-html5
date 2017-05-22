@@ -99,15 +99,12 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
      */
     setString: function (text) {
         if(text === this._labelRenderer.getString()) return;
+        this._setString(text);
 
-        this._labelRenderer.setString(text);
         this._updateContentSizeWithTextureSize(this._labelRenderer.getContentSize());
-        this._labelRendererAdaptDirty = true;
     },
 
     _setString: function (text) {
-        if(text === this._labelRenderer.getString()) return;
-
         this._labelRenderer.setString(text);
         this._labelRendererAdaptDirty = true;
     },
@@ -143,10 +140,8 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
      * @param {Number} size
      */
     setFontSize: function (size) {
-        this._labelRenderer.setFontSize(size);
-        this._fontSize = size;
+        this._setFontSize(size);
         this._updateContentSizeWithTextureSize(this._labelRenderer.getContentSize());
-        this._labelRendererAdaptDirty = true;
     },
 
     _setFontSize: function (size) {
@@ -168,10 +163,8 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
      * @return {String} name
      */
     setFontName: function (name) {
-        this._fontName = name;
-        this._labelRenderer.setFontName(name);
+        this._setFontName(name);
         this._updateContentSizeWithTextureSize(this._labelRenderer.getContentSize());
-        this._labelRendererAdaptDirty = true;
     },
 
     _setFontName: function (name) {
@@ -218,12 +211,8 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
      * @param {cc.Size} size
      */
     setTextAreaSize: function (size) {
-        this._labelRenderer.setDimensions(size);
-        if (!this._ignoreSize) {
-            this._customSize = size;
-        }
+        this._setTextAreaSize(size);
         this._updateContentSizeWithTextureSize(this._labelRenderer.getContentSize());
-        this._labelRendererAdaptDirty = true;
     },
 
     _setTextAreaSize: function (size) {
@@ -247,9 +236,8 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
      * @param {cc.TEXT_ALIGNMENT_LEFT|cc.TEXT_ALIGNMENT_CENTER|cc.TEXT_ALIGNMENT_RIGHT} alignment Horizontal Alignment
      */
     setTextHorizontalAlignment: function (alignment) {
-        this._labelRenderer.setHorizontalAlignment(alignment);
+        this._setTextHorizontalAlignment(alignment);
         this._updateContentSizeWithTextureSize(this._labelRenderer.getContentSize());
-        this._labelRendererAdaptDirty = true;
     },
 
 
@@ -271,9 +259,8 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
      * @param {cc.VERTICAL_TEXT_ALIGNMENT_TOP|cc.VERTICAL_TEXT_ALIGNMENT_CENTER|cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM} alignment
      */
     setTextVerticalAlignment: function (alignment) {
-        this._labelRenderer.setVerticalAlignment(alignment);
+        this._setTextVerticalAlignment(alignment);
         this._updateContentSizeWithTextureSize(this._labelRenderer.getContentSize());
-        this._labelRendererAdaptDirty = true;
     },
 
     _setTextVerticalAlignment: function (alignment) {
@@ -364,7 +351,6 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
     _labelScaleChangedWithSize: function () {
         var locContentSize = this._contentSize;
         if (this._ignoreSize) {
-            this._labelRenderer.setDimensions(0, 0);
             this._labelRenderer.setScale(1.0);
             this._normalScaleValueX = this._normalScaleValueY = 1;
         } else {

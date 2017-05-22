@@ -27,8 +27,6 @@
         for (i = 0, len = locCmds.length; i < len; i++) {
             cmd = locCmds[i];
             checkNode = cmd._node;
-            if (checkNode instanceof ccui.ScrollView)
-                continue;
             if (checkNode && checkNode._parent && checkNode._parent._inViewRect === false)
                 continue;
 

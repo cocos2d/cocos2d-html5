@@ -306,9 +306,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {Number} localZOrder
      */
     setLocalZOrder: function (localZOrder) {
-        this._localZOrder = localZOrder;
         if (this._parent)
             this._parent.reorderChild(this, localZOrder);
+        else
+            this._localZOrder = localZOrder;
         cc.eventManager._setDirtyForNode(this);
     },
 
@@ -1717,7 +1718,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         cc.assert(interval >= 0, cc._LogInfos.Node_schedule_2);
 
         interval = interval || 0;
-        repeat = (repeat == null) ? cc.REPEAT_FOREVER : repeat;
+        repeat = isNaN(repeat) ? cc.REPEAT_FOREVER : repeat;
         delay = delay || 0;
 
         this.scheduler.schedule(callback, this, interval, repeat, delay, !this._running, key);
@@ -2014,7 +2015,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     updateTransform: function () {
         var children = this._children, node;
         for (var i = 0; i < children.length; i++) {
-            varnode = children[i];
+            node = children[i];
             if (node)
                 node.updateTransform();
         }
@@ -2101,12 +2102,16 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {cc.Node} parent
      */
     visit: function (parent) {
-        // quick return if not visible
-        if (!this._visible)
-            return;
+        var cmd = this._renderCmd, parentCmd = parent ? parent._renderCmd : null;
 
-        var renderer = cc.renderer, cmd = this._renderCmd;
-        cmd.visit(parent && parent._renderCmd);
+        // quick return if not visible
+        if (!this._visible) {
+            cmd._propagateFlagsDown(parentCmd);
+            return;
+        }
+
+        var renderer = cc.renderer;
+        cmd.visit(parentCmd);
 
         var i, children = this._children, len = children.length, child;
         if (len > 0) {

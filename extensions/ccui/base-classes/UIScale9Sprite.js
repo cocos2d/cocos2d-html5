@@ -1,3 +1,5 @@
+/* global ccui */
+
 /****************************************************************************
  Copyright (c) 2008-2010 Ricardo Quesada
  Copyright (c) 2011-2012 cocos2d-x.org
@@ -136,6 +138,7 @@ var simpleQuadGenerator = {
         var atlasWidth = spriteFrame._texture._pixelsWide;
         var atlasHeight = spriteFrame._texture._pixelsHigh;
         var textureRect = spriteFrame._rect;
+        textureRect = cc.rectPointsToPixels(textureRect);
 
         if (uvs.length < 8) {
             dataPool.put(uvs);
@@ -254,12 +257,15 @@ var scale9QuadGenerator = {
         var leftWidth, centerWidth, rightWidth;
         var topHeight, centerHeight, bottomHeight;
         var textureRect = spriteFrame._rect;
+        textureRect = cc.rectPointsToPixels(textureRect);
+        rect = cc.rectPointsToPixels(rect);
+        var scale = cc.contentScaleFactor();
 
-        leftWidth = insetLeft;
-        rightWidth = insetRight;
+        leftWidth = insetLeft * scale;
+        rightWidth = insetRight * scale;
         centerWidth = rect.width - leftWidth - rightWidth;
-        topHeight = insetTop;
-        bottomHeight = insetBottom;
+        topHeight = insetTop * scale;
+        bottomHeight = insetBottom * scale;
         centerHeight = rect.height - topHeight - bottomHeight;
 
         if (uvs.length < 32) {
@@ -363,10 +369,12 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
     _uvsDirty: true,
     _isTriangle: false,
     _isTrimmedContentSize: false,
+    _textureLoaded: false,
 
     //v3.3
     _flippedX: false,
     _flippedY: false,
+    _className: "Scale9Sprite",
 
     /**
      * Constructor function.
@@ -407,6 +415,10 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
         if (webgl === undefined) {
             webgl = cc._renderType === cc.game.RENDER_TYPE_WEBGL;
         }
+    },
+
+    textureLoaded: function () {
+        return this._textureLoaded;
     },
 
     getCapInsets: function () {
@@ -472,6 +484,7 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
         }
 
         var locLoaded = texture.isLoaded();
+        this._textureLoaded = locLoaded;
         this._loader.clear();
         if (!locLoaded) {
             this._loader.once(texture, function () {
@@ -603,10 +616,12 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
                 if (cc.sizeEqualToSize(self._contentSize, cc.size(0, 0))) {
                     self.setContentSize(self._spriteFrame._rect);
                 }
+                self._textureLoaded = true;
                 self._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.contentDirty);
                 cc.renderer.childrenOrderDirty = true;
             };
-            if (spriteFrame.textureLoaded()) {
+            self._textureLoaded = spriteFrame.textureLoaded();
+            if (self._textureLoaded) {
                 onResourceDataLoaded();
             } else {
                 this._loader.clear();

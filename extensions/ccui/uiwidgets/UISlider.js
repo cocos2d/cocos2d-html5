@@ -648,6 +648,11 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
         this._slidBallDisabledRenderer.setVisible(false);
 
         this._slidBallNormalRenderer.setScale(this._sliderBallNormalTextureScaleX, this._sliderBallNormalTextureScaleY);
+        if (cc._renderType === cc.game.RENDER_TYPE_WEBGL) {
+            this._slidBallNormalRenderer._renderCmd._shaderProgram = this._getNormalGLProgram();
+        } else {
+            // TODO: add canvas support
+        }
     },
 
     _onPressStateChangedToPressed: function () {
@@ -658,12 +663,24 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
             this._slidBallPressedRenderer.setVisible(true);
             this._slidBallDisabledRenderer.setVisible(false);
         }
+        if (cc._renderType === cc.game.RENDER_TYPE_WEBGL) {
+            this._slidBallNormalRenderer._renderCmd._shaderProgram = this._getNormalGLProgram();
+        } else {
+            // TODO: add canvas support
+        }
     },
 
     _onPressStateChangedToDisabled: function () {
         if (this._slidBallDisabledTextureFile) {
             this._slidBallNormalRenderer.setVisible(false);
             this._slidBallDisabledRenderer.setVisible(true);
+        } else {
+            this._slidBallNormalRenderer.setVisible(true);
+            if (cc._renderType === cc.game.RENDER_TYPE_WEBGL) {
+                this._slidBallNormalRenderer._renderCmd._shaderProgram = this._getGrayGLProgram();
+            } else {
+                // TODO: add canvas support
+            }
         }
         this._slidBallNormalRenderer.setScale(this._sliderBallNormalTextureScaleX, this._sliderBallNormalTextureScaleY);
         this._slidBallPressedRenderer.setVisible(false);

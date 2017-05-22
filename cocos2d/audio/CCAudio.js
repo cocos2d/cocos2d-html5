@@ -83,6 +83,7 @@
  * Encapsulate DOM and webAudio
  */
 cc.Audio = cc.Class.extend({
+    interruptPlay: false,
     src: null,
     _element: null,
     _AUDIO_TYPE: "AUDIO",
@@ -110,7 +111,10 @@ cc.Audio = cc.Class.extend({
     },
 
     play: function (offset, loop) {
-        if (!this._element) return;
+        if (!this._element) {
+            this.interruptPlay = false;
+            return;
+        }
         this._element.loop = loop;
         this._element.play();
         if (this._AUDIO_TYPE === 'AUDIO' && this._element.paused) {
@@ -118,7 +122,7 @@ cc.Audio = cc.Class.extend({
             cc.Audio.touchPlayList.push({ loop: loop, offset: offset, audio: this._element });
         }
 
-        if (cc.Audio.bindTouch === false && this._element.paused) {
+        if (cc.Audio.bindTouch === false) {
             cc.Audio.bindTouch = true;
             // Listen to the touchstart body event and play the audio when necessary.
             cc.game.canvas.addEventListener('touchstart', cc.Audio.touchStart);
@@ -131,7 +135,10 @@ cc.Audio = cc.Class.extend({
     },
 
     stop: function () {
-        if (!this._element) return;
+        if (!this._element) {
+            this.interruptPlay = true;
+            return;
+        }
         this._element.pause();
         try {
             this._element.currentTime = 0;
@@ -140,12 +147,18 @@ cc.Audio = cc.Class.extend({
     },
 
     pause: function () {
-        if (!this._element) return;
+        if (!this._element) {
+            this.interruptPlay = true;
+            return;
+        }
         this._element.pause();
     },
 
     resume: function () {
-        if (!this._element) return;
+        if (!this._element) {
+            this.interruptPlay = false;
+            return;
+        }
         this._element.play();
     },
 
@@ -339,6 +352,15 @@ cc.Audio.WebAudio.prototype = {
         if (SWA) {
             var context = new (window.AudioContext || window.webkitAudioContext || window.mozAudioContext)();
             cc.Audio._context = context;
+            // check context integrity
+            if (
+                !context["createBufferSource"] ||
+                !context["createGain"] ||
+                !context["destination"] ||
+                !context["decodeAudioData"]
+            ) {
+                throw 'context is incomplete';
+            }
             if (polyfill.DELAY_CREATE_CTX)
                 setTimeout(function () {
                     context = new (window.AudioContext || window.webkitAudioContext || window.mozAudioContext)();
@@ -354,7 +376,7 @@ cc.Audio.WebAudio.prototype = {
 
         cache: {},
 
-        useWebAudio: false,
+        useWebAudio: true,
 
         loadBuffer: function (url, cb) {
             if (!SWA) return; // WebAudio Buffer
@@ -516,12 +538,18 @@ cc.Audio.WebAudio.prototype = {
             if (bgMusic && bgMusic.getPlaying()) {
                 bgMusic.stop();
             }
+            var musicVolume = this._musicVolume;
             var audio = cc.loader.getRes(url);
             if (!audio) {
-                cc.loader.load(url);
+                cc.loader.load(url, function () {
+                    if (!audio.getPlaying() && !audio.interruptPlay) {
+                        audio.setVolume(musicVolume);
+                        audio.play(0, loop || false);
+                    }
+                });
                 audio = cc.loader.getRes(url);
             }
-            audio.setVolume(this._musicVolume);
+            audio.setVolume(musicVolume);
             audio.play(0, loop || false);
 
             this._currMusic = audio;
@@ -712,6 +740,7 @@ cc.Audio.WebAudio.prototype = {
 
             }
 
+            var cache = loader.useWebAudio;
             loader.useWebAudio = true;
             cc.loader.load(url, function (audio) {
                 audio = cc.loader.getRes(url);
@@ -720,7 +749,7 @@ cc.Audio.WebAudio.prototype = {
                 audio.play(0, loop || false);
                 effectList.push(audio);
             });
-            loader.useWebAudio = false;
+            loader.useWebAudio = cache;
 
             return audio;
         },

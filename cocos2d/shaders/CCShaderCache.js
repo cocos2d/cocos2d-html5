@@ -102,12 +102,33 @@ cc.shaderCache = /** @lends cc.shaderCache# */{
      * @constant
      * @type {Number}
      */
-    TYPE_MAX: 10,
+    TYPE_SPRITE_POSITION_TEXTURECOLOR_GRAY: 11,
+    /**
+     * @public
+     * @constant
+     * @type {Number}
+     */
+    TYPE_MAX: 11,
+
+    _keyMap: [
+        cc.SHADER_POSITION_TEXTURECOLOR,
+        cc.SHADER_POSITION_TEXTURECOLORALPHATEST,
+        cc.SHADER_POSITION_COLOR,
+        cc.SHADER_POSITION_TEXTURE,
+        cc.SHADER_POSITION_TEXTURE_UCOLOR,
+        cc.SHADER_POSITION_TEXTUREA8COLOR,
+        cc.SHADER_POSITION_UCOLOR,
+        cc.SHADER_POSITION_LENGTHTEXTURECOLOR,
+        cc.SHADER_SPRITE_POSITION_TEXTURECOLOR,
+        cc.SHADER_SPRITE_POSITION_TEXTURECOLORALPHATEST,
+        cc.SHADER_SPRITE_POSITION_COLOR,
+        cc.SHADER_SPRITE_POSITION_TEXTURECOLOR_GRAY
+    ],
 
     _programs: {},
 
     _init: function () {
-        // this.loadDefaultShaders();
+        this.loadDefaultShaders();
         return true;
     },
 
@@ -124,7 +145,13 @@ cc.shaderCache = /** @lends cc.shaderCache# */{
                 program.addAttribute(cc.ATTRIBUTE_NAME_POSITION, cc.VERTEX_ATTRIB_POSITION);
                 program.addAttribute(cc.ATTRIBUTE_NAME_COLOR, cc.VERTEX_ATTRIB_COLOR);
                 program.addAttribute(cc.ATTRIBUTE_NAME_TEX_COORD, cc.VERTEX_ATTRIB_TEX_COORDS);
-                break;
+              break;
+            case cc.SHADER_SPRITE_POSITION_TEXTURECOLOR_GRAY:
+              program.initWithVertexShaderByteArray(cc.SHADER_SPRITE_POSITION_TEXTURE_COLOR_VERT, cc.SHADER_SPRITE_POSITION_TEXTURE_COLOR_GRAY_FRAG);
+              program.addAttribute(cc.ATTRIBUTE_NAME_POSITION, cc.VERTEX_ATTRIB_POSITION);
+              program.addAttribute(cc.ATTRIBUTE_NAME_COLOR, cc.VERTEX_ATTRIB_COLOR);
+              program.addAttribute(cc.ATTRIBUTE_NAME_TEX_COORD, cc.VERTEX_ATTRIB_TEX_COORDS);
+              break;
             case cc.SHADER_POSITION_TEXTURECOLORALPHATEST:
                 program.initWithVertexShaderByteArray(cc.SHADER_POSITION_TEXTURE_COLOR_VERT, cc.SHADER_POSITION_TEXTURE_COLOR_ALPHATEST_FRAG);
                 program.addAttribute(cc.ATTRIBUTE_NAME_POSITION, cc.VERTEX_ATTRIB_POSITION);
@@ -188,6 +215,10 @@ cc.shaderCache = /** @lends cc.shaderCache# */{
      * loads the default shaders
      */
     loadDefaultShaders: function () {
+        for (var i = 0; i < this.TYPE_MAX; ++i) {
+            var key = this._keyMap[i];
+            this.programForKey(key);
+        }
     },
 
     /**
@@ -199,57 +230,62 @@ cc.shaderCache = /** @lends cc.shaderCache# */{
         // Position Texture Color shader
         var program = this.programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
         program.reset();
-        this._loadDefaultShader(program, this.TYPE_POSITION_TEXTURECOLOR);
+        this._loadDefaultShader(program, cc.SHADER_POSITION_TEXTURECOLOR);
 
         // Sprite Position Texture Color shader
         program = this.programForKey(cc.SHADER_SPRITE_POSITION_TEXTURECOLOR);
         program.reset();
-        this._loadDefaultShader(program, this.TYPE_SPRITE_POSITION_TEXTURECOLOR);
+        this._loadDefaultShader(program, cc.SHADER_SPRITE_POSITION_TEXTURECOLOR);
 
         // Position Texture Color alpha test
         program = this.programForKey(cc.SHADER_POSITION_TEXTURECOLORALPHATEST);
         program.reset();
-        this._loadDefaultShader(program, this.TYPE_POSITION_TEXTURECOLOR_ALPHATEST);
+        this._loadDefaultShader(program, cc.SHADER_POSITION_TEXTURECOLORALPHATEST);
 
         // Sprite Position Texture Color alpha shader
         program = this.programForKey(cc.SHADER_SPRITE_POSITION_TEXTURECOLORALPHATEST);
         program.reset();
-        this._loadDefaultShader(program, this.TYPE_SPRITE_POSITION_TEXTURECOLOR_ALPHATEST);
+        this._loadDefaultShader(program, cc.SHADER_SPRITE_POSITION_TEXTURECOLORALPHATEST);
 
         //
         // Position, Color shader
         //
         program = this.programForKey(cc.SHADER_POSITION_COLOR);
         program.reset();
-        this._loadDefaultShader(program, this.TYPE_POSITION_COLOR);
+        this._loadDefaultShader(program, cc.SHADER_POSITION_COLOR);
 
         //
         // Position Texture shader
         //
         program = this.programForKey(cc.SHADER_POSITION_TEXTURE);
         program.reset();
-        this._loadDefaultShader(program, this.TYPE_POSITION_TEXTURE);
+        this._loadDefaultShader(program, cc.SHADER_POSITION_TEXTURE);
+
+        //Position Texture Gray shader
+        program = this.programForKey(cc.SHADER_SPRITE_POSITION_TEXTURE_COLOR_GRAY_FRAG);
+        program.reset();
+        this._loadDefaultShader(program, cc.SHADER_SPRITE_POSITION_TEXTURE_COLOR_GRAY_FRAG);
 
         //
         // Position, Texture attribs, 1 Color as uniform shader
         //
         program = this.programForKey(cc.SHADER_POSITION_TEXTURE_UCOLOR);
         program.reset();
-        this._loadDefaultShader(program, this.TYPE_POSITION_TEXTURE_UCOLOR);
+        this._loadDefaultShader(program, cc.SHADER_POSITION_TEXTURE_UCOLOR);
 
         //
         // Position Texture A8 Color shader
         //
         program = this.programForKey(cc.SHADER_POSITION_TEXTUREA8COLOR);
         program.reset();
-        this._loadDefaultShader(program, this.TYPE_POSITION_TEXTURE_A8COLOR);
+        this._loadDefaultShader(program, cc.SHADER_POSITION_TEXTUREA8COLOR);
 
         //
         // Position and 1 color passed as a uniform (to similate glColor4ub )
         //
         program = this.programForKey(cc.SHADER_POSITION_UCOLOR);
         program.reset();
-        this._loadDefaultShader(program, this.TYPE_POSITION_UCOLOR);
+        this._loadDefaultShader(program, cc.SHADER_POSITION_UCOLOR);
     },
 
     /**

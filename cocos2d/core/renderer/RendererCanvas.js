@@ -163,9 +163,9 @@ cc.rendererCanvas = {
 
         ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.clearRect(0, 0, viewport.width, viewport.height);
-        if (this._clearColor.r !== 0 ||
-            this._clearColor.g !== 0 ||
-            this._clearColor.b !== 0) {
+        if (this._clearColor.r !== 255 ||
+            this._clearColor.g !== 255 ||
+            this._clearColor.b !== 255) {
             wrapper.setFillStyle(this._clearFillStyle);
             wrapper.setGlobalAlpha(this._clearColor.a);
             ctx.fillRect(0, 0, viewport.width, viewport.height);

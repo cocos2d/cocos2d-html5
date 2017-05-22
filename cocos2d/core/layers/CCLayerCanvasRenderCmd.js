@@ -61,7 +61,7 @@
             this._cacheDirty = true;
             if (this._updateCache === 0)
                 this._updateCache = 2;
-            this._dirtyFlag = locFlag & flags.orderDirty ^ locFlag;
+            this._dirtyFlag &= ~flags.orderDirty;
         }
 
         this.originUpdateStatus();
@@ -365,7 +365,7 @@
         var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
         if (locFlag & flags.gradientDirty) {
             this._dirtyFlag |= flags.colorDirty;
-            this._dirtyFlag = locFlag & flags.gradientDirty ^ locFlag;
+            this._dirtyFlag &= ~flags.gradientDirty;
         }
 
         this.originUpdateStatus();
@@ -375,7 +375,7 @@
         var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
         if (locFlag & flags.gradientDirty) {
             this._dirtyFlag |= flags.colorDirty;
-            this._dirtyFlag = locFlag & flags.gradientDirty ^ locFlag;
+            this._dirtyFlag &= ~flags.gradientDirty;
         }
 
         this._originSyncStatus(parentCmd);

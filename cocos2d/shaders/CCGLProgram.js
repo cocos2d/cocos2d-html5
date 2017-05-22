@@ -795,8 +795,8 @@ cc.GLProgram.create = function (vShaderFileName, fShaderFileName) {
 cc.GLProgram._highpSupported = null;
 
 cc.GLProgram._isHighpSupported = function () {
-    if (cc.GLProgram._highpSupported == null) {
-        var ctx = cc._renderContext;
+    var ctx = cc._renderContext;
+    if (ctx.getShaderPrecisionFormat && cc.GLProgram._highpSupported == null) {
         var highp = ctx.getShaderPrecisionFormat(ctx.FRAGMENT_SHADER, ctx.HIGH_FLOAT);
         cc.GLProgram._highpSupported = highp.precision !== 0;
     }

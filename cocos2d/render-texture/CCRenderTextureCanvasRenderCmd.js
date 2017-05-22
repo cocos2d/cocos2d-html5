@@ -25,7 +25,7 @@
 (function () {
     cc.RenderTexture.CanvasRenderCmd = function (renderableObject) {
         this._rootCtor(renderableObject);
-        this._needDraw = true;
+        this._needDraw = false;
         this._clearColorStr = "rgba(255,255,255,1)";
 
         this._cacheCanvas = document.createElement('canvas');

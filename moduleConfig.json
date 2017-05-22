@@ -441,6 +441,7 @@
             "extensions/spine/Spine.js",
             "extensions/spine/CCSkeleton.js",
             "extensions/spine/CCSkeletonAnimation.js",
+            "extensions/spine/CCSkeletonTexture.js",
             "extensions/spine/CCSkeletonCanvasRenderCmd.js",
             "extensions/spine/CCSkeletonWebGLRenderCmd.js"
         ],

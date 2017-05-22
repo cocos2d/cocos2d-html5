@@ -22,6 +22,17 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+function setProgram (node, program) {
+    node.shaderProgram = program;
+
+    var children = node.children;
+    if (!children)
+        return;
+
+    for (var i = 0; i < children.length; i++)
+        setProgram(children[i], program);
+}
+
 // ------------------------------- ClippingNode's WebGL render cmd ------------------------------
 (function () {
     cc.ClippingNode.WebGLRenderCmd = function (renderable) {
@@ -122,6 +133,14 @@
         node._stencil = stencil;
         if (node._stencil)
             node._stencil._parent = node;
+    };
+
+    proto.resetProgramByStencil = function () {
+        var node = this._node;
+        if (node._stencil) {
+            var program = node._originStencilProgram;
+            setProgram(node._stencil, program);
+        }
     };
 
     proto._onBeforeVisit = function (ctx) {

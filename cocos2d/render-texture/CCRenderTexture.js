@@ -133,13 +133,18 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     },
 
     visit: function (parent) {
+        var cmd = this._renderCmd, parentCmd = parent ? parent._renderCmd : null;
+
         // quick return if not visible
-        if (!this._visible)
+        if (!this._visible) {
+            cmd._propagateFlagsDown(parentCmd);
             return;
+        }
 
-        var renderer = cc.renderer, cmd = this._renderCmd;
+        var renderer = cc.renderer;
 
-        cmd.visit(parent && parent._renderCmd);
+        cmd.visit(parentCmd);
+        renderer.pushRenderCommand(cmd);
         this.sprite.visit(this);
         cmd._dirtyFlag = 0;
     },
@@ -234,10 +239,10 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 
     /**
      * clears the texture with a color
-     * @param {Number|cc.Rect} r red 0-1
-     * @param {Number} g green 0-1
-     * @param {Number} b blue 0-1
-     * @param {Number} a alpha 0-1
+     * @param {Number|cc.Rect} r red 0-255
+     * @param {Number} g green 0-255
+     * @param {Number} b blue 0-255
+     * @param {Number} a alpha 0-255
      */
     clear: function (r, g, b, a) {
         this.beginWithClear(r, g, b, a);

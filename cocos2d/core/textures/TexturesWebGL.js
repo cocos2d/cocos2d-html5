@@ -83,6 +83,7 @@ cc._tmp.WebGLTexture2D = function () {
         releaseTexture: function () {
             if (this._webTextureObj)
                 cc._renderContext.deleteTexture(this._webTextureObj);
+            this._htmlElementObj = null;
             cc.loader.release(this.url);
         },
 
@@ -457,11 +458,8 @@ cc._tmp.WebGLTexture2D = function () {
             // Not sure about this ! Some texture need to be updated even after loaded
             if (!cc.game._rendererInitialized)
                 return;
-            if (!self._htmlElementObj) {
-                var img = cc.loader.getRes(self.url);
-                if (!img) return;
-                self.initWithElement(img);
-            }
+            if (!self._htmlElementObj)
+                return;
             if (!self._htmlElementObj.width || !self._htmlElementObj.height)
                 return;
 
@@ -498,6 +496,7 @@ cc._tmp.WebGLTexture2D = function () {
 
             self._hasPremultipliedAlpha = premultiplied;
             self._hasMipmaps = false;
+            self._htmlElementObj = null;
 
             //dispatch load event to listener.
             self.dispatchEvent("load");
@@ -854,7 +853,7 @@ cc._tmp.WebGLTextureAtlas = function () {
 cc._tmp.WebGLTextureCache = function () {
     var _p = cc.textureCache;
 
-    _p.handleLoadedTexture = function (url) {
+    _p.handleLoadedTexture = function (url, img) {
         var locTexs = this._textures, tex, ext;
         //remove judge(webgl)
         if (!cc.game._rendererInitialized) {
@@ -865,6 +864,7 @@ cc._tmp.WebGLTextureCache = function () {
             tex = locTexs[url] = new cc.Texture2D();
             tex.url = url;
         }
+        tex.initWithElement(img);
         ext = cc.path.extname(url);
         if (ext === ".png") {
             tex.handleLoadedTexture(true);
@@ -872,6 +872,7 @@ cc._tmp.WebGLTextureCache = function () {
         else {
             tex.handleLoadedTexture();
         }
+        return tex;
     };
 
     /**
@@ -917,12 +918,7 @@ cc._tmp.WebGLTextureCache = function () {
             if (err)
                 return cb && cb.call(target, err);
 
-            if (!cc.loader.cache[url]) {
-                cc.loader.cache[url] = img;
-            }
-            cc.textureCache.handleLoadedTexture(url);
-
-            var texResult = locTexs[url];
+            var texResult = cc.textureCache.handleLoadedTexture(url, img);
             cb && cb.call(target, texResult);
         });
 

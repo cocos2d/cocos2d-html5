@@ -262,8 +262,18 @@ cc.SHADER_SPRITE_POSITION_TEXTURE_COLOR_VERT =
         + "    gl_Position = CC_PMatrix * a_position;  \n"
         + "    v_fragmentColor = a_color; \n"
         + "    v_texCoord = a_texCoord; \n"
-        + "}";
+    + "}";
 
+cc.SHADER_SPRITE_POSITION_TEXTURE_COLOR_GRAY_FRAG =
+        "precision lowp float;\n"
+        + "varying vec4 v_fragmentColor; \n"
+        + "varying vec2 v_texCoord; \n"
+        + "void main() \n"
+        + "{ \n"
+        + "    vec4 c = texture2D(CC_Texture0, v_texCoord); \n"
+        + "    gl_FragColor.xyz = vec3(0.2126*c.r + 0.7152*c.g + 0.0722*c.b); \n"
+        +"     gl_FragColor.w = c.w ; \n"
+        + "}";
 //-----------------------Shader_PositionTextureColorAlphaTest_frag Shader Source----------------------------
 /**
  * @constant

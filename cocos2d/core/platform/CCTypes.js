@@ -37,7 +37,7 @@ cc.Color = function (r, g, b, a) {
     r = r || 0;
     g = g || 0;
     b = b || 0;
-    a = a || 0;
+    a = typeof a === 'number' ? a : 255;
     this._val = ((r << 24) >>> 0) + (g << 16) + (b << 8) + a;
 };
 
@@ -60,12 +60,10 @@ _p._getB = function () {
 _p._setB = function (value) {
     this._val = (this._val & 0xffff00ff) | (value << 8);
 };
-
 _p._getA = function () {
     return this._val & 0x000000ff;
 };
-
-_p.setA = function (value) {
+_p._setA = function (value) {
     this._val = (this._val & 0xffffff00) | value;
 };
 
