@@ -471,6 +471,11 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         }
         var curTextFirstSprite = this.getChildByTag(startIndex);
         var curTextLastSprite = this.getChildByTag(startIndex + endIndex);
+        var i = 1;
+        while (!curTextLastSprite) {
+            curTextLastSprite = this.getChildByTag(startIndex + endIndex - i);
+            i++;
+        }
         return this._getLetterPosXLeft(curTextLastSprite) - this._getLetterPosXLeft(curTextFirstSprite);
     },
 
