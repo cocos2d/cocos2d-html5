@@ -1311,7 +1311,7 @@ cc.RotateBy.create = cc.rotateBy;
  * @param {cc.Point|Number} deltaPos
  * @param {Number} [deltaY]
  * @example
- * var actionTo = cc.moveBy(2, cc.p(windowSize.width - 40, windowSize.height - 40));
+ * var actionBy = cc.moveBy(2, cc.p(windowSize.width - 40, windowSize.height - 40));
  */
 cc.MoveBy = cc.ActionInterval.extend(/** @lends cc.MoveBy# */{
     _positionDelta: null,
@@ -1430,7 +1430,7 @@ cc.MoveBy = cc.ActionInterval.extend(/** @lends cc.MoveBy# */{
  * @return {cc.MoveBy}
  * @example
  * // example
- * var actionTo = cc.moveBy(2, cc.p(windowSize.width - 40, windowSize.height - 40));
+ * var actionBy = cc.moveBy(2, cc.p(windowSize.width - 40, windowSize.height - 40));
  */
 cc.moveBy = function (duration, deltaPos, deltaY) {
     return new cc.MoveBy(duration, deltaPos, deltaY);
@@ -1458,7 +1458,7 @@ cc.MoveBy.create = cc.moveBy;
  * @param {cc.Point|Number} position
  * @param {Number} y
  * @example
- * var actionBy = new cc.MoveTo(2, cc.p(80, 80));
+ * var actionTo = new cc.MoveTo(2, cc.p(80, 80));
  */
 cc.MoveTo = cc.MoveBy.extend(/** @lends cc.MoveTo# */{
     _endPosition: null,
@@ -1524,12 +1524,12 @@ cc.MoveTo = cc.MoveBy.extend(/** @lends cc.MoveTo# */{
  * Moving to the specified coordinates.
  * @function
  * @param {Number} duration duration in seconds
- * @param {cc.Point} position
+ * @param {cc.Point|Number} position
  * @param {Number} y
- * @return {cc.MoveBy}
+ * @return {cc.MoveTo}
  * @example
  * // example
- * var actionBy = cc.moveTo(2, cc.p(80, 80));
+ * var actionTo = cc.moveTo(2, cc.p(80, 80));
  */
 cc.moveTo = function (duration, position, y) {
     return new cc.MoveTo(duration, position, y);
@@ -1540,9 +1540,9 @@ cc.moveTo = function (duration, position, y) {
  * @static
  * @deprecated since v3.0 <br /> Please use cc.moveTo instead.
  * @param {Number} duration duration in seconds
- * @param {cc.Point} position
+ * @param {cc.Point|Number} position
  * @param {Number} y
- * @return {cc.MoveBy}
+ * @return {cc.MoveTo}
  */
 cc.MoveTo.create = cc.moveTo;
 
