@@ -153,7 +153,6 @@ cc.GLProgramState = function (glprogram) {
     this._boundTextureUnits = {};
     this._textureUnitIndex = 1; // Start at 1, as CC_Texture0 is bound to 0
 
-    
     var activeUniforms = glprogram._glContext.getProgramParameter(glprogram._programObj,
                                                                   glprogram._glContext.ACTIVE_UNIFORMS);
 
@@ -168,7 +167,7 @@ cc.GLProgramState = function (glprogram) {
             this._uniforms.push(uniformValue);
             this._uniformsByName[uniform.name] = count;
             this._uniformsByLocation[uniform.location] = count;
-	    count++;
+	        count++;
         }
     }
 };
@@ -181,7 +180,10 @@ cc.GLProgramState.prototype = {
         }
          
         for (var i = 0; i < this._uniforms.length; ++i) {
-            this._uniforms[i].apply();
+            var uniform = this._uniforms[i];
+            if (uniform._currentBoundValue !== uniform._value) {
+                uniform.apply();
+            }
         }
     },
 
