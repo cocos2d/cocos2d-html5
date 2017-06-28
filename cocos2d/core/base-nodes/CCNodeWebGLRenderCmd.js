@@ -57,7 +57,7 @@
     // to ease the transition from using glPrograms directly, to 
     // using glProgramStates. 
     Object.defineProperty(proto, '_shaderProgram', {
-        set: function () { this.setShaderProgram.apply(this, arguments); },
+        set: function (value) { this.setShaderProgram(value); },
         get: function () { return this.getShaderProgram(); }
     });
 })();
