@@ -82,6 +82,8 @@ cc._canvas = null;
 cc.container = null;
 cc._gameDiv = null;
 
+window.ENABLE_IMAEG_POOL = true;
+
 /**
  * Iterate over an object or an array, executing a function for each matched element.
  * @param {object|array} obj
@@ -938,7 +940,7 @@ cc.loader = (function () {
                     delete _queue[url];
                 }
 
-                if (cc._renderType === cc.game.RENDER_TYPE_WEBGL) {
+                if (ENABLE_IMAEG_POOL && cc._renderType === cc.game.RENDER_TYPE_WEBGL) {
                     imagePool.put(img);
                 }
             };
