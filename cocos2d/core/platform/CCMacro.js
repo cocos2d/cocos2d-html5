@@ -175,7 +175,7 @@ cc.nodeDrawSetup = function (node) {
     //cc.glEnable(node._glServerState);
     if (node._shaderProgram) {
         //cc._renderContext.useProgram(node._shaderProgram._programObj);
-        node._shaderProgram.use();
+        node._glProgramState.apply();
         node._shaderProgram.setUniformForModelViewAndProjectionMatrixWithMat4();
     }
 };

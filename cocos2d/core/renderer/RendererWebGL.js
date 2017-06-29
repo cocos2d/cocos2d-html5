@@ -33,8 +33,8 @@ var _batchedInfo = {
         blendSrc: null,
         // The batched blend destination, all batching element should have the same blend destination
         blendDst: null,
-        // The batched shader, all batching element should have the same shader
-        shader: null
+        // The batched glProgramState, all batching element should have the same glProgramState
+        glProgramState: null
     },
 
     _batchBroken = false,
@@ -342,19 +342,19 @@ return {
         var texture = node._texture || (node._spriteFrame ? node._spriteFrame._texture : null);
         var blendSrc = node._blendFunc.src;
         var blendDst = node._blendFunc.dst;
-        var shader = cmd._shaderProgram;
+        var glProgramState = cmd._glProgramState;
         if (_batchBroken ||
             _batchedInfo.texture !== texture ||
             _batchedInfo.blendSrc !== blendSrc ||
             _batchedInfo.blendDst !== blendDst ||
-            _batchedInfo.shader !== shader) {
+            _batchedInfo.glProgramState !== glProgramState) {
             // Draw batched elements
             this._batchRendering();
             // Update _batchedInfo
             _batchedInfo.texture = texture;
             _batchedInfo.blendSrc = blendSrc;
             _batchedInfo.blendDst = blendDst;
-            _batchedInfo.shader = shader;
+            _batchedInfo.glProgramState = glProgramState;
             _batchBroken = false;
         }
 
@@ -403,12 +403,12 @@ return {
 
         var gl = cc._renderContext;
         var texture = _batchedInfo.texture;
-        var shader = _batchedInfo.shader;
+        var glProgramState = _batchedInfo.glProgramState;
         var uploadAll = _batchingSize > _maxVertexSize * 0.5;
 
-        if (shader) {
-            shader.use();
-            shader._updateProjectionUniform();
+        if (glProgramState) {
+            glProgramState.apply();
+            glProgramState.getGLProgram()._updateProjectionUniform();
         }
 
         cc.glBlendFunc(_batchedInfo.blendSrc, _batchedInfo.blendDst);

@@ -136,8 +136,7 @@
             this._dataDirty = false;
         }
 
-        this._shaderProgram.use();
-        this._shaderProgram._setUniformForMVPMatrixWithMat4(this._matrix);
+	this._glProgramState.apply(this._matrix);
         cc.glBlendFunc(node._blendFunc.src, node._blendFunc.dst);
 
         gl.bindBuffer(gl.ARRAY_BUFFER, this._vertexBuffer);
@@ -302,8 +301,7 @@
         }
 
         //draw gradient layer
-        this._shaderProgram.use();
-        this._shaderProgram._setUniformForMVPMatrixWithMat4(this._matrix);
+        this._glProgramState.apply(this._matrix);
         cc.glBlendFunc(node._blendFunc.src, node._blendFunc.dst);
 
         gl.bindBuffer(gl.ARRAY_BUFFER, this._vertexBuffer);

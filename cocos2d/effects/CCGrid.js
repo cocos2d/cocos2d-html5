@@ -39,7 +39,7 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
     _step: null,
     _grabber: null,
     _isTextureFlipped: false,
-    _shaderProgram: null,
+    _glProgramState: null,
     _directorProjection: 0,
 
     _dirty: false,
@@ -62,7 +62,7 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
         this._step = cc.p(0, 0);
         this._grabber = null;
         this._isTextureFlipped = false;
-        this._shaderProgram = null;
+        this._glProgramState = null;
         this._directorProjection = 0;
         this._dirty = false;
 
@@ -227,7 +227,7 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
         if (!this._grabber)
             return false;
         this._grabber.grab(this._texture);
-        this._shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURE);
+        this._glProgramState = cc.GLProgramState.getOrCreateWithGLProgram(cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURE));
         this.calculateVertexPoints();
         return true;
     },
@@ -443,9 +443,7 @@ cc.Grid3D = cc.GridBase.extend(/** @lends cc.Grid3D# */{
         this._matrix.mat[5] = wt.d;
         this._matrix.mat[13] = wt.ty;
 
-        this._shaderProgram.use();
-        //this._shaderProgram.setUniformsForBuiltins();
-        this._shaderProgram._setUniformForMVPMatrixWithMat4(this._matrix);
+        this._glProgramState.apply(this._matrix);
 
         var gl = cc._renderContext, locDirty = this._dirty;
 
@@ -714,9 +712,7 @@ cc.TiledGrid3D = cc.GridBase.extend(/** @lends cc.TiledGrid3D# */{
         this._matrix.mat[5] = wt.d;
         this._matrix.mat[13] = wt.ty;
 
-        this._shaderProgram.use();
-        this._shaderProgram._setUniformForMVPMatrixWithMat4(this._matrix);
-        //this._shaderProgram.setUniformsForBuiltins();
+        this._glProgramState.apply(this._matrix);
 
         //
         // Attributes

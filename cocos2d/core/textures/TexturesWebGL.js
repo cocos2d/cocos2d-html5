@@ -340,8 +340,8 @@ cc._tmp.WebGLTexture2D = function () {
                 point.x, height + point.y, 0.0,
                 width + point.x, height + point.y, 0.0];
 
-            self._shaderProgram.use();
-            self._shaderProgram.setUniformsForBuiltins();
+            self._glProgramState.apply();
+            self._glProgramState._glprogram.setUniformsForBuiltins();
 
             cc.glBindTexture2D(self);
 
@@ -370,8 +370,8 @@ cc._tmp.WebGLTexture2D = function () {
                 rect.x, rect.y + rect.height, /*0.0,*/
                 rect.x + rect.width, rect.y + rect.height        /*0.0*/];
 
-            self._shaderProgram.use();
-            self._shaderProgram.setUniformsForBuiltins();
+            self._glProgramState.apply();
+            self._glProgramState._glprogram.setUniformsForBuiltins();
 
             cc.glBindTexture2D(self);
 

@@ -231,7 +231,7 @@ cc.GLProgram = cc.Class.extend(/** @lends cc.GLProgram# */{
         }
 
         this._glContext.linkProgram(this._programObj);
-
+	
         if (this._vertShader)
             this._glContext.deleteShader(this._vertShader);
         if (this._fragShader)
