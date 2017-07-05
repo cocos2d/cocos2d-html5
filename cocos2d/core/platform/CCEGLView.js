@@ -37,7 +37,7 @@ cc.DENSITYDPI_LOW = "low-dpi";
 
 var __BrowserGetter = {
     init: function () {
-        this.html = document.getElementsByTagName("html")[0];
+        this.html = document.documentElement;
     },
     availWidth: function (frame) {
         if (!frame || frame === this.html)
@@ -66,25 +66,11 @@ if (cc.sys.os === cc.sys.OS_IOS) // All browsers are WebView
 switch (__BrowserGetter.adaptationType) {
     case cc.sys.BROWSER_TYPE_SAFARI:
         __BrowserGetter.meta["minimal-ui"] = "true";
-        __BrowserGetter.availWidth = function (frame) {
-            return frame.clientWidth;
-        };
-        __BrowserGetter.availHeight = function (frame) {
-            return frame.clientHeight;
-        };
         break;
     case cc.sys.BROWSER_TYPE_CHROME:
         __BrowserGetter.__defineGetter__("target-densitydpi", function () {
             return cc.view._targetDensityDPI;
         });
-    case cc.sys.BROWSER_TYPE_SOUGOU:
-    case cc.sys.BROWSER_TYPE_UC:
-        __BrowserGetter.availWidth = function (frame) {
-            return frame.clientWidth;
-        };
-        __BrowserGetter.availHeight = function (frame) {
-            return frame.clientHeight;
-        };
         break;
     case cc.sys.BROWSER_TYPE_MIUI:
         __BrowserGetter.init = function (view) {
@@ -140,6 +126,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     _resizeCallback: null,
 
     _orientationChanging: true,
+    _resizing: false,
 
     _scaleX: 1,
     _originalScaleX: 1,
@@ -187,8 +174,6 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         _t._viewName = "Cocos2dHTML5";
 
         var sys = cc.sys;
-        _t.enableRetina(sys.os === sys.OS_IOS || sys.os === sys.OS_OSX);
-        _t.enableAutoFullScreen(sys.isMobile && sys.browserType !== sys.BROWSER_TYPE_BAIDU);
         cc.visibleRect && cc.visibleRect.init(_t._visibleRect);
 
         // Setup system default resolution policies
@@ -199,6 +184,10 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         _t._rpFixedWidth = new cc.ResolutionPolicy(_strategyer.EQUAL_TO_FRAME, _strategy.FIXED_WIDTH);
 
         _t._targetDensityDPI = cc.DENSITYDPI_HIGH;
+
+        if (sys.isMobile) {
+            window.addEventListener('orientationchange', this._orientationChange);
+        }
     },
 
     // Resize helper functions
@@ -209,18 +198,35 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         } else {
             view = cc.view;
         }
+        if (view._orientationChanging) {
+            return;
+        }
 
         // Check frame size changed or not
         var prevFrameW = view._frameSize.width, prevFrameH = view._frameSize.height, prevRotated = view._isRotated;
-        view._initFrameSize();
+        if (cc.sys.isMobile) {
+            var containerStyle = cc.game.container.style,
+                margin = containerStyle.margin;
+            containerStyle.margin = '0';
+            containerStyle.display = 'none';
+            view._initFrameSize();
+            containerStyle.margin = margin;
+            containerStyle.display = 'block';
+        }
+        else {
+            view._initFrameSize();
+        }
         if (view._isRotated === prevRotated && view._frameSize.width === prevFrameW && view._frameSize.height === prevFrameH)
             return;
 
         // Frame size changed, do resize works
         var width = view._originalDesignResolutionSize.width;
         var height = view._originalDesignResolutionSize.height;
-        if (width > 0)
+        view._resizing = true;
+        if (width > 0) {
             view.setDesignResolutionSize(width, height, view._resolutionPolicy);
+        }
+        view._resizing = false;
 
         cc.eventManager.dispatchCustomEvent('canvas-resize');
         if (view._resizeCallback) {
@@ -230,7 +236,13 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
 
     _orientationChange: function () {
         cc.view._orientationChanging = true;
-        cc.view._resizeEvent();
+        if (cc.sys.isMobile) {
+            cc.game.container.style.display = "none";
+        }
+        setTimeout(function () {
+            cc.view._orientationChanging = false;
+            cc.view._resizeEvent();
+        }, 300);
     },
 
     /**
@@ -268,14 +280,12 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
             if (!this.__resizeWithBrowserSize) {
                 this.__resizeWithBrowserSize = true;
                 window.addEventListener('resize', this._resizeEvent);
-                window.addEventListener('orientationchange', this._orientationChange);
             }
         } else {
             //disable
             if (this.__resizeWithBrowserSize) {
                 this.__resizeWithBrowserSize = false;
                 window.removeEventListener('resize', this._resizeEvent);
-                window.removeEventListener('orientationchange', this._orientationChange);
             }
         }
     },
@@ -303,11 +313,13 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
      */
     setOrientation: function (orientation) {
         orientation = orientation & cc.ORIENTATION_AUTO;
-        if (orientation) {
+        if (orientation && this._orientation !== orientation) {
             this._orientation = orientation;
-            var designWidth = this._originalDesignResolutionSize.width;
-            var designHeight = this._originalDesignResolutionSize.height;
-            this.setDesignResolutionSize(designWidth, designHeight, this._resolutionPolicy);
+            if (this._resolutionPolicy) {
+                var designWidth = this._originalDesignResolutionSize.width;
+                var designHeight = this._originalDesignResolutionSize.height;
+                this.setDesignResolutionSize(designWidth, designHeight, this._resolutionPolicy);
+            }
         }
     },
 
@@ -329,7 +341,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         var h = __BrowserGetter.availHeight(this._frame);
         var isLandscape = w >= h;
 
-        if (!this._orientationChanging || !cc.sys.isMobile ||
+        if (!cc.sys.isMobile ||
             (isLandscape && this._orientation & cc.ORIENTATION_LANDSCAPE) ||
             (!isLandscape && this._orientation & cc.ORIENTATION_PORTRAIT)) {
             locFrameSize.width = w;
@@ -347,9 +359,6 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
             cc.container.style.transformOrigin = '0px 0px 0px';
             this._isRotated = true;
         }
-        setTimeout(function () {
-            cc.view._orientationChanging = false;
-        }, 1000);
     },
 
     // hack
@@ -483,12 +492,6 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     },
 
     /**
-     * Force destroying EGL view, subclass must implement this method.
-     */
-    end: function () {
-    },
-
-    /**
      * Get whether render system is ready(no matter opengl or canvas),<br/>
      * this name is for the compatibility with cocos2d-x, subclass must implement this method.
      * @return {Boolean}
@@ -568,15 +571,8 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         this._frameSize.height = height;
         this._frame.style.width = width + "px";
         this._frame.style.height = height + "px";
-        //this.centerWindow();
         this._resizeEvent();
         cc.director.setProjection(cc.director.getProjection());
-    },
-
-    /**
-     * Empty function
-     */
-    centerWindow: function () {
     },
 
     /**
@@ -686,9 +682,9 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         if (cc.sys.isMobile)
             this._adjustViewportMeta();
 
-        // Permit to re-detect the orientation of device.
-        this._orientationChanging = true;
-        this._initFrameSize();
+        // If resizing, then frame size is already initialized, this logic should be improved
+        if (!this._resizing)
+            this._initFrameSize();
 
         if (!policy) {
             cc.log(cc._LogInfos.EGLView_setDesignResolutionSize_2);
@@ -771,8 +767,10 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         this._setViewportMeta({"width": width}, true);
 
         // Set body width to the exact pixel resolution
-        document.documentElement.style.width = width + 'px';
-        document.body.style.width = "100%";
+        document.documentElement.style.width = width + "px";
+        document.body.style.width = width + "px";
+        document.body.style.left = "0px";
+        document.body.style.top = "0px";
 
         // Reset the resolution size and policy
         this.setDesignResolutionSize(width, height, resolutionPolicy);
@@ -838,13 +836,13 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
             var boxArr = gl.getParameter(gl.SCISSOR_BOX);
             _scissorRect = cc.rect(boxArr[0], boxArr[1], boxArr[2], boxArr[3]);
         }
-        var scaleX = this._scaleX;
-        var scaleY = this._scaleY;
+        var scaleXFactor = 1 / this._scaleX;
+        var scaleYFactor = 1 / this._scaleY;
         return cc.rect(
-            (_scissorRect.x - this._viewPortRect.x) / scaleX,
-            (_scissorRect.y - this._viewPortRect.y) / scaleY,
-            _scissorRect.width / scaleX,
-            _scissorRect.height / scaleY
+            (_scissorRect.x - this._viewPortRect.x) * scaleXFactor,
+            (_scissorRect.y - this._viewPortRect.y) * scaleYFactor,
+            _scissorRect.width * scaleXFactor,
+            _scissorRect.height * scaleYFactor
         );
     },
 
@@ -985,7 +983,7 @@ cc.ContainerStrategy = cc.Class.extend(/** @lends cc.ContainerStrategy# */{
 
     _setupContainer: function (view, w, h) {
         var locCanvas = cc.game.canvas, locContainer = cc.game.container;
-        if (cc.sys.isMobile) {
+        if (cc.sys.os === cc.sys.OS_ANDROID) {
             document.body.style.width = (view._isRotated ? h : w) + 'px';
             document.body.style.height = (view._isRotated ? w : h) + 'px';
         }
@@ -1094,7 +1092,7 @@ cc.ContentStrategy = cc.Class.extend(/** @lends cc.ContentStrategy# */{
             this._setupContainer(view, view._frameSize.width, view._frameSize.height);
             // Setup container's margin and padding
             if (view._isRotated) {
-                containerStyle.marginLeft = frameH + 'px';
+                containerStyle.margin = '0 0 0 ' + frameH + 'px';
             }
             else {
                 containerStyle.margin = '0px';
@@ -1124,7 +1122,7 @@ cc.ContentStrategy = cc.Class.extend(/** @lends cc.ContentStrategy# */{
             this._setupContainer(view, containerW, containerH);
             // Setup container's margin and padding
             if (view._isRotated) {
-                containerStyle.marginLeft = frameH + 'px';
+                containerStyle.margin = '0 0 0 ' + frameH + 'px';
             }
             else {
                 containerStyle.margin = '0px';

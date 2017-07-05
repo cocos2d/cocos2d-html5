@@ -31,7 +31,7 @@
  * @type {String}
  * @name cc.ENGINE_VERSION
  */
-window["CocosEngine"] = cc.ENGINE_VERSION = "Cocos2d-JS v3.14";
+window["CocosEngine"] = cc.ENGINE_VERSION = "Cocos2d-JS v3.15";
 
 /**
  * <p>
@@ -56,7 +56,7 @@ window["CocosEngine"] = cc.ENGINE_VERSION = "Cocos2d-JS v3.14";
  * @constant
  * @type {Number}
  */
-cc.FIX_ARTIFACTS_BY_STRECHING_TEXEL = 1;
+cc.FIX_ARTIFACTS_BY_STRECHING_TEXEL = 0;
 
 /**
  * Position of the FPS (Default: 0,0 (bottom-left corner))<br/>
@@ -167,23 +167,6 @@ cc.TEXTURE_NPOT_SUPPORT = 0;
 
 /**
  * <p>
- *    If enabled, cocos2d supports retina display.<br/>
- *    For performance reasons, it's recommended disable it in games without retina display support, like iPad only games.<br/>
- *    <br/>
- *    To enable set it to 1. Use 0 to disable it. Enabled by default.<br/>
- *    <br/>
- *    This value governs only the PNG, GIF, BMP, images.<br/>
- *    This value DOES NOT govern the PVR (PVR.GZ, PVR.CCZ) files. If NPOT PVR is loaded, then it will create an NPOT texture ignoring this value.<br/>
- *    To modify it, in Web engine please refer to CCConfig.js, in JSB please refer to CCConfig.h
- * </p>
- * @constant
- * @type {Number}
- * @deprecated This value will be removed in 1.1 and NPOT textures will be loaded by default if the device supports it.
- */
-cc.RETINA_DISPLAY_SUPPORT = 1;
-
-/**
- * <p>
  *    It's the suffix that will be appended to the files in order to load "retina display" images.<br/>
  *    <br/>
  *    On an iPhone4 with Retina Display support enabled, the file @"sprite-hd.png" will be loaded instead of @"sprite.png".<br/>
@@ -261,13 +244,6 @@ cc.LABELBMFONT_DEBUG_DRAW = 0;
 cc.LABELATLAS_DEBUG_DRAW = 0;
 
 cc.DRAWNODE_TOTAL_VERTICES = 20000;
-
-/**
- * Whether or not support retina display
- * @constant
- * @type {Number}
- */
-cc.IS_RETINA_DISPLAY_SUPPORTED = 0;
 
 /**
  * Default engine

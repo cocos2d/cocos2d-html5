@@ -228,6 +228,7 @@
             "cocos2d/shaders/CCShaders.js",
             "cocos2d/shaders/CCShaderCache.js",
             "cocos2d/shaders/CCGLProgram.js",
+            "cocos2d/shaders/CCGLProgramState.js",
             "cocos2d/shaders/CCGLStateCache.js"
         ],
         "shape-nodes" : [
@@ -440,6 +441,7 @@
             "extensions/spine/Spine.js",
             "extensions/spine/CCSkeleton.js",
             "extensions/spine/CCSkeletonAnimation.js",
+            "extensions/spine/CCSkeletonTexture.js",
             "extensions/spine/CCSkeletonCanvasRenderCmd.js",
             "extensions/spine/CCSkeletonWebGLRenderCmd.js"
         ],

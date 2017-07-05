@@ -22,6 +22,17 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+function setProgram (node, program) {
+    node.shaderProgram = program;
+
+    var children = node.children;
+    if (!children)
+        return;
+
+    for (var i = 0; i < children.length; i++)
+        setProgram(children[i], program);
+}
+
 // ------------------------------- ClippingNode's WebGL render cmd ------------------------------
 (function () {
     cc.ClippingNode.WebGLRenderCmd = function (renderable) {

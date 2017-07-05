@@ -68,8 +68,7 @@
         this._matrix.mat[5] = wt.d;
         this._matrix.mat[13] = wt.ty;
 
-        this._shaderProgram.use();
-        this._shaderProgram._setUniformForMVPMatrixWithMat4(this._matrix);
+        this._glProgramState.apply(this._matrix);
 
         cc.glBlendFunc(node._blendFunc.src, node._blendFunc.dst);
         if (this._uniformColor && this._colorF32Array) {

@@ -45,8 +45,7 @@
             this._matrix.mat[13] = wt.ty;
 
             cc.glBlendFunc(node._blendFunc.src, node._blendFunc.dst);
-            this._shaderProgram.use();
-            this._shaderProgram._setUniformForMVPMatrixWithMat4(this._matrix);
+            this._glProgramState.apply(this._matrix);
             node._render();
         }
     };

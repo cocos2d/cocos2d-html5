@@ -151,12 +151,16 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
     },
 
     visit: function (parent) {
-        // quick return if not visible
-        if (!this._visible)
-            return;
+        var cmd = this._renderCmd, parentCmd = parent ? parent._renderCmd : null;
 
-        this._renderCmd.visit(parent && parent._renderCmd);
-        this._renderCmd._dirtyFlag = 0;
+        // quick return if not visible
+        if (!this._visible) {
+            cmd._propagateFlagsDown(parentCmd);
+            return;
+        }
+
+        cmd.visit(parentCmd);
+        cmd._dirtyFlag = 0;
     },
 
     addChild: function (child, localZOrder, tag) {

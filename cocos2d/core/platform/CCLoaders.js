@@ -48,15 +48,19 @@ cc._imgLoader = {
     load: function (realUrl, url, res, cb) {
         var callback;
         if (cc.loader.isLoading(realUrl)) {
-            callback = cb;
+            callback = function (err, img) {
+                if (err)
+                    return cb(err);
+                var tex = cc.textureCache.getTextureForKey(url) || cc.textureCache.handleLoadedTexture(url, img);
+                cb(null, tex);
+            };
         }
         else {
             callback = function (err, img) {
                 if (err)
                     return cb(err);
-                cc.loader.cache[url] = img;
-                cc.textureCache.handleLoadedTexture(url);
-                cb(null, img);
+                var tex = cc.textureCache.handleLoadedTexture(url, img);
+                cb(null, tex);
             };
         }
         cc.loader.loadImg(realUrl, callback);

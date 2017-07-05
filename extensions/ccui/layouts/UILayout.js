@@ -134,14 +134,18 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * @param {cc.Node} [parent]
      */
     visit: function (parent) {
-        if (!this._visible)
+        var cmd = this._renderCmd, parentCmd = parent ? parent._renderCmd : null;
+
+        // quick return if not visible
+        if (!this._visible) {
+            cmd._propagateFlagsDown(parentCmd);
             return;
+        }
 
         this._adaptRenderers();
         this._doLayout();
 
-        var renderer = cc.renderer, cmd = this._renderCmd;
-        var parentCmd = parent && parent._renderCmd;
+        var renderer = cc.renderer;
         cmd.visit(parentCmd);
 
         var stencilClipping = this._clippingEnabled && this._clippingType === ccui.Layout.CLIPPING_STENCIL;

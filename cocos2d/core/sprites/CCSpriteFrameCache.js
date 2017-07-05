@@ -169,7 +169,7 @@ cc.spriteFrameCache = /** @lends cc.spriteFrameCache# */{
             var frame = frames[key];
             var spriteFrame = spriteFrames[key];
             if (!spriteFrame) {
-                spriteFrame = new cc.SpriteFrame(texture, frame.rect, frame.rotated, frame.offset, frame.size);
+                spriteFrame = new cc.SpriteFrame(texture, cc.rect(frame.rect), frame.rotated, frame.offset, frame.size);
                 var aliases = frame.aliases;
                 if (aliases) {//set aliases
                     for (var i = 0, li = aliases.length; i < li; i++) {

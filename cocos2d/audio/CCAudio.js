@@ -122,7 +122,7 @@ cc.Audio = cc.Class.extend({
             cc.Audio.touchPlayList.push({ loop: loop, offset: offset, audio: this._element });
         }
 
-        if (cc.Audio.bindTouch === false && this._element.paused) {
+        if (cc.Audio.bindTouch === false) {
             cc.Audio.bindTouch = true;
             // Listen to the touchstart body event and play the audio when necessary.
             cc.game.canvas.addEventListener('touchstart', cc.Audio.touchStart);
@@ -352,6 +352,15 @@ cc.Audio.WebAudio.prototype = {
         if (SWA) {
             var context = new (window.AudioContext || window.webkitAudioContext || window.mozAudioContext)();
             cc.Audio._context = context;
+            // check context integrity
+            if (
+                !context["createBufferSource"] ||
+                !context["createGain"] ||
+                !context["destination"] ||
+                !context["decodeAudioData"]
+            ) {
+                throw 'context is incomplete';
+            }
             if (polyfill.DELAY_CREATE_CTX)
                 setTimeout(function () {
                     context = new (window.AudioContext || window.webkitAudioContext || window.mozAudioContext)();

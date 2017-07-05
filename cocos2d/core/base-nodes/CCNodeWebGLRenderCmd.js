@@ -27,7 +27,7 @@
         this._node = renderable;
         this._anchorPointInPoints = {x: 0, y: 0};
         this._displayedColor = cc.color(255, 255, 255, 255);
-        this._shaderProgram = null;
+        this._glProgramState = null;
     };
 
     var proto = cc.Node.WebGLRenderCmd.prototype = Object.create(cc.Node.RenderCmd.prototype);
@@ -38,10 +38,26 @@
     };
 
     proto.setShaderProgram = function (shaderProgram) {
-        this._shaderProgram = shaderProgram;
+        this._glProgramState = cc.GLProgramState.getOrCreateWithGLProgram(shaderProgram);
     };
 
     proto.getShaderProgram = function () {
-        return this._shaderProgram;
+        return this._glProgramState ? this._glProgramState.getGLProgram() : null;
     };
+
+    proto.getGLProgramState = function () {
+        return this._glProgramState;
+    };
+
+    proto.setGLProgramState = function (glProgramState) {
+        this._glProgramState = glProgramState;
+    };
+
+    // Use a property getter/setter for backwards compatability, and
+    // to ease the transition from using glPrograms directly, to 
+    // using glProgramStates. 
+    Object.defineProperty(proto, '_shaderProgram', {
+        set: function (value) { this.setShaderProgram(value); },
+        get: function () { return this.getShaderProgram(); }
+    });
 })();

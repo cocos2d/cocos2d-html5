@@ -24,13 +24,25 @@ cc.LabelTTF._textBaseline = ["top", "middle", "bottom"];
 //check the first character
 cc.LabelTTF.wrapInspection = true;
 
-//Support: English French German
-//Other as Oriental Language
-cc.LabelTTF._wordRex = /([a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]+|\S)/;
-cc.LabelTTF._symbolRex = /^[!,.:;}\]%\?>、‘“》？。，！]/;
-cc.LabelTTF._lastWordRex = /([a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]+|\S)$/;
-cc.LabelTTF._lastEnglish = /[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]+$/;
-cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
+// These regular expressions consider a word any sequence of characters
+// from these Unicode (sub)blocks:
+// - Basic Latin (letters and numbers, plus the hypen-minus '-')
+// - Latin-1 Supplement (accentuated letters and ¿¡ only)
+// - Latin Extended-A (complete)
+// - Latin Extended-B (complete)
+// - IPA Extensions (complete)
+// - Spacing Modifier Letters (complete)
+// - Combining Diacritical Marks (Combining Grapheme Joiner excluded)
+// - Greek and Coptic (complete, including reserved code points)
+// - Cyrillic (complete)
+// - Cyrillic Supplement (complete)
+// - General Punctuation (Non-Breaking Hyphen* [U+2011] and quotation marks)
+// * Note that Hyphen [U+2010] is considered a word boundary.
+cc.LabelTTF._wordRex = /([a-zA-Z0-9\-¿¡«À-ÖØ-öø-ʯ\u0300-\u034e\u0350-\u036FͰ-ԯ\u2011‵-‷‹⁅]+|\S)/;
+cc.LabelTTF._symbolRex = /^[!,.:;}\]%\?>、‘“》»？。，！\u2010′-‴›‼⁆⁇-⁉]/;
+cc.LabelTTF._lastWordRex = /([a-zA-Z0-9\-¿¡«À-ÖØ-öø-ʯ\u0300-\u034e\u0350-\u036FͰ-ԯ\u2011‵-‷‹⁅]+|\S)$/;
+cc.LabelTTF._lastEnglish = /[a-zA-Z0-9\-¿¡«À-ÖØ-öø-ʯ\u0300-\u034e\u0350-\u036FͰ-ԯ\u2011‵-‷‹⁅]+$/;
+cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9\-¿¡«À-ÖØ-öø-ʯ\u0300-\u034e\u0350-\u036FͰ-ԯ\u2011‵-‷‹⁅]/;
 
 (function () {
     cc.LabelTTF.RenderCmd = function () {
@@ -418,7 +430,10 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
         if (node._string.length === 0) {
             locLabelCanvas.width = 1;
             locLabelCanvas.height = locContentSize.height || 1;
-            node._texture && node._texture.handleLoadedTexture();
+            if (node._texture) {
+                node._texture._htmlElementObj = this._labelCanvas;
+                node._texture.handleLoadedTexture();
+            }
             node.setTextureRect(cc.rect(0, 0, 1, locContentSize.height));
             return true;
         }
@@ -432,7 +447,10 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
         if (flag) locContext.clearRect(0, 0, width, height);
         this._saveStatus();
         this._drawTTFInCanvas(locContext);
-        node._texture && node._texture.handleLoadedTexture();
+        if (node._texture) {
+            node._texture._htmlElementObj = this._labelCanvas;
+            node._texture.handleLoadedTexture();
+        }
         node.setTextureRect(cc.rect(0, 0, width, height));
         return true;
     };

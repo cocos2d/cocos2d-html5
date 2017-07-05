@@ -183,7 +183,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     convertToGL: function (uiPoint) {
         var docElem = document.documentElement;
         var view = cc.view;
-        var box = element.getBoundingClientRect();
+        var box = docElem.getBoundingClientRect();
         box.left += window.pageXOffset - docElem.clientLeft;
         box.top += window.pageYOffset - docElem.clientTop;
         var x = view._devicePixelRatio * (uiPoint.x - box.left);
@@ -202,7 +202,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     convertToUI: function (glPoint) {
         var docElem = document.documentElement;
         var view = cc.view;
-        var box = element.getBoundingClientRect();
+        var box = docElem.getBoundingClientRect();
         box.left += window.pageXOffset - docElem.clientLeft;
         box.top += window.pageYOffset - docElem.clientTop;
         var uiPoint = {x: 0, y: 0};
@@ -939,7 +939,7 @@ cc.Director.PROJECTION_3D = 1;
 cc.Director.PROJECTION_CUSTOM = 3;
 
 /**
- * Constant for default projection of cc.Director, default projection is 3D projection
+ * Constant for default projection of cc.Director, default projection is 2D projection
  * @constant
  * @type {Number}
  */
