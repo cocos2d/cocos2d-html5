@@ -154,14 +154,14 @@ cc.EditBoxDelegate = cc.Class.extend({
      * This method is called when an edit box gains focus after keyboard is shown.
      * @param {cc.EditBox} sender
      */
-    editBoxEditingDidBegan: function (sender) {
+    editBoxEditingDidBegin: function (sender) {
     },
 
     /**
      * This method is called when an edit box loses focus after keyboard is hidden.
      * @param {cc.EditBox} sender
      */
-    editBoxEditingDidEnded: function (sender) {
+    editBoxEditingDidEnd: function (sender) {
     },
 
     /**
@@ -176,7 +176,7 @@ cc.EditBoxDelegate = cc.Class.extend({
      * This method is called when the return button was pressed.
      * @param {cc.EditBox} sender
      */
-    editBoxEditingReturn: function (sender) {
+    editBoxReturn: function (sender) {
     }
 });
 
@@ -219,6 +219,8 @@ cc.EditBox = cc.Node.extend({
     _placeholderFontSize: 14,
     _placeholderColor: null,
     _className: 'EditBox',
+    _touchListener: null,
+    _touchEnabled: true,
 
     /**
      * constructor of cc.EditBox
@@ -240,14 +242,27 @@ cc.EditBox = cc.Node.extend({
 
         this.initWithSizeAndBackgroundSprite(size, normal9SpriteBg);
 
-        cc.eventManager.addListener({
+        this._touchListener = cc.EventListener.create({
             event: cc.EventListener.TOUCH_ONE_BY_ONE,
             swallowTouches: true,
             onTouchBegan: this._onTouchBegan.bind(this),
             onTouchEnded: this._onTouchEnded.bind(this)
-        }, this);
+        });
+        cc.eventManager.addListener(this._touchListener, this);
 
         this.setInputFlag(this._editBoxInputFlag);
+    },
+
+    setTouchEnabled: function (enable) {
+        if (this._touchEnabled === enable) {
+            return;
+        }
+        this._touchEnabled = enable;
+        if (this._touchEnabled) {
+            cc.eventManager.addListener(this._touchListener, this);
+        } else {
+            cc.eventManager.removeListener(this._touchListener);
+        }
     },
 
     _createRenderCmd: function () {
@@ -319,7 +334,21 @@ cc.EditBox = cc.Node.extend({
         this._renderCmd._removeDomInputControl();
     },
 
+    _isAncestorsVisible: function (node) {
+        if (null == node)
+            return true;
+
+        var parent = node.getParent();
+
+        if (parent && !parent.isVisible())
+            return false;
+        return this._isAncestorsVisible(parent);
+    },
+
     _onTouchBegan: function (touch) {
+        if (!this.isVisible() || !this._isAncestorsVisible(this)) {
+            return;
+        }
         var touchPoint = touch.getLocation();
         var bb = cc.rect(0, 0, this._contentSize.width, this._contentSize.height);
         var hitted = cc.rectContainsPoint(bb, this.convertToNodeSpace(touchPoint));
@@ -333,6 +362,9 @@ cc.EditBox = cc.Node.extend({
     },
 
     _onTouchEnded: function () {
+        if (!this.isVisible() || !this._isAncestorsVisible(this)) {
+            return;
+        }
         this._renderCmd.show();
     },
 
@@ -822,8 +854,8 @@ cc.EditBox.create = function (size, normal9SpriteBg, press9SpriteBg, disabled9Sp
                 editBox._text = this.value;
                 thisPointer._updateEditBoxContentStyle();
                 thisPointer.hidden();
-                if (editBox._delegate && editBox._delegate.editBoxEditingReturn) {
-                    editBox._delegate.editBoxEditingReturn(editBox);
+                if (editBox._delegate && editBox._delegate.editBoxReturn) {
+                    editBox._delegate.editBoxReturn(editBox);
                 }
                 cc._canvas.focus();
             }
@@ -845,10 +877,12 @@ cc.EditBox.create = function (size, normal9SpriteBg, press9SpriteBg, disabled9Sp
             this.__autoResize = cc.view.__resizeWithBrowserSize;
             cc.view.resizeWithBrowserSize(false);
 
-            scrollWindowUp(editBox);
+            if (cc.sys.isMobile) {
+                scrollWindowUp(editBox);
+            }
 
-            if (editBox._delegate && editBox._delegate.editBoxEditingDidBegan) {
-                editBox._delegate.editBoxEditingDidBegan(editBox);
+            if (editBox._delegate && editBox._delegate.editBoxEditingDidBegin) {
+                editBox._delegate.editBoxEditingDidBegin(editBox);
             }
         });
         tmpEdTxt.addEventListener('blur', function () {
@@ -862,8 +896,8 @@ cc.EditBox.create = function (size, normal9SpriteBg, press9SpriteBg, disabled9Sp
                 cc.view.resizeWithBrowserSize(true);
             }
             window.scrollY = 0;
-            if (editBox._delegate && editBox._delegate.editBoxEditingDidEnded) {
-                editBox._delegate.editBoxEditingDidEnded(editBox);
+            if (editBox._delegate && editBox._delegate.editBoxEditingDidEnd) {
+                editBox._delegate.editBoxEditingDidEnd(editBox);
             }
 
             if (this.value === '') {
@@ -930,10 +964,12 @@ cc.EditBox.create = function (size, normal9SpriteBg, press9SpriteBg, disabled9Sp
             this.__autoResize = cc.view.__resizeWithBrowserSize;
             cc.view.resizeWithBrowserSize(false);
 
-            scrollWindowUp(editBox);
+            if (cc.sys.isMobile) {
+                scrollWindowUp(editBox);
+            }
 
-            if (editBox._delegate && editBox._delegate.editBoxEditingDidBegan) {
-                editBox._delegate.editBoxEditingDidBegan(editBox);
+            if (editBox._delegate && editBox._delegate.editBoxEditingDidBegin) {
+                editBox._delegate.editBoxEditingDidBegin(editBox);
             }
 
         });
@@ -943,8 +979,8 @@ cc.EditBox.create = function (size, normal9SpriteBg, press9SpriteBg, disabled9Sp
             if (e.keyCode === cc.KEY.enter) {
                 e.stopPropagation();
 
-                if (editBox._delegate && editBox._delegate.editBoxEditingReturn) {
-                    editBox._delegate.editBoxEditingReturn(editBox);
+                if (editBox._delegate && editBox._delegate.editBoxReturn) {
+                    editBox._delegate.editBoxReturn(editBox);
                 }
             }
         });
@@ -960,8 +996,8 @@ cc.EditBox.create = function (size, normal9SpriteBg, press9SpriteBg, disabled9Sp
                 cc.view.resizeWithBrowserSize(true);
             }
 
-            if (editBox._delegate && editBox._delegate.editBoxEditingDidEnded) {
-                editBox._delegate.editBoxEditingDidEnded(editBox);
+            if (editBox._delegate && editBox._delegate.editBoxEditingDidEnd) {
+                editBox._delegate.editBoxEditingDidEnd(editBox);
             }
 
             if (this.value === '') {
