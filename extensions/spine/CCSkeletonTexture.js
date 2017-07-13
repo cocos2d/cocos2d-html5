@@ -22,7 +22,11 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-sp.SkeletonTexture = cc.Class.extend({
+sp.SkeletonTexture = function (image) {
+    sp.spine.Texture.call(this, image);
+};
+cc.inherits(sp.SkeletonTexture, sp.spine.Texture);
+cc.extend(sp.SkeletonTexture.prototype, {
     name: 'sp.SkeletonTexture',
     _texture: null,
 
@@ -61,8 +65,3 @@ sp.SkeletonTexture = cc.Class.extend({
         }
     }
 });
-
-var proto = sp.SkeletonTexture.prototype;
-cc.extend(proto, spine.Texture.prototype);
-// proto.constructor = spine.Texture;
-

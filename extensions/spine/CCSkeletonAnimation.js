@@ -32,8 +32,7 @@ sp._atlasLoader = {
     load:function(line){
         var texturePath = cc.path.join(cc.path.dirname(this.spAtlasFile), line);
         var texture = cc.textureCache.addImage(texturePath);
-        var tex = new sp.SkeletonTexture();
-        tex._image = { width: texture.getPixelsWide(), height: texture.getPixelsHigh() };
+        var tex = new sp.SkeletonTexture({ width: texture.getPixelsWide(), height: texture.getPixelsHigh() });
         tex.setRealTexture(texture);
         return tex;
     },
@@ -55,7 +54,7 @@ sp.ANIMATION_EVENT_TYPE = {
     EVENT: 5
 };
 
-sp.TrackEntryListeners = function(startListener, endListener, completeListener, eventListener, interruptListener, disposeListener){
+sp.TrackEntryListeners = function (startListener, endListener, completeListener, eventListener, interruptListener, disposeListener) {
     this.startListener = startListener || null;
     this.endListener = endListener || null;
     this.completeListener = completeListener || null;
@@ -156,7 +155,7 @@ sp.SkeletonAnimation = sp.Skeleton.extend(/** @lends sp.SkeletonAnimation# */{
 
     /**
      * Sets animation state data to sp.SkeletonAnimation.
-     * @param {spine.AnimationStateData} stateData
+     * @param {sp.spine.AnimationStateData} stateData
      */
     setAnimationStateData: function (stateData) {
         var state = new spine.AnimationState(stateData);
@@ -192,7 +191,7 @@ sp.SkeletonAnimation = sp.Skeleton.extend(/** @lends sp.SkeletonAnimation# */{
      * @param {Number} trackIndex
      * @param {String} name
      * @param {Boolean} loop
-     * @returns {spine.TrackEntry|null}
+     * @returns {sp.spine.TrackEntry|null}
      */
     setAnimation: function (trackIndex, name, loop) {
         var animation = this._skeleton.data.findAnimation(name);
@@ -209,7 +208,7 @@ sp.SkeletonAnimation = sp.Skeleton.extend(/** @lends sp.SkeletonAnimation# */{
      * @param {String} name
      * @param {Boolean} loop
      * @param {Number} [delay=0]
-     * @returns {spine.TrackEntry|null}
+     * @returns {sp.spine.TrackEntry|null}
      */
     addAnimation: function (trackIndex, name, loop, delay) {
         delay = delay == null ? 0 : delay;
@@ -222,9 +221,18 @@ sp.SkeletonAnimation = sp.Skeleton.extend(/** @lends sp.SkeletonAnimation# */{
     },
 
     /**
+     * Find animation with specified name
+     * @param {String} name
+     * @returns {sp.spine.Animation|null}
+     */
+    findAnimation: function (name) {
+        return this._skeleton.data.findAnimation(name);
+    },
+
+    /**
      * Returns track entry by trackIndex.
      * @param trackIndex
-     * @returns {spine.TrackEntry|null}
+     * @returns {sp.spine.TrackEntry|null}
      */
     getCurrent: function (trackIndex) {
         return this._state.getCurrent(trackIndex);
@@ -254,6 +262,7 @@ sp.SkeletonAnimation = sp.Skeleton.extend(/** @lends sp.SkeletonAnimation# */{
     update: function (dt) {
         this._super(dt);
         dt *= this._timeScale;
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.contentDirty);
         this._state.update(dt);
         this._state.apply(this._skeleton);
         this._skeleton.updateWorldTransform();
