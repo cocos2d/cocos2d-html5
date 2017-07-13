@@ -1,3 +1,5 @@
+// Spine runtime version 3.5.35
+
 var __extends = (this && this.__extends) || function (d, b) {
 	for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
 	function __() { this.constructor = d; }
@@ -1096,7 +1098,7 @@ var spine;
 				}
 			}
 			if (entry.mixDuration > 0)
-			this.queueEvents(from, animationTime);
+				this.queueEvents(from, animationTime);
 			this.events.length = 0;
 			from.nextAnimationLast = animationTime;
 			from.nextTrackLast = from.trackTime;
@@ -4239,13 +4241,12 @@ var spine;
 			var scale = this.scale;
 			attachment.worldVerticesLength = verticesLength;
 			var vertices = map.vertices;
-			var scaledVertices = spine.Utils.toFloatArray(vertices);
 			if (verticesLength == vertices.length) {
 				if (scale != 1) {
 					for (var i = 0, n = vertices.length; i < n; i++)
-						scaledVertices[i] *= scale;
+						vertices[i] *= scale;
 				}
-				attachment.vertices = scaledVertices;
+				attachment.vertices = spine.Utils.toFloatArray(vertices);
 				return;
 			}
 			var weights = new Array();
@@ -5352,4 +5353,6 @@ var spine;
 	}());
 	spine.TimeKeeper = TimeKeeper;
 })(spine || (spine = {}));
-//# sourceMappingURL=spine-core.js.map
+
+var sp = sp || {};
+sp.spine = spine;

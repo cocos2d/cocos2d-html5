@@ -190,7 +190,6 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
              */
             handleLoadedTexture: function () {
                 var self = this;
-                if (self._textureLoaded) return;
                 if (!self._htmlElementObj) {
                     return;
                 }
