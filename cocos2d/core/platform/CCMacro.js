@@ -499,6 +499,13 @@ cc.ORIENTATION_AUTO = 3;
  */
 cc.CONCURRENCY_HTTP_REQUEST_COUNT = cc.sys.isMobile ? 20 : 0;
 
+/**
+ * The maximum vertex count for a single batched draw call.
+ * @constant
+ * @type Number
+ */
+cc.BATCH_VERTEX_COUNT = 2000;
+
 
 // ------------------- vertex attrib flags -----------------------------
 /**

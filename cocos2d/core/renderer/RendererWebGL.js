@@ -33,7 +33,7 @@ var _batchedInfo = {
         blendSrc: null,
         // The batched blend destination, all batching element should have the same blend destination
         blendDst: null,
-        // The batched glProgramState, all batching element should have the same glProgramState
+        // The batched gl program state, all batching element should have the same state
         glProgramState: null
     },
 
@@ -129,7 +129,7 @@ return {
     _cacheToBufferCmds: {},                              // an array saves the renderer commands need for cache to other canvas
     _cacheInstanceIds: [],
     _currentID: 0,
-    _clearColor: cc.color(),                            //background color,default BLACK
+    _clearColor: cc.color(0, 0, 0, 255),              //background color,default BLACK
 
     init: function () {
         var gl = cc._renderContext;
@@ -138,7 +138,7 @@ return {
 
         this.mat4Identity = new cc.math.Matrix4();
         this.mat4Identity.identity();
-        initQuadBuffer(2000);
+        initQuadBuffer(cc.BATCH_VERTEX_COUNT);
         if (cc.sys.os === cc.sys.OS_IOS) {
             _IS_IOS = true;
         }
@@ -313,18 +313,23 @@ return {
         _batchingSize += increment;
     },
 
-    _updateBatchedInfo: function (texture, blendFunc, shaderProgram) {
-        if (texture) {
+    _updateBatchedInfo: function (texture, blendFunc, glProgramState) {
+        if (texture !== _batchedInfo.texture ||
+            blendFunc.src !== _batchedInfo.blendSrc ||
+            blendFunc.dst !== _batchedInfo.blendDst ||
+            glProgramState !== _batchedInfo.glProgramState) {
+            // Draw batched elements
+            this._batchRendering();
+            // Update _batchedInfo
             _batchedInfo.texture = texture;
-        }
-
-        if (blendFunc) {
             _batchedInfo.blendSrc = blendFunc.src;
             _batchedInfo.blendDst = blendFunc.dst;
-        }
+            _batchedInfo.glProgramState = glProgramState;
 
-        if (shaderProgram) {
-            _batchedInfo.shader = shaderProgram;
+            return true;
+        }
+        else {
+            return false;
         }
     },
 
@@ -339,7 +344,7 @@ return {
 
         // Check batching
         var node = cmd._node;
-        var texture = node._texture || (node._spriteFrame ? node._spriteFrame._texture : null);
+        var texture = node._texture || (node._spriteFrame && node._spriteFrame._texture);
         var blendSrc = node._blendFunc.src;
         var blendDst = node._blendFunc.dst;
         var glProgramState = cmd._glProgramState;
@@ -361,38 +366,7 @@ return {
         // Upload vertex data
         var len = cmd.uploadData(_vertexDataF32, _vertexDataUI32, _batchingSize * _sizePerVertex);
         if (len > 0) {
-            var i, curr, type = cmd.vertexType || VertexType.QUAD;
-            switch (type) {
-            case VertexType.QUAD:
-                for (i = 0; i < len; i += 4) {
-                    curr = _batchingSize + i;
-                    _indexData[_indexSize++] = curr + 0;
-                    _indexData[_indexSize++] = curr + 1;
-                    _indexData[_indexSize++] = curr + 2;
-                    _indexData[_indexSize++] = curr + 1;
-                    _indexData[_indexSize++] = curr + 2;
-                    _indexData[_indexSize++] = curr + 3;
-                }
-                break;
-            case VertexType.TRIANGLE:
-                _pureQuad = false;
-                for (i = 0; i < len; i += 3) {
-                    curr = _batchingSize + i;
-                    _indexData[_indexSize++] = curr + 0;
-                    _indexData[_indexSize++] = curr + 1;
-                    _indexData[_indexSize++] = curr + 2;
-                }
-                break;
-            case VertexType.CUSTOM:
-                _pureQuad = false;
-                if (cmd.uploadIndexData) {
-                    _indexSize += cmd.uploadIndexData(_indexData, _indexSize, _batchingSize);
-                }
-                break;
-            default:
-                return;
-            }
-            _batchingSize += len;
+            this._increaseBatchingSize(len, cmd.vertexType);
         }
     },
 
