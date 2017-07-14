@@ -1083,7 +1083,7 @@ cc.RotateTo = cc.ActionInterval.extend(/** @lends cc.RotateTo# */{
     initWithDuration: function (duration, deltaAngleX, deltaAngleY) {
         if (cc.ActionInterval.prototype.initWithDuration.call(this, duration)) {
             this._dstAngleX = deltaAngleX || 0;
-            this._dstAngleY = deltaAngleY || this._dstAngleX;
+            this._dstAngleY = deltaAngleY !== undefined ? deltaAngleY : this._dstAngleX;
             return true;
         }
         return false;
