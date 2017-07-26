@@ -33,7 +33,7 @@
  * @property {String}   titleFont               - The content string font of the button title
  * @property {Number}   titleFontSize           - The content string font size of the button title
  * @property {String}   titleFontName           - The content string font name of the button title
- * @property {cc.Color} titleFontColor          - The content string font color of the button title
+ * @property {cc.Color} titleColor          - The content string font color of the button title
  * @property {Boolean}  pressedActionEnabled    - Indicate whether button has zoom effect when clicked
  */
 ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
