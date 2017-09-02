@@ -43,7 +43,6 @@ cc.UniformValue = function (uniform, glprogram) {
     this._glprogram = glprogram;
 
     this._value = null;
-    this._currentBoundValue = null;
     this._type = -1;
 };
 
@@ -105,12 +104,6 @@ cc.UniformValue.prototype = {
     },
 
     apply: function apply() {
-        if (this._currentBoundValue === this._value
-            && this._type !== types.GL_CALLBACK) {
-            return;
-        }
-
-        this._currentBoundValue = this._value;
         switch (this._type) {
         case types.GL_INT:
             this._glprogram.setUniformLocationWith1i(this._uniform.location, this._value);
@@ -180,10 +173,7 @@ cc.GLProgramState.prototype = {
         }
          
         for (var i = 0; i < this._uniforms.length; ++i) {
-            var uniform = this._uniforms[i];
-            if (uniform._currentBoundValue !== uniform._value) {
-                uniform.apply();
-            }
+            this._uniforms[i].apply();
         }
     },
 
