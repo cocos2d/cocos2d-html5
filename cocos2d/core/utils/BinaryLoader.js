@@ -37,6 +37,7 @@ cc.loader.loadBinary = function (url, cb) {
     var xhr = this.getXMLHttpRequest(),
         errInfo = "load " + url + " failed!";
     xhr.open("GET", url, true);
+    xhr.responseType = 'arraybuffer';
     if (cc.loader.loadBinary._IEFilter) {
         // IE-specific logic here
         xhr.setRequestHeader("Accept-Charset", "x-user-defined");
@@ -49,7 +50,7 @@ cc.loader.loadBinary = function (url, cb) {
     } else {
         if (xhr.overrideMimeType) xhr.overrideMimeType("text\/plain; charset=x-user-defined");
         xhr.onload = function () {
-            xhr.readyState === 4 && xhr.status === 200 ? cb(null, self._str2Uint8Array(xhr.responseText)) : cb(errInfo);
+            xhr.readyState === 4 && xhr.status === 200 ? cb(null, xhr.response) : cb(errInfo);
         };
     }
     xhr.send(null);
@@ -80,6 +81,7 @@ cc.loader.loadBinarySync = function (url) {
     req.timeout = 0;
     var errInfo = "load " + url + " failed!";
     req.open('GET', url, false);
+    req.responseType = 'arraybuffer';
     var arrayInfo = null;
     if (cc.loader.loadBinary._IEFilter) {
         req.setRequestHeader("Accept-Charset", "x-user-defined");
@@ -102,7 +104,7 @@ cc.loader.loadBinarySync = function (url) {
             return null;
         }
 
-        arrayInfo = this._str2Uint8Array(req.responseText);
+        arrayInfo = req.response;
     }
     return arrayInfo;
 };
