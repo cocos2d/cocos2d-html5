@@ -801,25 +801,51 @@ cc.loader = (function () {
                     };
                 } else {
                     if (xhr.overrideMimeType) xhr.overrideMimeType("text\/plain; charset=utf-8");
-                    xhr.onload = function () {
+                    var loadCallback = function () {
+                        xhr.removeEventListener('load', loadCallback);
+                        xhr.removeEventListener('error', errorCallback);
                         if (xhr._timeoutId >= 0) {
                             clearTimeout(xhr._timeoutId);
+                        }
+                        else {
+                            xhr.removeEventListener('timeout', timeoutCallback);
                         }
                         if (xhr.readyState === 4) {
                             xhr.status === 200 ? cb(null, xhr.responseText) : cb({status:xhr.status, errorMessage:errInfo}, null);
                         }
                     };
-                    xhr.onerror = function () {
+                    var errorCallback = function () {
+                        xhr.removeEventListener('load', loadCallback);
+                        xhr.removeEventListener('error', errorCallback);
+                        if (xhr._timeoutId >= 0) {
+                            clearTimeout(xhr._timeoutId);
+                        }
+                        else {
+                            xhr.removeEventListener('timeout', timeoutCallback);
+                        }
                         cb({status: xhr.status, errorMessage: errInfo}, null);
                     };
-                    if (xhr.ontimeout === undefined) {
-                        xhr._timeoutId = setTimeout(function () {
-                            xhr.ontimeout();
-                        }, xhr.timeout);
-                    }
-                    xhr.ontimeout = function () {
+                    var timeoutCallback = function () {
+                        xhr.removeEventListener('load', loadCallback);
+                        xhr.removeEventListener('error', errorCallback);
+                        if (xhr._timeoutId >= 0) {
+                            clearTimeout(xhr._timeoutId);
+                        }
+                        else {
+                            xhr.removeEventListener('timeout', timeoutCallback);
+                        }
                         cb({status: xhr.status, errorMessage: "Request timeout: " + errInfo}, null);
                     };
+                    xhr.addEventListener('load', loadCallback);
+                    xhr.addEventListener('error', errorCallback);
+                    if (xhr.ontimeout === undefined) {
+                        xhr._timeoutId = setTimeout(function () {
+                            timeoutCallback();
+                        }, xhr.timeout);
+                    }
+                    else {
+                        xhr.addEventListener('timeout', timeoutCallback);
+                    }
                 }
                 xhr.send(null);
             } else {
@@ -836,9 +862,14 @@ cc.loader = (function () {
             xhr.open("GET", url, true);
             xhr.responseType = "arraybuffer";
 
-            xhr.onload = function () {
+            var loadCallback = function () {
+                xhr.removeEventListener('load', loadCallback);
+                xhr.removeEventListener('error', errorCallback);
                 if (xhr._timeoutId >= 0) {
                     clearTimeout(xhr._timeoutId);
+                }
+                else {
+                    xhr.removeEventListener('timeout', timeoutCallback);
                 }
                 var arrayBuffer = xhr.response; // Note: not oReq.responseText
                 if (arrayBuffer) {
@@ -848,17 +879,38 @@ cc.loader = (function () {
                     xhr.status === 200 ? cb(null, xhr.response) : cb({status:xhr.status, errorMessage:errInfo}, null);
                 }
             };
-            xhr.onerror = function(){
+            var errorCallback = function(){
+                xhr.removeEventListener('load', loadCallback);
+                xhr.removeEventListener('error', errorCallback);
+                if (xhr._timeoutId >= 0) {
+                    clearTimeout(xhr._timeoutId);
+                }
+                else {
+                    xhr.removeEventListener('timeout', timeoutCallback);
+                }
                 cb({status:xhr.status, errorMessage:errInfo}, null);
             };
-            if (xhr.ontimeout === undefined) {
-                xhr._timeoutId = setTimeout(function () {
-                    xhr.ontimeout();
-                }, xhr.timeout);
-            }
-            xhr.ontimeout = function () {
+            var timeoutCallback = function () {
+                xhr.removeEventListener('load', loadCallback);
+                xhr.removeEventListener('error', errorCallback);
+                if (xhr._timeoutId >= 0) {
+                    clearTimeout(xhr._timeoutId);
+                }
+                else {
+                    xhr.removeEventListener('timeout', timeoutCallback);
+                }
                 cb({status: xhr.status, errorMessage: "Request timeout: " + errInfo}, null);
             };
+            xhr.addEventListener('load', loadCallback);
+            xhr.addEventListener('error', errorCallback);
+            if (xhr.ontimeout === undefined) {
+                xhr._timeoutId = setTimeout(function () {
+                    timeoutCallback();
+                }, xhr.timeout);
+            }
+            else {
+                xhr.addEventListener('timeout', timeoutCallback);
+            }
             xhr.send(null);
         },
 
