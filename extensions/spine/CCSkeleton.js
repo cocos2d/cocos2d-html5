@@ -106,7 +106,16 @@ sp.Skeleton = cc.Node.extend(/** @lends sp.Skeleton# */{
     init: function () {
         cc.Node.prototype.init.call(this);
         this._premultipliedAlpha = (cc._renderType === cc.game.RENDER_TYPE_WEBGL && cc.OPTIMIZE_BLEND_FUNC_FOR_PREMULTIPLIED_ALPHA);
+    },
+
+    onEnter: function () {
+        cc.Node.prototype.onEnter.call(this);
         this.scheduleUpdate();
+    },
+
+    onExit: function () {
+        this.unscheduleUpdate();
+        cc.Node.prototype.onExit.call(this);
     },
 
     /**

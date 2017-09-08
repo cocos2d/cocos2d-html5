@@ -102,8 +102,8 @@ proto.rendering = function (wrapper, scaleX, scaleY) {
 proto.updateStatus = function() {
     this.originUpdateStatus();
     this._updateCurrentRegions();
-    this._regionFlag = _ccsg.Node.CanvasRenderCmd.RegionStatus.DirtyDouble;
-    this._dirtyFlag &= ~_ccsg.Node._dirtyFlags.contentDirty;
+    this._regionFlag = cc.Node.CanvasRenderCmd.RegionStatus.DirtyDouble;
+    this._dirtyFlag &= ~cc.Node._dirtyFlags.contentDirty;
 };
 
 proto.getLocalBB = function() {
