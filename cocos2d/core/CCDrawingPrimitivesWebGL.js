@@ -61,7 +61,7 @@ cc.DrawingPrimitiveWebGL = cc.Class.extend(/** @lends cc.DrawingPrimitiveWebGL# 
             _t._shader = cc.shaderCache.programForKey(cc.SHADER_POSITION_UCOLOR);
             _t._shader._addUniformLocation(this._colorLocation);
             _t._shader._addUniformLocation(this._pointSizeLocation);
-            _t._glProgramState = new cc.GLProgramState(_t._shader);
+            _t._glProgramState = cc.GLProgramState.getOrCreateWithGLProgram(_t._shader);
 
             _t._initialized = true;
         }
