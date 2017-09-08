@@ -943,4 +943,4 @@ cc.Director.PROJECTION_CUSTOM = 3;
  * @constant
  * @type {Number}
  */
-cc.Director.PROJECTION_DEFAULT = cc.Director.PROJECTION_2D;
+cc.Director.PROJECTION_DEFAULT = cc.Director.PROJECTION_3D;
