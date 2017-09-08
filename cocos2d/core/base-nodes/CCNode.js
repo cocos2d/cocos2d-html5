@@ -306,6 +306,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {Number} localZOrder
      */
     setLocalZOrder: function (localZOrder) {
+        if (localZOrder === this._localZOrder)
+            return;
         if (this._parent)
             this._parent.reorderChild(this, localZOrder);
         else
@@ -1363,9 +1365,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         cc.assert(child, cc._LogInfos.Node_reorderChild);
         if (this._children.indexOf(child) === -1) {
             cc.log(cc._LogInfos.Node_reorderChild_2);
-            return;
-        }
-        if (zOrder === child.zIndex) {
             return;
         }
         cc.renderer.childrenOrderDirty = this._reorderChildDirty = true;
