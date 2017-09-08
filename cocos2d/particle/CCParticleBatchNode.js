@@ -278,9 +278,6 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
             return;
         }
 
-        if (zOrder === child.zIndex)
-            return;
-
         // no reordering if only 1 child
         if (this._children.length > 1) {
             var getIndexes = this._getCurrentIndex(child, zOrder);
