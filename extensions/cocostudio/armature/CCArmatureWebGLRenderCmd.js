@@ -118,7 +118,7 @@
     };
 
     proto.setShaderProgram = function (shaderProgram) {
-        this._shaderProgram = shaderProgram;
+        this._glProgramState = cc.GLProgramState.getOrCreateWithGLProgram(shaderProgram);
     };
 
     proto._updateColorAndOpacity = function (skinRenderCmd, bone) {
