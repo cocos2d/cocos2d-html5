@@ -298,7 +298,7 @@
     proto.uploadData = function (f32buffer, ui32buffer, vertexDataOffset) {
         var node = this._node, locTexture = node._texture;
         if (!(locTexture && locTexture._textureLoaded && node._rect.width && node._rect.height) || !this._displayedOpacity)
-            return false;
+            return 0;
 
         // Fill in vertex data with quad information (4 vertices for sprite)
         var opacity = this._displayedOpacity;

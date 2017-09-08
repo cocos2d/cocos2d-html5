@@ -385,7 +385,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
 
     _removeUpdateFromHash:function (entry) {
         var self = this; 
-        element = self._hashForUpdates[entry.target.__instanceId];
+        var element = self._hashForUpdates[entry.target.__instanceId];
         if (element) {
             // Remove list entry from list
             var list = element.list, listEntry = element.entry;
