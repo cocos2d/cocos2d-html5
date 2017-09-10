@@ -387,8 +387,10 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9\-¿¡«À-ÖØ-öø-ʯ\u0300-\u034e\u03
         var locStrLen = this._strings.length;
         for (var i = 0; i < locStrLen; i++) {
             var line = this._strings[i];
-            if (locStrokeEnabled)
+            if (locStrokeEnabled) {
+                context.lineJoin = 'round';
                 context.strokeText(line, xOffset, yOffsetArray[i]);
+            }
             context.fillText(line, xOffset, yOffsetArray[i]);
         }
         cc.g_NumberOfDraws++;
