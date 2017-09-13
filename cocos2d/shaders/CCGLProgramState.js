@@ -163,9 +163,9 @@ cc.GLProgramState.prototype = {
             this._glprogram._setUniformForMVPMatrixWithMat4(modelView);
         }
 
-        Object.values(this._uniforms).forEach(function(uniform) {
-            uniform.apply();
-        });
+        for (var name in this._uniforms) {
+            this._uniforms[name].apply();
+        };
     },
 
     setGLProgram: function setGLProgram(glprogram) {

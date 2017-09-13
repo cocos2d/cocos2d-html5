@@ -48,11 +48,18 @@ cc.GLProgram = cc.Class.extend(/** @lends cc.GLProgram# */{
 
         var updated = false;
         var element = this._hashForUniforms[name];
-        var args = Array.isArray(arguments[1]) ? arguments[1] :
-            Array.prototype.slice.call(arguments, 1);
+        var args;
+        if (Array.isArray(arguments[1])) {
+            args = arguments[1];
+        } else {
+            args = new Array(arguments.length - 1);
+            for (var i = 1; i < arguments.length; i += 1) {
+                args[i - 1] = arguments[i];
+            }
+        }
 
         if (!element || element.length !== args.length) {
-            this._hashForUniforms[name] = args.slice();
+            this._hashForUniforms[name] = [].concat(args);
             updated = true;
         } else {
             for (var i = 0; i < args.length; i += 1) {
@@ -260,11 +267,14 @@ cc.GLProgram = cc.Class.extend(/** @lends cc.GLProgram# */{
      *  cc.UNIFORM_SAMPLER
      */
     updateUniforms: function () {
-        [cc.UNIFORM_PMATRIX_S, cc.UNIFORM_MVMATRIX_S, cc.UNIFORM_MVPMATRIX_S,
-            cc.UNIFORM_TIME_S, cc.UNIFORM_SINTIME_S, cc.UNIFORM_COSTIME_S,
-            cc.UNIFORM_RANDOM01_S, cc.UNIFORM_SAMPLER_S].forEach(function(name) {
-            this._addUniformLocation(name);
-        }.bind(this));
+        this._addUniformLocation(cc.UNIFORM_PMATRIX_S);
+        this._addUniformLocation(cc.UNIFORM_MVMATRIX_S);
+        this._addUniformLocation(cc.UNIFORM_MVPMATRIX_S);
+        this._addUniformLocation(cc.UNIFORM_TIME_S);
+        this._addUniformLocation(cc.UNIFORM_SINTIME_S);
+        this._addUniformLocation(cc.UNIFORM_COSTIME_S);
+        this._addUniformLocation(cc.UNIFORM_RANDOM01_S);
+        this._addUniformLocation(cc.UNIFORM_SAMPLER_S);
         this._usesTime = (this._uniforms[cc.UNIFORM_TIME_S] != null || this._uniforms[cc.UNIFORM_SINTIME_S] != null || this._uniforms[cc.UNIFORM_COSTIME_S] != null);
 
         this.use();
