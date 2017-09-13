@@ -35,6 +35,7 @@
 
         this._bl = cc.p();
         this._tr = cc.p();
+        this._transformUpdating = false;
 
         this.initCmd();
     };
@@ -55,7 +56,9 @@
         this._tr.x = rx * wt.a + ty * wt.c + wt.tx;
         this._tr.y = rx * wt.b + ty * wt.d + wt.ty;
 
+        this._transformUpdating = true;
         this._updateProgressData();
+        this._transformUpdating = false;
     };
 
     proto.rendering = function (ctx) {
@@ -449,7 +452,7 @@
         this._updateColor();
 
         var locVertexData = this._vertexData;
-        if (!sameIndexCount) {
+        if (this._transformUpdating || !sameIndexCount) {
             //    First we populate the array with the m_tMidpoint, then all
             //    vertices/texcoords/colors of the 12 'o clock start and edges and the hitpoint
             this._textureCoordFromAlphaPoint(locVertexData[0].texCoords, locMidPoint.x, locMidPoint.y);
