@@ -125,7 +125,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     // Custom callback for resize event
     _resizeCallback: null,
 
-    _orientationChanging: true,
+    _orientationChanging: false,
     _resizing: false,
 
     _scaleX: 1,
