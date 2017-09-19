@@ -854,6 +854,7 @@ cc.EditBox.create = function (size, normal9SpriteBg, press9SpriteBg, disabled9Sp
         var thisPointer = this;
         var tmpEdTxt = this._edTxt = document.createElement('input');
         tmpEdTxt.type = 'text';
+        tmpEdTxt.style.fontFamily = this._edFontName;     
         tmpEdTxt.style.fontSize = this._edFontSize + 'px';
         tmpEdTxt.style.color = '#000000';
         tmpEdTxt.style.border = 0;
@@ -949,6 +950,7 @@ cc.EditBox.create = function (size, normal9SpriteBg, press9SpriteBg, disabled9Sp
         var thisPointer = this;
         var tmpEdTxt = this._edTxt = document.createElement('textarea');
         tmpEdTxt.type = 'text';
+        tmpEdTxt.style.fontFamily = this._edFontName;     
         tmpEdTxt.style.fontSize = this._edFontSize + 'px';
         tmpEdTxt.style.color = '#000000';
         tmpEdTxt.style.border = 0;
