@@ -496,7 +496,7 @@ cc._tmp.WebGLTexture2D = function () {
 
             self._hasPremultipliedAlpha = premultiplied;
             self._hasMipmaps = false;
-            if (ENABLE_IMAEG_POOL) {
+            if (window.ENABLE_IMAEG_POOL) {
                 self._htmlElementObj = null;
             }
 

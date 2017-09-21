@@ -140,19 +140,19 @@ cc.inject = function (srcPrototype, destPrototype) {
  * @namespace
  * @name ClassManager
  */
-var ClassManager = {
-    id : (0|(Math.random()*998)),
+var ClassManager = function () {
+    var id = (0|(Math.random()*998));
+    var instanceId = (0|(Math.random()*998));
 
-    instanceId : (0|(Math.random()*998)),
+    this.getNewID = function () {
+        return id++;
+    };
 
-    getNewID : function(){
-        return this.id++;
-    },
-
-    getNewInstanceId : function(){
-        return this.instanceId++;
-    }
+    this.getNewInstanceId = function () {
+        return instanceId++;
+    };
 };
+var classManager = new ClassManager();
 
 /* Managed JavaScript Inheritance
  * Based on John Resig's Simple JavaScript Inheritance http://ejohn.org/blog/simple-javascript-inheritance/
@@ -192,7 +192,7 @@ var ClassManager = {
         var Class;
         if (cc.game.config && cc.game.config[cc.game.CONFIG_KEY.exposeClassName]) {
             var constructor = "(function " + (props._className || "Class") + " (arg0, arg1, arg2, arg3, arg4, arg5) {\n";
-            constructor += "    this.__instanceId = ClassManager.getNewInstanceId();\n";
+            constructor += "    this.__instanceId = classManager.getNewInstanceId();\n";
             constructor += "    if (this.ctor) {\n";
             constructor += "        switch (arguments.length) {\n";
             constructor += "        case 0: this.ctor(); break;\n";
@@ -208,7 +208,7 @@ var ClassManager = {
         }
         else {
             Class = function (arg0, arg1, arg2, arg3, arg4) {
-                this.__instanceId = ClassManager.getNewInstanceId();
+                this.__instanceId = classManager.getNewInstanceId();
                 if (this.ctor) {
                     switch (arguments.length) {
                     case 0: this.ctor(); break;
@@ -223,7 +223,7 @@ var ClassManager = {
             };
         }
 
-        desc.value = ClassManager.getNewID();
+        desc.value = classManager.getNewID();
         Object.defineProperty(prototype, '__pid', desc);
 
         // Populate our constructed prototype object
