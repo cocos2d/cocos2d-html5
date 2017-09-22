@@ -60,4 +60,6 @@
         set: function (value) { this.setShaderProgram(value); },
         get: function () { return this.getShaderProgram(); }
     });
+    /** @expose */
+    proto._shaderProgram;
 })();

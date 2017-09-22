@@ -992,7 +992,7 @@ cc.loader = (function () {
                     delete _queue[url];
                 }
 
-                if (ENABLE_IMAEG_POOL && cc._renderType === cc.game.RENDER_TYPE_WEBGL) {
+                if (window.ENABLE_IMAEG_POOL && cc._renderType === cc.game.RENDER_TYPE_WEBGL) {
                     imagePool.put(img);
                 }
             };

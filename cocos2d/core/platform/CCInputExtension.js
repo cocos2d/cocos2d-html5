@@ -39,10 +39,12 @@ _p.setAccelerometerEnabled = function(isEnable){
     var scheduler = cc.director.getScheduler();
     if(_t._accelEnabled){
         _t._accelCurTime = 0;
+        _t._registerAccelerometerEvent();
         scheduler.scheduleUpdate(_t);
     } else {
         _t._accelCurTime = 0;
-        scheduler.scheduleUpdate(_t);
+        _t._unregisterAccelerometerEvent();
+        scheduler.unscheduleUpdate(_t);
     }
 };
 
@@ -85,7 +87,14 @@ _p._registerAccelerometerEvent = function(){
         _t._minus = -1;
     }
 
-    w.addEventListener(_deviceEventType, _t.didAccelerate.bind(_t), false);
+    _t.didAccelerateCallback = _t.didAccelerate.bind(_t);
+    w.addEventListener(_deviceEventType, _t.didAccelerateCallback, false);
+};
+
+_p._unregisterAccelerometerEvent = function () {
+    this._acceleration = null;
+    var _deviceEventType = (this._accelDeviceEvent === window.DeviceMotionEvent) ? "devicemotion" : "deviceorientation";
+    window.removeEventListener(_deviceEventType, this.didAccelerateCallback, false);
 };
 
 _p.didAccelerate = function (eventData) {
