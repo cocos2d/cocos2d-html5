@@ -100,12 +100,22 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
         }
     },
 
-    _createTitleRendererIfNeeded: function ( ) {
+    _createTitleRendererIfNeeded: function (fntFile) {
         if(!this._titleRenderer) {
-            this._titleRenderer = new cc.LabelTTF("");
-            this._titleRenderer.setAnchorPoint(0.5, 0.5);
+            if(fntFile != null)
+            {
+                this._titleRenderer = new cc.LabelBMFont("", fntFile);
+                this._titleRenderer.setAlignment(cc.TEXT_ALIGNMENT_CENTER);
+            }
+            else
+            {
+                this._titleRenderer = new cc.LabelTTF("");
+                this._titleRenderer.setVerticalAlignment(cc.VERTICAL_TEXT_ALIGNMENT_CENTER);
+            }
+
+            this._titleRenderer.setAnchorPoint(0.5, 0.4);
             this._titleColor = cc.color.WHITE;
-            this._titleRenderer.setVerticalAlignment(cc.VERTICAL_TEXT_ALIGNMENT_CENTER);
+
             this.addProtectedChild(this._titleRenderer, ccui.Button.TITLE_RENDERER_ZORDER, -1);
         }
     },
@@ -657,7 +667,11 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
     setTitleFontSize: function (size) {
         this._createTitleRendererIfNeeded();
 
-        this._titleRenderer.setFontSize(size);
+        if(this._titleRenderer.setFontSize)
+            this._titleRenderer.setFontSize(size);
+        else
+            this._titleRenderer.setBoundingWidth(size);
+
         this._fontSize = size;
     },
 
@@ -705,9 +719,9 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
      * @param {String} fontName
      */
     setTitleFontName: function (fontName) {
-        this._createTitleRendererIfNeeded();
+        this._createTitleRendererIfNeeded(fontName);
 
-        this._titleRenderer.setFontName(fontName);
+        this._titleRenderer.setFontName && this._titleRenderer.setFontName(fontName);
         this._fontName = fontName;
     },
 
