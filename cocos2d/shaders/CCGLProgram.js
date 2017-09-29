@@ -63,7 +63,8 @@ cc.GLProgram = cc.Class.extend(/** @lends cc.GLProgram# */{
             updated = true;
         } else {
             for (var i = 0; i < args.length; i += 1) {
-                if (args[i] !== element[i]) {
+                // Array and Typed Array inner values could be changed, so we must update them
+                if (args[i] !== element[i] || typeof args[i] === 'object') {
                     element[i] = args[i];
                     updated = true;
                 }
