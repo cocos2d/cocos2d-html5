@@ -50,7 +50,7 @@ cc.loader.loadBinary = function (url, cb) {
     } else {
         if (xhr.overrideMimeType) xhr.overrideMimeType("text\/plain; charset=x-user-defined");
         xhr.onload = function () {
-            xhr.readyState === 4 && xhr.status === 200 ? cb(null, xhr.response) : cb(errInfo);
+            xhr.readyState === 4 && xhr.status === 200 ? cb(null, new Uint8Array(xhr.response)) : cb(errInfo);
         };
     }
     xhr.send(null);
@@ -104,7 +104,7 @@ cc.loader.loadBinarySync = function (url) {
             return null;
         }
 
-        arrayInfo = req.response;
+        arrayInfo = new Uint8Array(req.response);
     }
     return arrayInfo;
 };
