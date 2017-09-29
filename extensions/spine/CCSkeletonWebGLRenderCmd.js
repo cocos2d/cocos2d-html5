@@ -290,8 +290,8 @@ proto._uploadMeshAttachmentData = function(attachment, slot, premultipliedAlpha,
     for (var i = 0, n = vertices.length; i < n; i += 8) {
         var vx = vertices[i],
             vy = vertices[i + 1];
-        var x = vx * wa + vy * wc + wx,
-            y = vx * wb + vy * wd + wy;
+        var x = vx * wa + vy * wb + wx,
+            y = vx * wc + vy * wd + wy;
         var r = vertices[i + 2] * nodeR,
             g = vertices[i + 3] * nodeG,
             b = vertices[i + 4] * nodeB,
