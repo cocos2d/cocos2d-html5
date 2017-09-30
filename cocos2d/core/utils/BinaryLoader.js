@@ -81,7 +81,6 @@ cc.loader.loadBinarySync = function (url) {
     req.timeout = 0;
     var errInfo = "load " + url + " failed!";
     req.open('GET', url, false);
-    req.responseType = 'arraybuffer';
     var arrayInfo = null;
     if (cc.loader.loadBinary._IEFilter) {
         req.setRequestHeader("Accept-Charset", "x-user-defined");
@@ -104,7 +103,7 @@ cc.loader.loadBinarySync = function (url) {
             return null;
         }
 
-        arrayInfo = new Uint8Array(req.response);
+        arrayInfo = self._str2Uint8Array(req.responseText);
     }
     return arrayInfo;
 };
