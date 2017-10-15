@@ -187,6 +187,8 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
 
         if (sys.isMobile) {
             window.addEventListener('orientationchange', this._orientationChange);
+        } else {
+            this._orientationChanging = false;
         }
     },
 
