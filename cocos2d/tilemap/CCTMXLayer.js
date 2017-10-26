@@ -129,8 +129,8 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             spacing = tileset.spacing,
             margin = tileset.margin,
 
-            cols = Math.floor((imageW - margin*2 + spacing) / (tw + spacing)),
-            rows = Math.floor((imageH - margin*2 + spacing) / (th + spacing)),
+            cols = Math.floor((imageW - margin + spacing) / (tw + spacing)),
+            rows = Math.floor((imageH - margin + spacing) / (th + spacing)),
             count = rows * cols,
 
             gid = tileset.firstGid,
