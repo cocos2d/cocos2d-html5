@@ -383,6 +383,7 @@ cc.Audio.WebAudio.prototype = {
 
             var request = cc.loader.getXMLHttpRequest();
             request.open("GET", url, true);
+            request.timeout = 10000;
             request.responseType = "arraybuffer";
 
             // Our asynchronous callback
