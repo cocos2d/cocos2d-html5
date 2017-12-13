@@ -1064,7 +1064,7 @@ cc.loader = (function () {
                 loader = _register[type.toLowerCase()];
             }
             if (!loader) {
-                cc.error("loader for [" + type + "] not exists!");
+                cc.error("loader for [" + type + "] doesn't exist!");
                 return cb();
             }
             var realUrl = url;
