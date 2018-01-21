@@ -193,16 +193,9 @@ cc.inject({
         this._useDelay = (this._delay > 0);
         this._repeat = repeat;
         this._runForever = (this._repeat === cc.REPEAT_FOREVER);
+        this._timesExecuted = 0;
         return true;
     },
-    /**
-     * @return {Number} returns interval of timer
-     */
-    getInterval : function(){return this._interval;},
-    /**
-     * @param {Number} interval set interval in seconds
-     */
-    setInterval : function(interval){this._interval = interval;},
 
     /**
      * triggers the timer
@@ -613,7 +606,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
                 timer = element.timers[i];
                 if (!timer.isExhausted() && callback === timer._callback) {
                     cc.log(cc._LogInfos.Scheduler_scheduleCallbackForTarget, timer.getInterval().toFixed(4), interval.toFixed(4));
-                    timer._interval = interval;
+                    timer.initWithCallback(this, callback, target, interval, repeat, delay, key);
                     return;
                 }
             }
