@@ -1486,6 +1486,45 @@ var _initSys = function () {
      * @type {Number}
      */
     sys.LANGUAGE_POLISH = "pl";
+    /**
+     * Turkish language code
+     * @constant
+     * @default
+     * @type {Number}
+     */
+    sys.LANGUAGE_TURKISH = "tr";
+
+    /**
+     * Ukrainian language code
+     * @constant
+     * @default
+     * @type {Number}
+     */
+    sys.LANGUAGE_UKRAINIAN = "uk";
+
+    /**
+     * Romanian language code
+     * @constant
+     * @default
+     * @type {Number}
+     */
+    sys.LANGUAGE_ROMANIAN = "ro";
+
+    /**
+     * Bulgarian language code
+     * @constant
+     * @default
+     * @type {Number}
+     */
+    sys.LANGUAGE_BULGARIAN = "bg";
+
+    /**
+     * Belarusian language code
+     * @constant
+     * @default
+     * @type {Number}
+     */
+    sys.LANGUAGE_BELARUSIAN = "be";
 
     /**
      * Unknown language code
