@@ -652,7 +652,7 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
 
     /**
      * Sets title fontSize to ccui.Button
-     * @param {cc.Size} size
+     * @param {Number} size
      */
     setTitleFontSize: function (size) {
         this._createTitleRendererIfNeeded();
