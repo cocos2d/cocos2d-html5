@@ -228,7 +228,9 @@ sp.Skeleton = cc.Node.extend(/** @lends sp.Skeleton# */{
             var attachment = slot.attachment;
             if (!attachment || !(attachment instanceof spine.RegionAttachment))
                 continue;
-            vertices = attachment.updateWorldVertices(slot, false);
+            // 3.5 vertices = attachment.updateWorldVertices(slot, false);
+            vertices = spine.Utils.setArraySize(new Array(), 8, 0);
+            attachment.computeWorldVertices(slot.bone, vertices, 0, 8);
             minX = Math.min(minX, vertices[VERTEX.X1] * scaleX, vertices[VERTEX.X4] * scaleX, vertices[VERTEX.X2] * scaleX, vertices[VERTEX.X3] * scaleX);
             minY = Math.min(minY, vertices[VERTEX.Y1] * scaleY, vertices[VERTEX.Y4] * scaleY, vertices[VERTEX.Y2] * scaleY, vertices[VERTEX.Y3] * scaleY);
             maxX = Math.max(maxX, vertices[VERTEX.X1] * scaleX, vertices[VERTEX.X4] * scaleX, vertices[VERTEX.X2] * scaleX, vertices[VERTEX.X3] * scaleX);

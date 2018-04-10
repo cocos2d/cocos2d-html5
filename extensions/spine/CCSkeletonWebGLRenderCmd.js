@@ -233,7 +233,11 @@ proto._uploadRegionAttachmentData = function(attachment, slot, premultipliedAlph
         nodeG = nodeColor.g,
         nodeB = nodeColor.b,
         nodeA = this._displayedOpacity;
-    var vertices = attachment.updateWorldVertices(slot, premultipliedAlpha);
+    // 3.5 var vertices = attachment.updateWorldVertices(slot, premultipliedAlpha);
+    // FIXME: lose premultipliedAlpha?
+    var vertices = spine.Utils.setArraySize(new Array(), 8, 0);
+    attachment.computeWorldVertices(slot.bone, vertices, 0, 8);
+    
     var wt = this._worldTransform,
         wa = wt.a, wb = wt.b, wc = wt.c, wd = wt.d,
         wx = wt.tx, wy = wt.ty,
@@ -280,14 +284,17 @@ proto._uploadMeshAttachmentData = function(attachment, slot, premultipliedAlpha,
         wx = wt.tx, wy = wt.ty,
         z = this._node.vertexZ;
     // get the vertex data
-    var vertices = attachment.updateWorldVertices(slot, premultipliedAlpha);
+    // 3.5 var vertices = attachment.updateWorldVertices(slot, premultipliedAlpha);
+    var verticesLength = attachment.worldVerticesLength;
+    var vertices = spine.Utils.setArraySize(new Array(), verticesLength, 0);
+    attachment.computeWorldVertices(slot, 0, verticesLength, vertices, 0, 2);
     var offset = vertexDataOffset;
     var nodeColor = this._displayedColor;
     var nodeR = nodeColor.r,
         nodeG = nodeColor.g,
         nodeB = nodeColor.b,
         nodeA = this._displayedOpacity;
-    for (var i = 0, n = vertices.length; i < n; i += 8) {
+    for (var i = 0, n = vertices.length; i < n; i += 2) {
         var vx = vertices[i],
             vy = vertices[i + 1];
         var x = vx * wa + vy * wb + wx,

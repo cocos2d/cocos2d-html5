@@ -6453,3 +6453,6 @@ var spine;
 	SwirlEffect.interpolation = new spine.PowOut(2);
 	spine.SwirlEffect = SwirlEffect;
 })(spine || (spine = {}));
+
+var sp = sp || {};
+sp.spine = spine;

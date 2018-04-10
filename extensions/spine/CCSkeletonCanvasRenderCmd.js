@@ -87,6 +87,7 @@ proto.rendering = function (wrapper, scaleX, scaleY) {
         }
 
         // Bone origins.
+        // FIXME: point position wrong, might due to scale
         drawingUtil.setPointSize(4);
         drawingUtil.setDrawColor(0, 0, 255, 255); // Root bone is blue.
 
@@ -114,7 +115,9 @@ proto._updateRegionAttachmentSlot = function (attachment, slot, points) {
     if (!points)
         return;
 
-    var vertices = attachment.updateWorldVertices(slot, false);
+    // 3.5 var vertices = attachment.updateWorldVertices(slot, false);
+    var vertices = spine.Utils.setArraySize(new Array(), 8, 0);
+    attachment.computeWorldVertices(slot.bone, vertices, 0, 8);
     var VERTEX = spine.RegionAttachment;
     points.length = 0;
     points.push(cc.p(vertices[VERTEX.X1], vertices[VERTEX.Y1]));
