@@ -233,13 +233,20 @@ proto._uploadRegionAttachmentData = function(attachment, slot, premultipliedAlph
         nodeG = nodeColor.g,
         nodeB = nodeColor.b,
         nodeA = this._displayedOpacity;
-    // 3.5 var vertices = attachment.updateWorldVertices(slot, premultipliedAlpha);
-    // FIXME: lose premultipliedAlpha? alpha impl innner, "vertices, 0, 8);" -> "vertices, 0, 2);"
+
     var vertices = spine.Utils.setArraySize(new Array(), 8, 0);
     attachment.computeWorldVertices(slot.bone, vertices, 0, 2);
 
     var uvs = attachment.uvs;
-    var color = attachment.color;
+
+    var skeleton = slot.bone.skeleton;
+    var skeletonColor = skeleton.color;
+    var slotColor = slot.color;
+    var regionColor = attachment.color;
+    var alpha = skeletonColor.a * slotColor.a * regionColor.a;
+    var multiplier = premultipliedAlpha ? alpha : 1;
+    var colors = attachment.tempColor;
+    colors.set(skeletonColor.r * slotColor.r * regionColor.r * multiplier, skeletonColor.g * slotColor.g * regionColor.g * multiplier, skeletonColor.b * slotColor.b * regionColor.b * multiplier, alpha);
     
     var wt = this._worldTransform,
         wa = wt.a, wb = wt.b, wc = wt.c, wd = wt.d,
@@ -255,10 +262,10 @@ proto._uploadRegionAttachmentData = function(attachment, slot, premultipliedAlph
             vy = vertices[srcIdx * 2 + 1];
         var x = vx * wa + vy * wc + wx,
             y = vx * wb + vy * wd + wy;
-        var r = color.r * nodeR,
-            g = color.g * nodeG,
-            b = color.b * nodeB,
-            a = color.a * nodeA;
+        var r = colors.r * nodeR,
+            g = colors.g * nodeG,
+            b = colors.b * nodeB,
+            a = colors.a * nodeA;
         var color = ((a<<24) | (b<<16) | (g<<8) | r);
         f32buffer[offset] = x;
         f32buffer[offset + 1] = y;
