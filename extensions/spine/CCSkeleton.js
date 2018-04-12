@@ -56,7 +56,10 @@ sp.ATTACHMENT_TYPE = {
     REGION: 0,
     BOUNDING_BOX: 1,
     MESH: 2,
-    SKINNED_MESH:3
+    SKINNED_MESH:3,
+    PATH:4,
+    POINT:5,
+    CLIPPING:6
 };
 
 var spine = sp.spine;

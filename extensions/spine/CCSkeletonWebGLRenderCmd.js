@@ -234,9 +234,12 @@ proto._uploadRegionAttachmentData = function(attachment, slot, premultipliedAlph
         nodeB = nodeColor.b,
         nodeA = this._displayedOpacity;
     // 3.5 var vertices = attachment.updateWorldVertices(slot, premultipliedAlpha);
-    // FIXME: lose premultipliedAlpha?
+    // FIXME: lose premultipliedAlpha? alpha impl innner, "vertices, 0, 8);" -> "vertices, 0, 2);"
     var vertices = spine.Utils.setArraySize(new Array(), 8, 0);
-    attachment.computeWorldVertices(slot.bone, vertices, 0, 8);
+    attachment.computeWorldVertices(slot.bone, vertices, 0, 2);
+
+    var uvs = attachment.uvs;
+    var color = attachment.color;
     
     var wt = this._worldTransform,
         wa = wt.a, wb = wt.b, wc = wt.c, wd = wt.d,
@@ -248,21 +251,21 @@ proto._uploadRegionAttachmentData = function(attachment, slot, premultipliedAlph
     // using two angles : (0, 1, 2) & (0, 2, 3)
     for (var i = 0; i < 6; i++) {
         var srcIdx = i < 4 ? i % 3 : i - 2;
-        var vx = vertices[srcIdx * 8],
-            vy = vertices[srcIdx * 8 + 1];
+        var vx = vertices[srcIdx * 2],
+            vy = vertices[srcIdx * 2 + 1];
         var x = vx * wa + vy * wc + wx,
             y = vx * wb + vy * wd + wy;
-        var r = vertices[srcIdx * 8 + 2] * nodeR,
-            g = vertices[srcIdx * 8 + 3] * nodeG,
-            b = vertices[srcIdx * 8 + 4] * nodeB,
-            a = vertices[srcIdx * 8 + 5] * nodeA;
+        var r = color.r * nodeR,
+            g = color.g * nodeG,
+            b = color.b * nodeB,
+            a = color.a * nodeA;
         var color = ((a<<24) | (b<<16) | (g<<8) | r);
         f32buffer[offset] = x;
         f32buffer[offset + 1] = y;
         f32buffer[offset + 2] = z;
         ui32buffer[offset + 3] = color;
-        f32buffer[offset + 4] = vertices[srcIdx * 8 + 6];
-        f32buffer[offset + 5] = vertices[srcIdx * 8 + 7];
+        f32buffer[offset + 4] = uvs[srcIdx * 2];
+        f32buffer[offset + 5] = uvs[srcIdx * 2 + 1];
         offset += 6;
     }
 
@@ -270,10 +273,10 @@ proto._uploadRegionAttachmentData = function(attachment, slot, premultipliedAlph
         // return the quad points info if debug slot enabled
         var VERTEX = spine.RegionAttachment;
         return [
-            cc.p(vertices[VERTEX.X1], vertices[VERTEX.Y1]),
-            cc.p(vertices[VERTEX.X2], vertices[VERTEX.Y2]),
-            cc.p(vertices[VERTEX.X3], vertices[VERTEX.Y3]),
-            cc.p(vertices[VERTEX.X4], vertices[VERTEX.Y4])
+            cc.p(vertices[VERTEX.OX1], vertices[VERTEX.OY1]),
+            cc.p(vertices[VERTEX.OX2], vertices[VERTEX.OY2]),
+            cc.p(vertices[VERTEX.OX3], vertices[VERTEX.OY3]),
+            cc.p(vertices[VERTEX.OX4], vertices[VERTEX.OY4])
         ];
     }
 };
@@ -285,6 +288,7 @@ proto._uploadMeshAttachmentData = function(attachment, slot, premultipliedAlpha,
         z = this._node.vertexZ;
     // get the vertex data
     // 3.5 var vertices = attachment.updateWorldVertices(slot, premultipliedAlpha);
+    // FIXME, NOT USED THIS FUNCTION?
     var verticesLength = attachment.worldVerticesLength;
     var vertices = spine.Utils.setArraySize(new Array(), verticesLength, 0);
     attachment.computeWorldVertices(slot, 0, verticesLength, vertices, 0, 2);
