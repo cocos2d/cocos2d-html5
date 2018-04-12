@@ -239,6 +239,7 @@ proto._uploadRegionAttachmentData = function(attachment, slot, premultipliedAlph
 
     var uvs = attachment.uvs;
 
+    // get the colors data
     var skeleton = slot.bone.skeleton;
     var skeletonColor = skeleton.color;
     var slotColor = slot.color;
@@ -246,7 +247,10 @@ proto._uploadRegionAttachmentData = function(attachment, slot, premultipliedAlph
     var alpha = skeletonColor.a * slotColor.a * regionColor.a;
     var multiplier = premultipliedAlpha ? alpha : 1;
     var colors = attachment.tempColor;
-    colors.set(skeletonColor.r * slotColor.r * regionColor.r * multiplier, skeletonColor.g * slotColor.g * regionColor.g * multiplier, skeletonColor.b * slotColor.b * regionColor.b * multiplier, alpha);
+    colors.set(skeletonColor.r * slotColor.r * regionColor.r * multiplier,
+        skeletonColor.g * slotColor.g * regionColor.g * multiplier,
+        skeletonColor.b * slotColor.b * regionColor.b * multiplier,
+        alpha);
     
     var wt = this._worldTransform,
         wa = wt.a, wb = wt.b, wc = wt.c, wd = wt.d,
@@ -294,11 +298,23 @@ proto._uploadMeshAttachmentData = function(attachment, slot, premultipliedAlpha,
         wx = wt.tx, wy = wt.ty,
         z = this._node.vertexZ;
     // get the vertex data
-    // 3.5 var vertices = attachment.updateWorldVertices(slot, premultipliedAlpha);
-    // FIXME, NOT USED THIS FUNCTION?
     var verticesLength = attachment.worldVerticesLength;
     var vertices = spine.Utils.setArraySize(new Array(), verticesLength, 0);
     attachment.computeWorldVertices(slot, 0, verticesLength, vertices, 0, 2);
+
+    var uvs = attachment.uvs;
+
+    // get the colors data
+    var skeleton = slot.bone.skeleton;
+    var skeletonColor = skeleton.color, slotColor = slot.color, meshColor = attachment.color;
+    var alpha = skeletonColor.a * slotColor.a * meshColor.a;
+    var multiplier = premultipliedAlpha ? alpha : 1;
+    var colors = attachment.tempColor;
+    colors.set(skeletonColor.r * slotColor.r * meshColor.r * multiplier,
+        skeletonColor.g * slotColor.g * meshColor.g * multiplier,
+        skeletonColor.b * slotColor.b * meshColor.b * multiplier,
+        alpha);
+            
     var offset = vertexDataOffset;
     var nodeColor = this._displayedColor;
     var nodeR = nodeColor.r,
@@ -310,18 +326,18 @@ proto._uploadMeshAttachmentData = function(attachment, slot, premultipliedAlpha,
             vy = vertices[i + 1];
         var x = vx * wa + vy * wb + wx,
             y = vx * wc + vy * wd + wy;
-        var r = vertices[i + 2] * nodeR,
-            g = vertices[i + 3] * nodeG,
-            b = vertices[i + 4] * nodeB,
-            a = vertices[i + 5] * nodeA;
+        var r = colors.r * nodeR,
+            g = colors.g * nodeG,
+            b = colors.b * nodeB,
+            a = colors.a * nodeA;
         var color = ((a<<24) | (b<<16) | (g<<8) | r);
 
         f32buffer[offset] = x;
         f32buffer[offset + 1] = y;
         f32buffer[offset + 2] = z;
         ui32buffer[offset + 3] = color;
-        f32buffer[offset + 4] = vertices[i + 6];
-        f32buffer[offset + 5] = vertices[i + 7];
+        f32buffer[offset + 4] = uvs[i];
+        f32buffer[offset + 5] = uvs[i + 1];
         offset += 6;
     }
 };
