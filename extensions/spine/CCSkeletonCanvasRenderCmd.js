@@ -87,13 +87,12 @@ proto.rendering = function (wrapper, scaleX, scaleY) {
         }
 
         // Bone origins.
-        // FIXME: point position wrong, might due to scale
-        drawingUtil.setPointSize(4);
+        var pointSize = 4;
         drawingUtil.setDrawColor(0, 0, 255, 255); // Root bone is blue.
 
         for (i = 0, n = locSkeleton.bones.length; i < n; i++) {
             bone = locSkeleton.bones[i];
-            drawingUtil.drawPoint({x: bone.worldX, y: bone.worldY});
+            drawingUtil.drawPoint({x: bone.worldX, y: bone.worldY}, pointSize);
             if (i === 0)
                 drawingUtil.setDrawColor(0, 255, 0, 255);
         }
