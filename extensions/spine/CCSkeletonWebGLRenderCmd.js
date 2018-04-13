@@ -91,8 +91,10 @@ proto.uploadData = function (f32buffer, ui32buffer, vertexDataOffset){
         this._currTexture = regionTextureAtlas.texture.getRealTexture();
         var batchBroken = cc.renderer._updateBatchedInfo(this._currTexture, this._getBlendFunc(slot.data.blendMode, premultiAlpha), this._glProgramState);
 
+        // keep the same logic with RendererWebGL.js, avoid vertex data overflow
+        var uploadAll = vertexDataOffset / 6 + vertCount > (cc.BATCH_VERTEX_COUNT - 200) * 0.5;
         // Broken for vertex data overflow
-        if (!batchBroken && vertexDataOffset + vertCount * 6 > f32buffer.length) {
+        if (!batchBroken && uploadAll) {
             // render the cached data
             cc.renderer._batchRendering();
             batchBroken = true;
