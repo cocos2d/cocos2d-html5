@@ -31,34 +31,6 @@
  */
 var sp = sp || {};
 
-/**
- * The vertex index of spine.
- * @constant
- * @type {{X1: number, Y1: number, X2: number, Y2: number, X3: number, Y3: number, X4: number, Y4: number}}
- */
-sp.VERTEX_INDEX = {
-    X1: 0,
-    Y1: 1,
-    X2: 2,
-    Y2: 3,
-    X3: 4,
-    Y3: 5,
-    X4: 6,
-    Y4: 7
-};
-
-/**
- * The attachment type of spine.  It contains three type: REGION(0), BOUNDING_BOX(1), MESH(2) and SKINNED_MESH.
- * @constant
- * @type {{REGION: number, BOUNDING_BOX: number, REGION_SEQUENCE: number, MESH: number}}
- */
-sp.ATTACHMENT_TYPE = {
-    REGION: 0,
-    BOUNDING_BOX: 1,
-    MESH: 2,
-    SKINNED_MESH:3
-};
-
 var spine = sp.spine;
 
 /**
@@ -228,11 +200,12 @@ sp.Skeleton = cc.Node.extend(/** @lends sp.Skeleton# */{
             var attachment = slot.attachment;
             if (!attachment || !(attachment instanceof spine.RegionAttachment))
                 continue;
-            vertices = attachment.updateWorldVertices(slot, false);
-            minX = Math.min(minX, vertices[VERTEX.X1] * scaleX, vertices[VERTEX.X4] * scaleX, vertices[VERTEX.X2] * scaleX, vertices[VERTEX.X3] * scaleX);
-            minY = Math.min(minY, vertices[VERTEX.Y1] * scaleY, vertices[VERTEX.Y4] * scaleY, vertices[VERTEX.Y2] * scaleY, vertices[VERTEX.Y3] * scaleY);
-            maxX = Math.max(maxX, vertices[VERTEX.X1] * scaleX, vertices[VERTEX.X4] * scaleX, vertices[VERTEX.X2] * scaleX, vertices[VERTEX.X3] * scaleX);
-            maxY = Math.max(maxY, vertices[VERTEX.Y1] * scaleY, vertices[VERTEX.Y4] * scaleY, vertices[VERTEX.Y2] * scaleY, vertices[VERTEX.Y3] * scaleY);
+            vertices = spine.Utils.setArraySize(new Array(), 8, 0);
+            attachment.computeWorldVertices(slot.bone, vertices, 0, 2);
+            minX = Math.min(minX, vertices[VERTEX.OX1] * scaleX, vertices[VERTEX.OX4] * scaleX, vertices[VERTEX.OX2] * scaleX, vertices[VERTEX.OX3] * scaleX);
+            minY = Math.min(minY, vertices[VERTEX.OY1] * scaleY, vertices[VERTEX.OY4] * scaleY, vertices[VERTEX.OY2] * scaleY, vertices[VERTEX.OY3] * scaleY);
+            maxX = Math.max(maxX, vertices[VERTEX.OX1] * scaleX, vertices[VERTEX.OX4] * scaleX, vertices[VERTEX.OX2] * scaleX, vertices[VERTEX.OX3] * scaleX);
+            maxY = Math.max(maxY, vertices[VERTEX.OY1] * scaleY, vertices[VERTEX.OY4] * scaleY, vertices[VERTEX.OY2] * scaleY, vertices[VERTEX.OY3] * scaleY);
         }
         var position = this.getPosition();
         return cc.rect(position.x + minX, position.y + minY, maxX - minX, maxY - minY);

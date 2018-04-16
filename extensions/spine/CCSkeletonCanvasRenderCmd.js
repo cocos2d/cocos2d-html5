@@ -87,12 +87,12 @@ proto.rendering = function (wrapper, scaleX, scaleY) {
         }
 
         // Bone origins.
-        drawingUtil.setPointSize(4);
+        var pointSize = 4;
         drawingUtil.setDrawColor(0, 0, 255, 255); // Root bone is blue.
 
         for (i = 0, n = locSkeleton.bones.length; i < n; i++) {
             bone = locSkeleton.bones[i];
-            drawingUtil.drawPoint({x: bone.worldX, y: bone.worldY});
+            drawingUtil.drawPoint({x: bone.worldX, y: bone.worldY}, pointSize);
             if (i === 0)
                 drawingUtil.setDrawColor(0, 255, 0, 255);
         }
@@ -114,13 +114,14 @@ proto._updateRegionAttachmentSlot = function (attachment, slot, points) {
     if (!points)
         return;
 
-    var vertices = attachment.updateWorldVertices(slot, false);
+    var vertices = spine.Utils.setArraySize(new Array(), 8, 0);
+    attachment.computeWorldVertices(slot.bone, vertices, 0, 2);
     var VERTEX = spine.RegionAttachment;
     points.length = 0;
-    points.push(cc.p(vertices[VERTEX.X1], vertices[VERTEX.Y1]));
-    points.push(cc.p(vertices[VERTEX.X4], vertices[VERTEX.Y4]));
-    points.push(cc.p(vertices[VERTEX.X3], vertices[VERTEX.Y3]));
-    points.push(cc.p(vertices[VERTEX.X2], vertices[VERTEX.Y2]));
+    points.push(cc.p(vertices[VERTEX.OX1], vertices[VERTEX.OY1]));
+    points.push(cc.p(vertices[VERTEX.OX4], vertices[VERTEX.OY4]));
+    points.push(cc.p(vertices[VERTEX.OX3], vertices[VERTEX.OY3]));
+    points.push(cc.p(vertices[VERTEX.OX2], vertices[VERTEX.OY2]));
 };
 
 proto._createChildFormSkeletonData = function () {
