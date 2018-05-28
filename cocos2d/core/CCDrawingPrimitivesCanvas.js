@@ -24,12 +24,6 @@
  THE SOFTWARE.
  ****************************************************************************/
 /**
- * @const
- * @type {number}
- */
-cc.PI2 = Math.PI * 2;
-
-/**
  * Canvas of DrawingPrimitive implement version use for canvasMode
  * @class
  * @extends cc.Class
