@@ -391,7 +391,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
      * @return {cc.Sprite}
      */
     getTileAt: function (pos, y) {
-        if (pos === undefined) {
+        if (pos == null) {
             throw new Error("cc.TMXLayer.getTileAt(): pos should be non-null");
         }
         var x = pos;
@@ -443,7 +443,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
      * @return {Number}
      */
     getTileGIDAt:function (pos, y) {
-        if (pos === undefined) {
+        if (pos == null) {
             throw new Error("cc.TMXLayer.getTileGIDAt(): pos should be non-null");
         }
         var x = pos;
@@ -478,7 +478,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
      * @param {Number} [flags]
      */
     setTileGID: function(gid, posOrX, flagsOrY, flags) {
-        if (posOrX === undefined) {
+        if (posOrX == null) {
             throw new Error("cc.TMXLayer.setTileGID(): pos should be non-null");
         }
         var pos;
@@ -555,13 +555,16 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
      * @return {Number}
      */
     getTileFlagsAt:function (pos, y) {
-        if(!pos)
+        if (pos == null) {
             throw new Error("cc.TMXLayer.getTileFlagsAt(): pos should be non-null");
-        if(y !== undefined)
+        }
+        if (y !== undefined) {
             pos = cc.p(pos, y);
-        if(pos.x >= this._layerSize.width || pos.y >= this._layerSize.height || pos.x < 0 || pos.y < 0)
+        }
+        if (pos.x >= this._layerSize.width || pos.y >= this._layerSize.height || pos.x < 0 || pos.y < 0) {
             throw new Error("cc.TMXLayer.getTileFlagsAt(): invalid position");
-        if(!this.tiles){
+        }
+        if (!this.tiles){
             cc.log("cc.TMXLayer.getTileFlagsAt(): TMXLayer: the tiles map has been released");
             return null;
         }
@@ -581,7 +584,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
      * @param {Number} [y]
      */
     removeTileAt:function (pos, y) {
-        if (!pos) {
+        if (pos == null) {
             throw new Error("cc.TMXLayer.removeTileAt(): pos should be non-null");
         }
         if (y !== undefined) {
@@ -616,8 +619,12 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
      * @return {cc.Point}
      */
     getPositionAt:function (pos, y) {
-        if (y !== undefined)
+        if (pos == null) {
+            throw new Error("cc.TMXLayer.getPositionAt(): pos should be non-null");
+        }
+        if (y !== undefined) {
             pos = cc.p(pos, y);
+        }
         var ret = cc.p(0,0);
         switch (this.layerOrientation) {
             case cc.TMX_ORIENTATION_ORTHO:
