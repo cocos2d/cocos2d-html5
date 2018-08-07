@@ -595,7 +595,8 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     setGravity: function (gravity) {
         if (this.emitterMode !== cc.ParticleSystem.MODE_GRAVITY)
             cc.log("cc.ParticleBatchNode.setGravity() : Particle Mode should be Gravity");
-        this.modeA.gravity = gravity;
+        this.modeA.gravity.x = gravity.x;
+        this.modeA.gravity.y = gravity.y;
     },
 
     /**
