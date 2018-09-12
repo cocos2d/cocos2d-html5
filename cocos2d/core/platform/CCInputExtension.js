@@ -136,4 +136,4 @@ _p.didAccelerate = function (eventData) {
     }
 };
 
-delete _p;
+_p = null;
