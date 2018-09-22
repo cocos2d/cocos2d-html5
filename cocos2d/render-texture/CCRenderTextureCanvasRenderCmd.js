@@ -28,6 +28,8 @@
         this._needDraw = false;
         this._clearColorStr = "rgba(255,255,255,1)";
 
+        this._oldIsCacheToCanvasOn = false;
+
         this._cacheCanvas = document.createElement('canvas');
         this._cacheContext = new cc.CanvasContextWrapper(this._cacheCanvas.getContext('2d'));
     };
@@ -70,6 +72,8 @@
     };
 
     proto.begin = function () {
+        this._oldIsCacheToCanvasOn = cc.renderer._isCacheToCanvasOn;
+        cc.renderer._turnToCacheMode(node.__instanceId);
     };
 
     proto._beginWithClear = function (r, g, b, a, depthValue, stencilValue, flags) {
@@ -91,6 +95,9 @@
 
         var scale = cc.contentScaleFactor();
         cc.renderer._renderingToCacheCanvas(this._cacheContext, node.__instanceId, scale, scale);
+
+        cc.renderer._isCacheToCanvasOn = this._oldIsCacheToCanvasOn;
+
         var spriteRenderCmd = node.sprite._renderCmd;
         spriteRenderCmd._notifyRegionStatus && spriteRenderCmd._notifyRegionStatus(cc.Node.CanvasRenderCmd.RegionStatus.Dirty);
     };
