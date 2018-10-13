@@ -416,7 +416,7 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
                 color = color || this.getDrawColor();
                 if (color.a == null)
                     color.a = 255;
-                var element = new cc._DrawNodeElement(cc.DrawNode.TYPE_POLY);
+                var element = new cc._DrawNodeElement(cc.DrawNode.TYPE_SEGMENT);
                 element.verts = [from, to];
                 element.lineWidth = lineWidth * 2;
                 element.lineColor = color;
