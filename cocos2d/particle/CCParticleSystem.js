@@ -2036,7 +2036,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         // update texture before updating texture rect
         var texture = spriteFrame.getTexture(), locTexture = this._texture;
         if (locTexture !== texture)
-            this.setTexture(texture);
+            this.setTextureWithRect(texture, spriteFrame.getRect());
     },
 
     /**
