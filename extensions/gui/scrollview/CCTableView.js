@@ -348,7 +348,7 @@ cc.TableView = cc.ScrollView.extend(/** @lends cc.TableView# */{
 
         cell.reset();
         if (cell.getParent() === this.getContainer()) {
-            this.getContainer().removeChild(cell, true);
+            this.getContainer().removeChild(cell, false);
         }
     },
 
@@ -512,7 +512,7 @@ cc.TableView = cc.ScrollView.extend(/** @lends cc.TableView# */{
             locCellsFreed.addObject(cell);
             cell.reset();
             if (cell.getParent() === locContainer)
-                locContainer.removeChild(cell, true);
+                locContainer.removeChild(cell, false);
         }
 
         this._indices = [];
