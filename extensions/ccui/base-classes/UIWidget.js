@@ -1364,7 +1364,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
      * @returns {number}
      */
     getLeftBoundary: function () {
-        return this.getPositionX() - this._getAnchorX() * this._contentSize.width;
+        return this.getBoundingBox().x;
     },
 
     /**
@@ -1372,7 +1372,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
      * @returns {number}
      */
     getBottomBoundary: function () {
-        return this.getPositionY() - this._getAnchorY() * this._contentSize.height;
+        return this.getBoundingBox().y;
     },
 
     /**
@@ -1380,7 +1380,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
      * @returns {number}
      */
     getRightBoundary: function () {
-        return this.getLeftBoundary() + this._contentSize.width;
+        return this.getLeftBoundary() + this.getBoundingBox().width;
     },
 
     /**
@@ -1388,7 +1388,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
      * @returns {number}
      */
     getTopBoundary: function () {
-        return this.getBottomBoundary() + this._contentSize.height;
+        return this.getBottomBoundary() + this.getBoundingBox().height;
     },
 
     /**
