@@ -5,36 +5,18 @@ Cocos2d-html5
 It incorporates the same high level api as “Cocos2d JS-binding engine” and compatible with Cocos2d-X.
 It currently supports canvas and WebGL renderer.
 
+#### Cocos2d-html5 has evolved to Cocos Creator, new generation of Cocos game engine with a full featured editor and content creation friendly workflow. The latest repository is maintained in here [Engine of Cocos Creator][9].
+
 Cross Platform
 -------------
    * Popular browsers:  Chrome 14+, Safari 5.0+, IE9+, Firefox 3.5+.
-   * Mobile platforms: coming soon.
+   * Mobile platforms: Mobile browsers,Facebook Instant Games and Mini Games.
    * Native App: Same piece of code can run on "Cocos2d JS-Binding Engine" without or with little modification.
 
 Documentation
 ------------------
    * Website: [www.cocos2d-x.org][3]
-   * API References: [http://www.cocos2d-x.org/wiki/Reference] [4]
-
-
-Installing from [bower][8] (version >=3.4)
-------------------
-
-```shell
-$ bower install cocos2d-html5
-```
-
-Running the tests (version <3)
-------------------
-
-```shell
-$ git clone git://github.com/cocos2d/cocos2d-html5.git
-$ cd cocos2d-html5
-$ git submodule update --init
-$ python -m SimpleHTTPServer
-```
-... and then open a browser and go to `http://localhost:8000/tests`
-
+   * Cocos Creator download: [Cocos Creator][10]
 
 Contact us
 ------------------
@@ -50,3 +32,5 @@ Contact us
 [6]: http://www.twitter.com/cocos2dhtml5 "http://www.twitter.com/cocos2dhtml5"
 [7]: http://t.sina.com.cn/cocos2dhtml5 "http://t.sina.com.cn/cocos2dhtml5"
 [8]: http://bower.io "http://bower.io"
+[9]: https://github.com/cocos-creator/engine
+[10]: http://cocos2d-x.org/download
