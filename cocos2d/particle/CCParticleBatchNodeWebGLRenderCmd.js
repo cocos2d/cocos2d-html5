@@ -52,6 +52,7 @@
         this._glProgramState.apply(this._matrix);
         cc.glBlendFuncForParticle(_t._blendFunc.src, _t._blendFunc.dst);
         _t.textureAtlas.drawQuads();
+        cc.glBlendResetToCache();
     };
 
     proto._initWithTexture = function () {

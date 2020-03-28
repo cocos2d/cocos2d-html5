@@ -223,6 +223,7 @@
 
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._buffersVBO[1]);
         gl.drawElements(gl.TRIANGLES, node._particleIdx * 6, gl.UNSIGNED_SHORT, 0);
+        cc.glBlendResetToCache();
     };
 
     proto.initTexCoordsWithRect = function (pointRect) {
