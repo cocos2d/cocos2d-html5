@@ -113,6 +113,12 @@ cc.DrawNode.create = function () {
 cc.DrawNode.TYPE_DOT = 0;
 cc.DrawNode.TYPE_SEGMENT = 1;
 cc.DrawNode.TYPE_POLY = 2;
+cc.DrawNode.RoundRectType = {
+    TOP: 1,
+    BOTTOM: 2,
+    RIGHT: 3,
+    LEFT: 4,
+}
 
 cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
 
@@ -466,6 +472,119 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
                 return this.drawPoly_(vertsCopy, fillColor, lineWidth, lineColor);
             },
 
+            /**
+             * draw a rounded rectangle with a fill color, border width, radius, line color and type, copying the vertex list
+             * @param {Number} [height] Hieght of rounded rectangle
+             * @param {Number} [width] Width of rounded rectangle
+             * @param {cc.Color|null} fillColor Fill color rounded rectangle else some default will be applied.
+             * @param {Number} [lineWidth] Width of the border
+             * @param {cc.Color|null} lineColor Line color rounded rectangle else some default will be applied.
+             * @param {Number} [radiusWidth] Width of corner radius
+             * @param {Number} [type] Type of rounded rectangle i.e.  TOP, BOTTOM, RIGHT, LEFT, If passed NULL all the corners will be rounded
+             *                        The possible values can be
+             *                        cc.DrawNode.RoundRectType.TOP     // Only top side corners will be rounded
+             *                        cc.DrawNode.RoundRectType.BOTTOM  // Only bottom side corners will be rounded
+             *                        cc.DrawNode.RoundRectType.RIGHT   // Only right side corners will be rounded
+             *                        cc.DrawNode.RoundRectType.LEFT    // Only left side corners will be rounded
+             */
+            drawRoundRect: function (width, height, fillColor, lineWidth = 1, lineColor, borderRadius, type) {
+                function getVertices(origin, destination, fillColor, lineWidth, lineColor, rad, type) {
+                    var vertices = [],
+                        radius = rad || 8,
+                        segments = 20,
+                        coef = 2.0 * Math.PI / segments,
+                        center = { x: 0, y: 0 };
+                    if (type !== RectType.TOP) {
+                        //Drawing bottom line
+                        if (type === RectType.RIGHT) {
+                            vertices.push(cc.p(origin.x, origin.y));
+                        } else {
+                            vertices.push(cc.p(origin.x + radius, origin.y));
+                        }
+                        //Drawing bottom right curve
+                        if (type !== RectType.LEFT) {
+                            center = {
+                                x: destination.x - radius,
+                                y: origin.y + radius
+                            }
+                            for (var i = segments / 2; i <= (segments - segments / 4); i++) {
+                                var rads = i * coef,
+                                    j = radius * Math.cos(rads + cc.degreesToRadians(90)) + center.x,
+                                    k = radius * Math.sin(rads + cc.degreesToRadians(90)) + center.y;
+                                vertices.push(cc.p(j, k));
+                            }
+                        } else {
+                            vertices.push(cc.p(destination.x, origin.y));
+                        }
+                    } else {
+                        vertices.push(cc.p(origin.x, origin.y));
+                        vertices.push(cc.p(destination.x, origin.y));
+                    }
+        
+                    if (type !== RectType.BOTTOM && type !== RectType.LEFT) {
+                        //Drawing top right curve
+                        center = {
+                            x: destination.x - radius,
+                            y: destination.y - radius
+                        }
+                        for (var i = (segments - segments / 4); i <= segments; i++) {
+                            var rads = i * coef,
+                                j = radius * Math.cos(rads + cc.degreesToRadians(90)) + center.x,
+                                k = radius * Math.sin(rads + cc.degreesToRadians(90)) + center.y;
+                            vertices.push(cc.p(j, k));
+                        }
+                    } else {
+                        vertices.push(cc.p(destination.x, destination.y));
+                    }
+        
+                    if (type !== RectType.BOTTOM && type !== RectType.RIGHT) {
+                        //Drawing top left curve
+                        center = {
+                            x: origin.x + radius,
+                            y: destination.y - radius
+                        }
+                        for (var i = 0; i <= segments / 4; i++) {
+                            var rads = i * coef,
+                                j = radius * Math.cos(rads + cc.degreesToRadians(90)) + center.x,
+                                k = radius * Math.sin(rads + cc.degreesToRadians(90)) + center.y;
+                            vertices.push(cc.p(j, k));
+                        }
+                    } else {
+                        vertices.push(cc.p(origin.x, destination.y));
+                    }
+        
+                    if (type !== RectType.TOP && type !== RectType.RIGHT) {
+                        //Drawing bottom left curve
+                        center = {
+                            x: origin.x + radius,
+                            y: origin.y + radius
+                        }
+                        for (var i = segments / 4; i <= segments / 2; i++) {
+                            var rads = i * coef,
+                                j = radius * Math.cos(rads + cc.degreesToRadians(90)) + center.x,
+                                k = radius * Math.sin(rads + cc.degreesToRadians(90)) + center.y;
+                            vertices.push(cc.p(j, k));
+                        }
+                    } else {
+                        vertices.push(cc.p(origin.x, origin.y));
+                    }
+                    return vertices;
+                }
+                this.width = width;
+                this.height = height;
+                lineColor = lineColor || this.getDrawColor();
+        
+                [lineColor, (fillColor || {})].forEach(function (obj) {
+                    obj.a = obj.a != null ? obj.a : 255
+                })
+        
+                if (fillColor) {
+                    this.drawPoly(getVertices(cc.p(0, 0), cc.p(width, height), fillColor, lineWidth, lineColor, borderRadius, type), fillColor, lineWidth, lineColor || cc.color(255, 255, 255));
+                } else {
+                    var defaultColor = cc.color(128, 0, 0); //color for background node
+                    this.drawPoly(getVertices(cc.p(0, 0), cc.p(width, height), fillColor, lineWidth, lineColor, borderRadius, type), defaultColor, lineWidth, defaultColor);
+                }
+            },
             /**
              * Clear the geometry in the node's buffer.
              */
