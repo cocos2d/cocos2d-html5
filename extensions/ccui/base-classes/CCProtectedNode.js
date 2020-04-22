@@ -90,14 +90,14 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
 
         renderer.pushRenderCommand(cmd);
 
-        for (; i < len; i++) {
-            children[i].visit(this);
-        }
         for (; j < pLen; j++) {
             pChild = pChildren[j];
             if (!pChild) continue;
             cmd._changeProtectedChild(pChild);
             pChild.visit(this);
+        }
+        for (; i < len; i++) {
+            children[i].visit(this);
         }
 
         if (locGrid && locGrid._active)
