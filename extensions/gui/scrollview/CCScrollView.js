@@ -502,8 +502,8 @@ cc.ScrollView = cc.Layer.extend(/** @lends cc.ScrollView# */{
                     moveDistance.x *= BOUNCE_BACK_FACTOR;
             }
 
-            if (!this._touchMoved && Math.abs(cc.convertDistanceFromPointToInch(dis)) < MOVE_INCH) {
-                //CCLOG("Invalid movement, distance = [%f, %f], disInch = %f", moveDistance.x, moveDistance.y);
+            if (Math.abs(cc.convertDistanceFromPointToInch(dis)) < MOVE_INCH) {
+                this._touchMoved = false;
                 return;
             }
 
@@ -513,7 +513,6 @@ cc.ScrollView = cc.Layer.extend(/** @lends cc.ScrollView# */{
             }
 
             this._touchPoint = newPoint;
-            this._touchMoved = true;
 
             if (this._dragging) {
                 switch (locDirection) {
