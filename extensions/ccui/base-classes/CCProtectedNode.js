@@ -148,7 +148,7 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
         cc.assert(tag !== cc.NODE_TAG_INVALID, "Invalid tag");
         var locChildren = this._protectedChildren;
         for (var i = 0, len = locChildren.length; i < len; i++)
-            if (locChildren.getTag() === tag)
+            if (locChildren[i].getTag() === tag)
                 return locChildren[i];
         return null;
     },
