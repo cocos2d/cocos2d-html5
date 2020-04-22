@@ -203,6 +203,7 @@ cc.BuilderReader = cc.Class.extend({
         var req = this.getXMLHttpRequest();
         var errInfo = "load " + url + " failed!";
         req.open('GET', url, false);
+        req.timeout = 10000;
         var arrayInfo = null;
         if (/msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent)) {
             req.setRequestHeader("Accept-Charset", "x-user-defined");

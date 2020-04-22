@@ -651,7 +651,6 @@ cc.loader = (function () {
          */
         getXMLHttpRequest: function () {
             var xhr = window.XMLHttpRequest ? new window.XMLHttpRequest() : new ActiveXObject("MSXML2.XMLHTTP");
-            xhr.timeout = 10000;
             if (xhr.ontimeout === undefined) {
                 xhr._timeoutId = -1;
             }
@@ -792,6 +791,7 @@ cc.loader = (function () {
                 var xhr = this.getXMLHttpRequest(),
                     errInfo = "load " + url + " failed!";
                 xhr.open("GET", url, true);
+                xhr.timeout = 10000;
                 if (/msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent)) {
                     // IE-specific logic here
                     xhr.setRequestHeader("Accept-Charset", "utf-8");
@@ -860,6 +860,7 @@ cc.loader = (function () {
             var xhr = cc.loader.getXMLHttpRequest(),
                 errInfo = "load " + url + " failed!";
             xhr.open("GET", url, true);
+            xhr.timeout = 10000;
             xhr.responseType = "arraybuffer";
 
             var loadCallback = function () {

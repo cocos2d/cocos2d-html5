@@ -37,6 +37,7 @@ cc.loader.loadBinary = function (url, cb) {
     var xhr = this.getXMLHttpRequest(),
         errInfo = "load " + url + " failed!";
     xhr.open("GET", url, true);
+    xhr.timeout = 10000;
     xhr.responseType = 'arraybuffer';
     if (cc.loader.loadBinary._IEFilter) {
         // IE-specific logic here
