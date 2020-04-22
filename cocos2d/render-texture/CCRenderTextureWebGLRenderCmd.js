@@ -29,6 +29,7 @@
 
         this._fBO = null;
         this._oldFBO = null;
+        this._oldIsCacheToBufferOn = false;
         this._textureCopy = null;
         this._depthRenderBuffer = null;
 
@@ -226,6 +227,10 @@
 
     proto.begin = function () {
         var node = this._node;
+
+        this._oldIsCacheToBufferOn = cc.renderer._isCacheToBufferOn;
+        cc.renderer._turnToCacheMode(node.__instanceId);
+
         // Save the current matrix
         cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
         cc.kmGLPushMatrix();
@@ -319,6 +324,8 @@
     proto.end = function () {
         var node = this._node;
         cc.renderer._renderingToBuffer(node.__instanceId);
+
+        cc.renderer._isCacheToBufferOn = this._oldIsCacheToBufferOn;
 
         var gl = cc._renderContext;
         var director = cc.director;

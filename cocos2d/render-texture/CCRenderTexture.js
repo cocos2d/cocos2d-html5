@@ -202,7 +202,6 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      * @function
      */
     begin: function () {
-        cc.renderer._turnToCacheMode(this.__instanceId);
         this._renderCmd.begin();
     },
     /**
