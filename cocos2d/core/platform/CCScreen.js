@@ -82,7 +82,7 @@ cc.screen = /** @lends cc.screen# */{
     init: function () {
         this._fn = {};
         var i, val, map = this._fnMap, valL;
-        for (i = 0, l = map.length; i < l; i++) {
+        for (i = 0; i < map.length; i++) {
             val = map[i];
             if (val && val[1] in document) {
                 for (i = 0, valL = val.length; i < valL; i++) {
