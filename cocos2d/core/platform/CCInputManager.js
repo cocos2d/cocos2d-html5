@@ -508,8 +508,8 @@ cc.inputManager = /** @lends cc.inputManager# */{
                 mouseEvent.setScrollData(0, event.wheelDelta);
                 cc.eventManager.dispatchEvent(mouseEvent);
 
-                event.stopPropagation();
-                event.preventDefault();
+                //event.stopPropagation();
+                //event.preventDefault();
             }, false);
 
             /* firefox fix */
@@ -522,8 +522,8 @@ cc.inputManager = /** @lends cc.inputManager# */{
                 mouseEvent.setScrollData(0, event.detail * -120);
                 cc.eventManager.dispatchEvent(mouseEvent);
 
-                event.stopPropagation();
-                event.preventDefault();
+                //event.stopPropagation();
+                //event.preventDefault();
             }, false);
         }
 
