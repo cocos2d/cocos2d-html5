@@ -58,7 +58,7 @@ ccui.linearVerticalLayoutManager = /** @lends ccui.linearVerticalLayoutManager# 
                 if (layoutParameter) {
                     var childGravity = layoutParameter.getGravity();
                     var ap = child.getAnchorPoint();
-                    var cs = child.getContentSize();
+                    var cs = child.getBoundingBox();
                     var finalPosX = ap.x * cs.width;
                     var finalPosY = topBoundary - ((1.0 - ap.y) * cs.height);
                     switch (childGravity) {
@@ -102,7 +102,7 @@ ccui.linearHorizontalLayoutManager = /** @lends ccui.linearHorizontalLayoutManag
                 if (layoutParameter) {
                     var childGravity = layoutParameter.getGravity();
                     var ap = child.getAnchorPoint();
-                    var cs = child.getContentSize();
+                    var cs = child.getBoundingBox();
                     var finalPosX = leftBoundary + (ap.x * cs.width);
                     var finalPosY = layoutSize.height - (1.0 - ap.y) * cs.height;
                     switch (childGravity) {
@@ -211,7 +211,7 @@ ccui.relativeLayoutManager = /** @lends ccui.relativeLayoutManager# */{
     _calculateFinalPositionWithRelativeWidget: function (layout) {
         var locWidget = this._widget;
         var ap = locWidget.getAnchorPoint();
-        var cs = locWidget.getContentSize();
+        var cs = locWidget.getBoundingBox();
 
         this._finalPositionX = 0.0;
         this._finalPositionY = 0.0;
@@ -272,7 +272,7 @@ ccui.relativeLayoutManager = /** @lends ccui.relativeLayoutManager# */{
                 if (relativeWidget) {
                     if (this._relativeWidgetLP && !this._relativeWidgetLP._put)
                         return false;
-                    var rbs = relativeWidget.getContentSize();
+                    var rbs = relativeWidget.getBoundingBox();
                     this._finalPositionY = relativeWidget.getTopBoundary() + ap.y * cs.height;
                     this._finalPositionX = relativeWidget.getLeftBoundary() + rbs.width * 0.5 + ap.x * cs.width - cs.width * 0.5;
                 }
@@ -297,7 +297,7 @@ ccui.relativeLayoutManager = /** @lends ccui.relativeLayoutManager# */{
                 if (relativeWidget) {
                     if (this._relativeWidgetLP && !this._relativeWidgetLP._put)
                         return false;
-                    var rbs = relativeWidget.getContentSize();
+                    var rbs = relativeWidget.getBoundingBox();
                     this._finalPositionX = relativeWidget.getLeftBoundary() - (1.0 - ap.x) * cs.width;
                     this._finalPositionY = relativeWidget.getBottomBoundary() + rbs.height * 0.5 + ap.y * cs.height - cs.height * 0.5;
                 }
@@ -322,7 +322,7 @@ ccui.relativeLayoutManager = /** @lends ccui.relativeLayoutManager# */{
                 if (relativeWidget) {
                     if (this._relativeWidgetLP && !this._relativeWidgetLP._put)
                         return false;
-                    var rbs = relativeWidget.getContentSize();
+                    var rbs = relativeWidget.getBoundingBox();
                     var locationRight = relativeWidget.getRightBoundary();
                     this._finalPositionX = locationRight + ap.x * cs.width;
                     this._finalPositionY = relativeWidget.getBottomBoundary() + rbs.height * 0.5 + ap.y * cs.height - cs.height * 0.5;
@@ -348,7 +348,7 @@ ccui.relativeLayoutManager = /** @lends ccui.relativeLayoutManager# */{
                 if (relativeWidget) {
                     if (this._relativeWidgetLP && !this._relativeWidgetLP._put)
                         return false;
-                    var rbs = relativeWidget.getContentSize();
+                    var rbs = relativeWidget.getBoundingBox();
                     this._finalPositionY = relativeWidget.getBottomBoundary() - (1.0 - ap.y) * cs.height;
                     this._finalPositionX = relativeWidget.getLeftBoundary() + rbs.width * 0.5 + ap.x * cs.width - cs.width * 0.5;
                 }
