@@ -240,6 +240,20 @@ cc.textureCache = /** @lends cc.textureCache# */{
     },
 
     /**
+    * Add a new texture object to the texture cache with the given key.
+    * @param {cc.Texture2D} tex The texture object to be added.
+    * @param {String} key Used as the key for the texture.
+    */
+    addTexture: function (tex, key) {
+        if (!(tex instanceof cc.Texture2D) || !key || this._textures[key]) {
+            cc.warn(cc._LogInfos.textureCache_addTexture);
+            return;
+        }
+
+        this._textures[key] = tex;
+    }
+
+    /**
      * <p>Returns a Texture2D object given an UIImage image<br />
      * If the image was not previously loaded, it will create a new Texture2D object and it will return it.<br />
      * Otherwise it will return a reference of a previously loaded image<br />

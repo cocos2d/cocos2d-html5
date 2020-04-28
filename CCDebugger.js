@@ -195,6 +195,7 @@ cc._LogInfos = {
     textureCache_dumpCachedTextureInfo_2: "cocos2d: '%s' id= HTMLCanvasElement %s x %s",
     textureCache_dumpCachedTextureInfo_3: "cocos2d: TextureCache dumpDebugInfo: %s textures, HTMLCanvasElement for %s KB (%s MB)",
     textureCache_addUIImage_2: "cc.Texture.addUIImage(): image should be non-null",
+    textureCache_addTexture: "cc.Texture.addTexture(): parameters are incorrect or key already exists",
 
     Texture2D_initWithETCFile: "initWithETCFile does not support on HTML5",
     Texture2D_initWithPVRFile: "initWithPVRFile does not support on HTML5",
